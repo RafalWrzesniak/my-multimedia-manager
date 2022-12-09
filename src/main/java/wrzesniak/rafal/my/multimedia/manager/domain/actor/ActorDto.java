@@ -1,7 +1,7 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.actor;
 
 import lombok.Data;
-import wrzesniak.rafal.my.multimedia.manager.domain.ImdbObject;
+import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;
 
 import java.net.URL;
 import java.time.LocalDate;
