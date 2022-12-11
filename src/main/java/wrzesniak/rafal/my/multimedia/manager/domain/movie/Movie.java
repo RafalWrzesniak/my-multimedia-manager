@@ -8,6 +8,7 @@ import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebSearchable;
 
 import javax.persistence.*;
 import java.net.URL;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +39,17 @@ public class Movie implements FilmwebSearchable {
 
     private URL filmwebUrl;
 
+    @ManyToMany
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = CascadeType.ALL)
     private List<Actor> actorList;
+    @ManyToMany
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = CascadeType.ALL)
     private List<Actor> directorList;
+    @ManyToMany
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = CascadeType.ALL)
     private List<Actor> writerList;
 
     @ElementCollection
@@ -59,8 +60,8 @@ public class Movie implements FilmwebSearchable {
     @ToString.Exclude
     private String plotLocal;
 
-    public String getImagePath() {
-        return String.format("images/movie/%s.jpg", imdbId);
+    public Path getImagePath() {
+        return Path.of("images", "movie", imdbId.concat(".jpg"));
     }
 
     @Override

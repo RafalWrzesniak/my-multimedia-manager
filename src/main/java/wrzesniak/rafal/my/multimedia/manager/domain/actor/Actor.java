@@ -7,6 +7,7 @@ import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebSearchable;
 
 import javax.persistence.*;
 import java.net.URL;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public class Actor implements FilmwebSearchable {
     @ToString.Exclude
     private List<Movie> wroteMovies;
 
-    public String getImagePath() {
-        return String.format("images/actor/%s.jpg", imdbId);
+    public Path getImagePath() {
+        return Path.of("images", "actor", imdbId.concat(".jpg"));
     }
 
     @Override
