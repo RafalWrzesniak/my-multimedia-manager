@@ -33,5 +33,5 @@ build/
 .vscode/
 
 ### Other ###
-V2__schema.sql
 images
+/V0__schema.sql

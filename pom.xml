@@ -112,6 +112,21 @@
             <version>8.5.13</version>
         </dependency>
 
+<!--		JsoUp-->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.15.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+<!--		FailSafe-->
+		<dependency>
+			<groupId>dev.failsafe</groupId>
+			<artifactId>failsafe</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
     </dependencies>
 
 	<build>
