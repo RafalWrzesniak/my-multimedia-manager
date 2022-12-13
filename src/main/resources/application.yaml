@@ -10,4 +10,24 @@ spring:
               create-source: metadata
               scripts:
                 action: create
-                create-target: V2__schema.sql
+                create-target: V0__schema.sql
+
+application:
+  imdb:
+    url: https://imdb-api.com/API
+    url-pl: https://imdb-api.com/pl/API
+    api-key: secret
+    not-found: Server busy
+    image-size: 384x528
+    api:
+      actor: Name
+      movie: Title
+      search: SearchMovie
+      resize: ResizeImage
+
+  filmweb:
+    url: https://www.filmweb.pl
+    search: search?q=
+    match:
+      movie: /film/
+      actor: /person/
