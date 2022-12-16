@@ -1,18 +1,8 @@
 package wrzesniak.rafal.my.multimedia.manager.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-
 import java.nio.file.Path;
 
 public class StringFunctions {
-
-    @SneakyThrows
-    public static JsonNode parseString(String string) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(string);
-    }
 
     public static String slash(String string) {
         return "/".concat(string);
@@ -26,4 +16,7 @@ public class StringFunctions {
         return fileName;
     }
 
+    public static String withRemovedDate(String titleWithDate) {
+        return titleWithDate.substring(0, titleWithDate.indexOf(" ("));
+    }
 }
