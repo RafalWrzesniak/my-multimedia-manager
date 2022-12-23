@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.io.IOException;
@@ -32,10 +31,9 @@ public class FilmwebService {
     private final FilmwebConfiguration filmwebConfiguration;
 
     @SneakyThrows
-    public URL createFullMovieUrlFrom(String urlPart) {
+    public URL createFilmwebUrlFromPart(String urlPart) {
         URL url = filmwebConfiguration.getUrl();
-        String film = urlPart.contains("/film/") ? "" : filmwebConfiguration.getMatch().get(Movie.class.getSimpleName());
-        return new URL(url + film + URLEncoder.encode(urlPart, UTF_8));
+        return new URL(url + urlPart); // URLEncoder.encode(urlPart, UTF_8)
     }
 
     @SneakyThrows
@@ -82,7 +80,7 @@ public class FilmwebService {
         log.info("Searching for prefix {} in query {}", prefix, query);
         Document parsedUrl = webOperations.parseUrl(query);
         Element foundElementWithUrl = parsedUrl.getElementsByAttributeValueStarting(HREF, prefix).first();
-        return foundElementWithUrl != null ? createFullMovieUrlFrom(foundElementWithUrl.attr(HREF)) : null;
+        return foundElementWithUrl != null ? createFilmwebUrlFromPart(foundElementWithUrl.attr(HREF)) : null;
     }
 
 }
