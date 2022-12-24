@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 public class MyMultimediaManagerApplication {
 
 	@Autowired
-	DataSource dataSource;
+	private DataSource dataSource;
 
 	public static void main(String[] args) {
 		SpringApplication.run(MyMultimediaManagerApplication.class, args);
