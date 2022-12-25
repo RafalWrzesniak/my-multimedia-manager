@@ -27,17 +27,14 @@ public class ActorContentList {
 
     public ActorContentList(String listName) {
         this.name = listName;
+        this.actorList = new ArrayList<>();
     }
 
     public boolean addMovie(Actor actor) {
-        if(actorList == null) {
-            actorList = new ArrayList<>();
-        }
         if(actorList.contains(actor)) {
             return false;
         }
-        actorList.add(actor);
-        return true;
+        return actorList.add(actor);
     }
 
     public List<Actor> getActors() {

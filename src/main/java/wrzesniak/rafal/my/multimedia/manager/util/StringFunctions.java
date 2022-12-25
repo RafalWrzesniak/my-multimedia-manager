@@ -1,6 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.util;
 
-import java.nio.file.Path;
+import java.io.File;
 
 public class StringFunctions {
 
@@ -8,8 +8,8 @@ public class StringFunctions {
         return "/".concat(string);
     }
 
-    public static String fileNameOf(Path filePath) {
-        String fileName = filePath.getFileName().toString();
+    public static String fileNameOf(File file) {
+        String fileName = file.getName();
         if(fileName.matches("^.+\\.\\w.+$")) {
             return fileName.substring(0, fileName.lastIndexOf('.'));
         }
