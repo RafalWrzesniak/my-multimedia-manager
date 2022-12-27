@@ -26,8 +26,17 @@ application:
       resize: ResizeImage
 
   filmweb:
-    url: https://www.filmweb.pl
+    link:
+      url: https://www.filmweb.pl
+      prefix:
+        movie: /film/
+        actor: /person/
     search: search?q=
-    match:
-      movie: /film/
-      actor: /person/
+
+  jwt:
+    secret: asdsalqrk1232115dfas@!#!@sds
+    expirationTime: 3600000
+
+server:
+  error:
+    include-stacktrace: never
