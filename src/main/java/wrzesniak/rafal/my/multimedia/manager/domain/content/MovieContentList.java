@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MovieContentList {
+public class MovieContentList implements ContentList {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -39,5 +39,9 @@ public class MovieContentList {
 
     public List<Movie> getMovies() {
         return new ArrayList<>(movies);
+    }
+
+    public void removeMovie(Movie movieToRemove) {
+        movies.remove(movieToRemove);
     }
 }

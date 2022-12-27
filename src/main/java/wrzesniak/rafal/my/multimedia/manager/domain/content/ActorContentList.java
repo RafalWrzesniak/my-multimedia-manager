@@ -15,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActorContentList {
+public class ActorContentList implements ContentList {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -30,7 +30,7 @@ public class ActorContentList {
         this.actorList = new ArrayList<>();
     }
 
-    public boolean addMovie(Actor actor) {
+    public boolean addActor(Actor actor) {
         if(actorList.contains(actor)) {
             return false;
         }
@@ -39,5 +39,9 @@ public class ActorContentList {
 
     public List<Actor> getActors() {
         return new ArrayList<>(actorList);
+    }
+
+    public void removeActor(Actor actorToRemove) {
+        actorList.remove(actorToRemove);
     }
 }
