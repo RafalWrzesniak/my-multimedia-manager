@@ -2,15 +2,18 @@ package wrzesniak.rafal.my.multimedia.manager.domain.mapper;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
+import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.USER;
 
 @Slf4j
 @NoArgsConstructor(access = PRIVATE)
@@ -44,6 +47,17 @@ public class DtoMapper {
                 .actorList(new ArrayList<>())
                 .directorList(new ArrayList<>())
                 .writerList(new ArrayList<>())
+                .build();
+    }
+
+    public static User mapToUser(LoginCredentials credentials) {
+        return User.builder()
+                .username(credentials.getUsername())
+                .password(credentials.getPassword())
+                .userRole(USER)
+                .enabled(true)
+                .movieLists(new ArrayList<>())
+                .actorList(new ArrayList<>())
                 .build();
     }
 
