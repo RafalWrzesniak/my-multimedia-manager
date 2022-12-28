@@ -12,8 +12,17 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "application.filmweb")
 public class FilmwebConfiguration {
 
-    private URL url;
+    private Link link;
     private String search;
-    private Map<String, String> match;
+
+    public URL getUrl() {
+        return link.url;
+    }
+
+    @Data
+    public static class Link {
+        private URL url;
+        private Map<String, String> prefix;
+    }
 
 }

@@ -73,7 +73,7 @@ public class FilmwebService {
 
     private String findMatchCriteriaBasedOnClass(FilmwebSearchable filmwebSearchable) {
         String match = filmwebSearchable.getClass().getSimpleName().toLowerCase();
-        return filmwebConfiguration.getMatch().get(match);
+        return filmwebConfiguration.getLink().getPrefix().get(match);
     }
 
     private URL findUrlFromQueryUrlByMatch(URL query, String prefix) throws IOException {
