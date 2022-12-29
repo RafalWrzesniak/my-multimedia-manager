@@ -15,12 +15,9 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
-import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-
-import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.fileNameOf;
 
 @Slf4j
 @Service
@@ -39,10 +36,7 @@ public class MovieCreatorService {
 
     @Transactional
     public Optional<Movie> createMovieFromFilmwebUrl(URL filmwebMovieUrl) {
-        if(!validators.isValidFilmwebMovieUrl(filmwebMovieUrl)) {
-            log.warn("Provided movie url is not a valid one: {}", filmwebMovieUrl);
-            return Optional.empty();
-        }
+        validators.validateFilmwebMovieUrl(filmwebMovieUrl);
         Optional<Movie> movieInDatabase = movieRepository.findByFilmwebUrl(filmwebMovieUrl);
         if(movieInDatabase.isPresent()) {
             log.info("Movie with url `{}` already exists in database: {}", filmwebMovieUrl, movieInDatabase);
@@ -54,11 +48,6 @@ public class MovieCreatorService {
             return Optional.empty();
         }
         return createMovieFromPolishTitle(polishTitle);
-    }
-
-    @Transactional
-    public Optional<Movie> createMovieFromLocalFolder(File file) {
-        return createMovieFromPolishTitle(fileNameOf(file));
     }
 
     @Transactional

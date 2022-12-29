@@ -16,7 +16,6 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
-import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -105,18 +104,4 @@ class MovieCreatorServiceTest {
         verify(creatorServiceSpy).createMovieFromPolishTitle("Matrix (1999)");
     }
 
-    @Test
-    void shouldCallCreateMovieFromPolishTitleWhenCreatingPath() {
-        // given
-        ArgumentCaptor<Movie> movieParam = ArgumentCaptor.forClass(Movie.class);
-        when(movieRepository.save(movieParam.capture())).thenAnswer((invocation) -> movieParam.getValue());
-        given(actorManagementService.createActorFromImdbId(any())).willReturn(Optional.empty());
-        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(validators, imdbService, webOperations, filmwebService, movieRepository, actorManagementService));
-
-        // when
-        creatorServiceSpy.createMovieFromLocalFolder(new File("E:\\Rafał\\Filmy\\Matrix\\Matrix.mkv"));
-
-        // then
-        verify(creatorServiceSpy).createMovieFromPolishTitle("Matrix");
-    }
 }

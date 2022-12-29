@@ -24,9 +24,7 @@ public class ActorController {
 
     @GetMapping("/findByImdbId/{imdbId}")
     public Optional<Actor> getByImdbId(@PathVariable String imdbId) {
-        if(!validators.isValidImdbId(imdbId)) {
-            throw new IllegalArgumentException(String.format("`%s` is not valid imdb id!", imdbId));
-        }
+        validators.validateImdbId(imdbId);
         return actorRepository.findByImdbId(imdbId);
     }
 
