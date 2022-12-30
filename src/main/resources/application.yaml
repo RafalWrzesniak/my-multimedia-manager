@@ -9,7 +9,7 @@ spring:
             schema-generation:
               create-source: metadata
               scripts:
-                action: create
+                action: none
                 create-target: V0__schema.sql
 
 application:
