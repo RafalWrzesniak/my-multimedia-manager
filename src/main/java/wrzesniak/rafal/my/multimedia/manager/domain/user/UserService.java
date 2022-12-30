@@ -23,9 +23,9 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final Validators validators;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
-    private final Validators validators;
     private final ActorRepository actorRepository;
 
     public MovieContentList addMovieToUserContentList(User user, String listName, String movieImbdId) {
@@ -69,11 +69,23 @@ public class UserService {
         return contentList;
     }
 
+    public void removeMovieFromList(User user, String listName, String movieImdbIdToRemove) {
+        validators.validateImdbId(movieImdbIdToRemove);
+        Movie movieToRemove = movieRepository.findByImdbId(movieImdbIdToRemove).orElseThrow(MovieNotFoundException::new);
+        removeMovieFromList(user, listName, movieToRemove);
+    }
+
     public void removeMovieFromList(User user, String listName, Movie movieToRemove) {
         MovieContentList movieContentList = user.getMovieContentListByName(listName).orElseThrow(NoListWithSuchNameException::new);
         movieContentList.removeMovie(movieToRemove);
         userRepository.save(user);
         log.info("Movie `{}` removed from list `{}` for user: {}", movieToRemove.getTitle(), listName, user.getUsername());
+    }
+
+    public void removeActorFromList(User user, String listName, String actorImdbIdToRemove) {
+        validators.validateImdbId(actorImdbIdToRemove);
+        Actor actorToRemove = actorRepository.findByImdbId(actorImdbIdToRemove).orElseThrow();
+        removeActorFromList(user, listName, actorToRemove);
     }
 
     public void removeActorFromList(User user, String listName, Actor actorToRemove) {
