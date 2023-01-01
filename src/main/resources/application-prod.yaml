@@ -1,3 +1,18 @@
 spring:
   devtools:
     add-properties: false
+  datasource:
+    url: database-url
+    driverClassName: org.postgresql.Driver
+    username: root
+    password: secret
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  flyway:
+    url: database-url
+    schemas: schema
+    user: root
+    password: secret
