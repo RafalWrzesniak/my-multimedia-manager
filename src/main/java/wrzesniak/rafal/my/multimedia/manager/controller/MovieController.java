@@ -44,7 +44,7 @@ public class MovieController {
 
     @PostMapping("/create/filmweb/{filmwebUrl}")
     public Movie findAndCreateMovieByFilmwebUrl(@PathVariable String filmwebUrl, @RequestParam(required = false) String listName) {
-        String urlPrefix = filmwebConfiguration.getLink().getPrefix().get(Movie.class.getSimpleName());
+        String urlPrefix = filmwebConfiguration.getLink().getPrefix().get(Movie.class.getSimpleName().toLowerCase());
         URL url = filmwebService.createFilmwebUrlFromPart(urlPrefix + filmwebUrl);
         Optional<Movie> potentialMovie = movieCreatorService.createMovieFromFilmwebUrl(url);
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
