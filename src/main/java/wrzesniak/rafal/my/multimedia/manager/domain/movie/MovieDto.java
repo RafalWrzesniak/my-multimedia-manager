@@ -3,6 +3,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.SingleFieldDto;
+import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebSearchable;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;
 
 import java.net.URL;
@@ -11,10 +12,11 @@ import java.util.List;
 
 @Data
 @With
+@ToString
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class MovieDto implements ImdbObject {
+public class MovieDto implements ImdbObject, FilmwebSearchable {
 
     private String id;
     private String title;
@@ -35,4 +37,10 @@ public class MovieDto implements ImdbObject {
     private String plotLocal;
     private String errorMessage;
 
+    private URL filmwebUrl;
+
+    @Override
+    public String getFilmwebSearchString() {
+        return String.format("%s (%s)", title, releaseDate.getYear());
+    }
 }
