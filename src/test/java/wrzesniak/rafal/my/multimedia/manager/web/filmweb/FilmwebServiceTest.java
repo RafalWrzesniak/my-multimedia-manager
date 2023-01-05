@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;
@@ -70,7 +70,7 @@ class FilmwebServiceTest {
     @Test
     void shouldAddFilmwebUrlToMovie() {
         // given
-        Movie movie = Movie.builder()
+        MovieDto movie = MovieDto.builder()
                 .title(PIRATES_TITLE)
                 .releaseDate(LocalDate.of(2003, 1, 1))
                 .build();
@@ -86,7 +86,7 @@ class FilmwebServiceTest {
     @Test
     void shouldAddFilmwebUrlToActor() {
         // given
-        Actor actor = Actor.builder()
+        ActorDto actor = ActorDto.builder()
                 .name("Quentin Tarantino")
                 .build();
 

@@ -3,7 +3,8 @@ package wrzesniak.rafal.my.multimedia.manager.domain.actor;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
-import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebSearchable;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebActorUrl;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.persistence.*;
 import java.net.URL;
@@ -17,23 +18,28 @@ import java.util.Optional;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @With
-@Builder
 @Data
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Actor implements FilmwebSearchable {
+public class Actor {
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @ImdbId
+    @Column(unique = true)
     private String imdbId;
 
     private String name;
     private LocalDate birthDate;
     private LocalDate deathDate;
 
+    @FilmwebActorUrl
+    @Column(unique = true)
     private URL filmwebUrl;
 
     @ManyToMany
@@ -51,11 +57,6 @@ public class Actor implements FilmwebSearchable {
 
     public Path getImagePath() {
         return Path.of("images", "actor", imdbId.concat(".jpg"));
-    }
-
-    @Override
-    public String getFilmwebSearchString() {
-        return name;
     }
 
     public Integer getAge() {

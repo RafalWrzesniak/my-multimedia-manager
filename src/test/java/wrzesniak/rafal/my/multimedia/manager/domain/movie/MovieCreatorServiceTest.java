@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorManagementService;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NotValidFilmwebUrlException;
-import wrzesniak.rafal.my.multimedia.manager.util.Validators;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
@@ -33,8 +32,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 class MovieCreatorServiceTest {
 
-    @Autowired
-    private Validators validators;
     @Autowired
     private ImdbService imdbService;
     @Autowired
@@ -90,7 +87,7 @@ class MovieCreatorServiceTest {
         ArgumentCaptor<Movie> movieParam = ArgumentCaptor.forClass(Movie.class);
         when(movieRepository.save(movieParam.capture())).thenAnswer((invocation) -> movieParam.getValue());
         given(actorManagementService.createActorFromImdbId(any())).willReturn(Optional.empty());
-        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(validators, imdbService, webOperations, filmwebService, movieRepository, actorManagementService));
+        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, filmwebService, movieRepository, actorManagementService));
 
         // when
         creatorServiceSpy.createMovieFromFilmwebUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));

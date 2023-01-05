@@ -4,30 +4,32 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.aop.TrackExecutionTime;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorManagementService;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
-import wrzesniak.rafal.my.multimedia.manager.util.Validators;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
+import javax.validation.Valid;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Validated
 @RequiredArgsConstructor
 public class MovieCreatorService {
 
     private static final int ACTORS_TO_DOWNLOAD = 10;
     private static final int CREW_TO_DOWNLOAD = 4;
 
-    private final Validators validators;
     private final ImdbService imdbService;
     private final WebOperations webOperations;
     private final FilmwebService filmwebService;
@@ -35,8 +37,7 @@ public class MovieCreatorService {
     private final ActorManagementService actorManagementService;
 
     @Transactional
-    public Optional<Movie> createMovieFromFilmwebUrl(URL filmwebMovieUrl) {
-        validators.validateFilmwebMovieUrl(filmwebMovieUrl);
+    public Optional<Movie> createMovieFromFilmwebUrl(@Valid @FilmwebMovieUrl URL filmwebMovieUrl) {
         Optional<Movie> movieInDatabase = movieRepository.findByFilmwebUrl(filmwebMovieUrl);
         if(movieInDatabase.isPresent()) {
             log.info("Movie with url `{}` already exists in database: {}", filmwebMovieUrl, movieInDatabase);
@@ -63,8 +64,8 @@ public class MovieCreatorService {
             log.info("Movie with title `{}` already exists in database: {}", polishTitle, movieInDataBase.get());
             return movieInDataBase;
         }
+        filmwebService.addFilmwebUrlTo(movieDto);
         Movie movie = DtoMapper.mapToMovie(movieDto);
-        filmwebService.addFilmwebUrlTo(movie);
         webOperations.downloadResizedImageTo(movieDto.getImage(), movie.getImagePath());
         formatPlotLocal(movie);
         addFullCastToMovie(movie, movieDto);

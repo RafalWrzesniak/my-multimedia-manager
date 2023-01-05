@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
-import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebSearchable;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.persistence.*;
 import java.net.URL;
@@ -22,12 +23,15 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Movie implements FilmwebSearchable {
+public class Movie {
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @ImdbId
+    @Column(unique = true)
     private String imdbId;
 
     private String title;
@@ -37,6 +41,8 @@ public class Movie implements FilmwebSearchable {
     private double imDbRating;
     private Integer imDbRatingVotes;
 
+    @FilmwebMovieUrl
+    @Column(unique = true)
     private URL filmwebUrl;
 
     @ManyToMany
@@ -62,11 +68,6 @@ public class Movie implements FilmwebSearchable {
 
     public Path getImagePath() {
         return Path.of("images", "movie", imdbId.concat(".jpg"));
-    }
-
-    @Override
-    public String getFilmwebSearchString() {
-        return String.format("%s (%s)", title, releaseDate.getYear());
     }
 
     public void addRole(Actor actor, Role role) {

@@ -33,7 +33,7 @@ public class FilmwebService {
     @SneakyThrows
     public URL createFilmwebUrlFromPart(String urlPart) {
         URL url = filmwebConfiguration.getUrl();
-        return new URL(url + urlPart); // URLEncoder.encode(urlPart, UTF_8)
+        return new URL(url + urlPart);
     }
 
     @SneakyThrows
@@ -73,6 +73,10 @@ public class FilmwebService {
 
     private String findMatchCriteriaBasedOnClass(FilmwebSearchable filmwebSearchable) {
         String match = filmwebSearchable.getClass().getSimpleName().toLowerCase();
+        int dtoIndex = match.indexOf("dto");
+        if(dtoIndex > 0) {
+            match = match.substring(0, dtoIndex);
+        }
         return filmwebConfiguration.getLink().getPrefix().get(match);
     }
 

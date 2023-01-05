@@ -28,13 +28,15 @@ public class ActorManagementService {
             log.info("Actor with imdbId {} already exists in database: {}", imdbId, actorInDataBase.get());
             return actorInDataBase;
         }
-        Optional<ActorDto> actorDto = imdbService.getActorById(imdbId);
-        if(actorDto.isEmpty()) {
+        Optional<ActorDto> optionalActorDto = imdbService.getActorById(imdbId);
+        if(optionalActorDto.isEmpty()) {
             return Optional.empty();
         }
-        Actor actor = actorDto.map(DtoMapper::mapToActor).orElseThrow();
-        webOperations.downloadResizedImageTo(actorDto.get().getImage(), actor.getImagePath());
-        filmwebService.addFilmwebUrlTo(actor);
+        ActorDto actorDto = optionalActorDto.get();
+        filmwebService.addFilmwebUrlTo(actorDto);
+
+        Actor actor = DtoMapper.mapToActor(actorDto);
+        webOperations.downloadResizedImageTo(actorDto.getImage(), actor.getImagePath());
         if(actor.getFilmwebUrl() == null || actor.getBirthDate() == null) {
             return Optional.empty();
         }

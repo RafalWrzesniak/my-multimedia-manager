@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ActorContentList;
@@ -13,23 +14,23 @@ import wrzesniak.rafal.my.multimedia.manager.domain.error.MovieNotFoundException
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchNameException;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieRepository;
-import wrzesniak.rafal.my.multimedia.manager.util.Validators;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
+import javax.validation.Valid;
 import java.util.function.Function;
 
 @Slf4j
 @Service
+@Validated
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
 
-    private final Validators validators;
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
     private final ActorRepository actorRepository;
 
-    public MovieContentList addMovieToUserContentList(User user, String listName, String movieImbdId) {
-        validators.validateImdbId(movieImbdId);
+    public MovieContentList addMovieToUserContentList(User user, String listName, @Valid @ImdbId String movieImbdId) {
         Movie movie = movieRepository.findByImdbId(movieImbdId).orElseThrow(MovieNotFoundException::new);
         return addMovieToUserContentList(user, listName, movie);
     }
@@ -42,8 +43,7 @@ public class UserService {
         return movieContentList;
     }
 
-    public ActorContentList addActorToUserContentList(User user, String listName, String actorImdbId) {
-        validators.validateImdbId(actorImdbId);
+    public ActorContentList addActorToUserContentList(User user, String listName, @Valid @ImdbId String actorImdbId) {
         Actor actor = actorRepository.findByImdbId(actorImdbId).orElseThrow();
         return addActorToUserContentList(user, listName, actor);
     }
@@ -69,8 +69,7 @@ public class UserService {
         return contentList;
     }
 
-    public void removeMovieFromList(User user, String listName, String movieImdbIdToRemove) {
-        validators.validateImdbId(movieImdbIdToRemove);
+    public void removeMovieFromList(User user, String listName, @Valid @ImdbId String movieImdbIdToRemove) {
         Movie movieToRemove = movieRepository.findByImdbId(movieImdbIdToRemove).orElseThrow(MovieNotFoundException::new);
         removeMovieFromList(user, listName, movieToRemove);
     }
@@ -82,8 +81,7 @@ public class UserService {
         log.info("Movie `{}` removed from list `{}` for user: {}", movieToRemove.getTitle(), listName, user.getUsername());
     }
 
-    public void removeActorFromList(User user, String listName, String actorImdbIdToRemove) {
-        validators.validateImdbId(actorImdbIdToRemove);
+    public void removeActorFromList(User user, String listName, @Valid @ImdbId String actorImdbIdToRemove) {
         Actor actorToRemove = actorRepository.findByImdbId(actorImdbIdToRemove).orElseThrow();
         removeActorFromList(user, listName, actorToRemove);
     }
