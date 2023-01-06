@@ -1,9 +1,12 @@
 package wrzesniak.rafal.my.multimedia.manager.controller;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import wrzesniak.rafal.my.multimedia.manager.domain.error.BasicApplicationException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -20,6 +23,24 @@ public class ExceptionHandlerAdvice {
                 .map(ConstraintViolation::getMessageTemplate)
                 .toList();
 
+        return buildResponseEntity(messages);
+    }
+
+    @ExceptionHandler(BasicApplicationException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(BasicApplicationException e) {
+        return buildResponseEntity(List.of(e.getClass().getSimpleName()));
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(BindException e) {
+        List<String> errors = e.getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .toList();
+
+        return buildResponseEntity(errors);
+    }
+
+    private ResponseEntity<Map<String, Object>> buildResponseEntity(List<String> messages) {
         return ResponseEntity
                 .badRequest()
                 .body(Map.of(
@@ -28,5 +49,4 @@ public class ExceptionHandlerAdvice {
                         "messages", messages,
                         "timestamp", LocalDateTime.now()));
     }
-
 }
