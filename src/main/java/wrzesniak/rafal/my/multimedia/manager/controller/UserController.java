@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserRepository;
 
@@ -18,7 +19,7 @@ public class UserController {
     @GetMapping("/")
     public User getCurrentUser() {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(username).orElseThrow();
+        return userRepository.findByUsername(username).orElseThrow(NoSuchUserException::new);
     }
 
 }
