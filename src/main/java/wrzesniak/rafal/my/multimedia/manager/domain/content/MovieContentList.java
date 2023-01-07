@@ -4,6 +4,7 @@ import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class MovieContentList implements ContentList {
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Pattern(regexp = LIST_NAME_REGEX, message = LIST_NAME_MESSAGE)
     private String name;
     @ManyToMany
     private List<Movie> movies;
