@@ -22,7 +22,7 @@ public class RegistrationService {
 
     public User registerNewUserAccount(LoginCredentials credentials) throws UserAlreadyExistException {
         if(userRepository.findByUsername(credentials.getUsername()).isPresent()) {
-            throw new UserAlreadyExistException("There is an account with username: " + credentials.getUsername());
+            throw new UserAlreadyExistException();
         }
         credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
         User user = DtoMapper.mapToUser(credentials);
@@ -33,7 +33,7 @@ public class RegistrationService {
 
     public User registerAdminUser(LoginCredentials credentials) throws UserAlreadyExistException {
         if(userRepository.findByUsername(credentials.getUsername()).isPresent()) {
-            throw new UserAlreadyExistException("There is an account with username: " + credentials.getUsername());
+            throw new UserAlreadyExistException();
         }
         credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
         User user = DtoMapper.mapToUser(credentials);
