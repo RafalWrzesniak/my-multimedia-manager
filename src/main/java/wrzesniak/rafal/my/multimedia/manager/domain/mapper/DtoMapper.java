@@ -38,7 +38,7 @@ public class DtoMapper {
                 .imdbId(movieDto.getId())
                 .title(movieDto.getTitle())
                 .filmwebUrl(movieDto.getFilmwebUrl())
-                .polishTitle(movieDto.getPolishTitle())
+                .polishTitle(movieDto.getWikipedia().titleInLanguage())
                 .releaseDate(movieDto.getReleaseDate())
                 .runtimeMins(movieDto.getRuntimeMins())
                 .imDbRating(movieDto.getImDbRating())

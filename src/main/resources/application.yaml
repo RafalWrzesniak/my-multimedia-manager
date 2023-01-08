@@ -19,6 +19,7 @@ application:
     api-key: secret
     not-found: Server busy
     image-size: 384x528
+    wikipedia: Wikipedia
     api:
       actor: Name
       movie: Title

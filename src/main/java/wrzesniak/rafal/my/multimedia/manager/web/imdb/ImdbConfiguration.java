@@ -16,6 +16,7 @@ public class ImdbConfiguration {
     private String apiKey;
     private String notFound;
     private String imageSize;
+    private String wikipedia;
     private Map<String, String> api;
 
     public String getMovieApi() {

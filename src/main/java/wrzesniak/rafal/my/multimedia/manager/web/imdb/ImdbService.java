@@ -8,7 +8,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
-import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 
 import javax.annotation.PostConstruct;
 import java.net.URL;
@@ -31,7 +30,7 @@ public class ImdbService {
     }
 
     public MovieDto getMovieById(String id) {
-        return retrievePathFromApi(imdbConfiguration.getMovieApi(), id)
+        return retrievePathFromApi(imdbConfiguration.getMovieApi(), id + slash(imdbConfiguration.getWikipedia()))
                 .bodyToMono(MovieDto.class)
                 .block();
     }
@@ -49,7 +48,7 @@ public class ImdbService {
             return Optional.empty();
         }
         String bestMovieId = bestFoundMovies.get(0).id();
-        MovieDto movieDto = getMovieById(bestMovieId).withPolishTitle(StringFunctions.withRemovedDate(polishTitle));
+        MovieDto movieDto = getMovieById(bestMovieId);
         log.info("For query {} a MovieDTO was chosen as the best choice: {}", polishTitle, movieDto);
         return Optional.of(movieDto);
     }
