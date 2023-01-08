@@ -10,12 +10,14 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ActorContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials.*;
 
 @With
 @Data
@@ -30,8 +32,11 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @Pattern(regexp = USERNAME_VALIDATION_REGEX, message = USERNAME_VALIDATION_MESSAGE)
     private String username;
+
     @JsonIgnore
+    @Pattern(regexp = PASSWORD_VALIDATION_REGEX, message = PASSWORD_VALIDATION_MESSAGE)
     private String password;
     private UserRole userRole;
     private boolean enabled;
