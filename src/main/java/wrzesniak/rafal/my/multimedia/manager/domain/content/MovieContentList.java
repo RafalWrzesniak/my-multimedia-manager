@@ -26,6 +26,8 @@ public class MovieContentList implements ContentList {
     private String name;
     @ManyToMany
     private List<Movie> movies;
+    private boolean isRecentlyWatchedList;
+    private boolean isToWatchList;
 
     public MovieContentList(String listName) {
         this.name = listName;

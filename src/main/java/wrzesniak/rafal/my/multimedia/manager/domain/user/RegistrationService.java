@@ -17,6 +17,8 @@ import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.ADMIN;
 @RequiredArgsConstructor
 public class RegistrationService {
 
+    private static final String TO_WATCH = "Do oglądnięcia";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -26,6 +28,7 @@ public class RegistrationService {
         }
         credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
         User user = DtoMapper.mapToUser(credentials);
+        user.addNewMovieList(TO_WATCH).withToWatchList(true);
         User savedUser = userRepository.save(user);
         log.info("New user register successfully: {}", savedUser);
         return savedUser;
