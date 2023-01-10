@@ -55,6 +55,8 @@ public class Actor {
     @ToString.Exclude
     private List<Movie> wroteMovies;
 
+    private LocalDate createdOn;
+
     public Path getImagePath() {
         return Path.of("images", "actor", imdbId.concat(".jpg"));
     }

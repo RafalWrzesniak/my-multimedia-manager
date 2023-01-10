@@ -9,6 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class DtoMapper {
                 .playedInMovies(new ArrayList<>())
                 .directedMovies(new ArrayList<>())
                 .wroteMovies(new ArrayList<>())
+                .createdOn(LocalDate.now())
                 .build();
     }
 
@@ -49,6 +51,7 @@ public class DtoMapper {
                 .actorList(new ArrayList<>())
                 .directorList(new ArrayList<>())
                 .writerList(new ArrayList<>())
+                .createdOn(LocalDate.now())
                 .build();
     }
 

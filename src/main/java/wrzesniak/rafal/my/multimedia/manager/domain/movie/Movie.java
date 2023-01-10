@@ -66,6 +66,9 @@ public class Movie {
     @ToString.Exclude
     private String plotLocal;
 
+    private LocalDate createdOn;
+    private LocalDate watchedOn;
+
     public Path getImagePath() {
         return Path.of("images", "movie", imdbId.concat(".jpg"));
     }
