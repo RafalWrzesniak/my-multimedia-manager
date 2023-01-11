@@ -66,7 +66,7 @@ public class MovieCreatorService {
         }
         filmwebService.addFilmwebUrlTo(movieDto);
         Movie movie = DtoMapper.mapToMovie(movieDto);
-        webOperations.downloadResizedImageTo(movieDto.getImage(), movie.getImagePath());
+        webOperations.downloadResizedImageToS3(movieDto.getImage(), movie.getImagePath());
         formatPlotLocal(movie);
         addFullCastToMovie(movie, movieDto);
         Movie savedMovie = movieRepository.save(movie);

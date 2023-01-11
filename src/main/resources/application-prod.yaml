@@ -16,3 +16,8 @@ spring:
     schemas: schema
     user: root
     password: secret
+
+aws:
+  access-key: secret
+  secret-key: secret
+  s3-bucket-name: multimedia-images

@@ -36,7 +36,7 @@ public class ActorManagementService {
         filmwebService.addFilmwebUrlTo(actorDto);
 
         Actor actor = DtoMapper.mapToActor(actorDto);
-        webOperations.downloadResizedImageTo(actorDto.getImage(), actor.getImagePath());
+        webOperations.downloadResizedImageToS3(actorDto.getImage(), actor.getImagePath());
         if(actor.getFilmwebUrl() == null || actor.getBirthDate() == null) {
             return Optional.empty();
         }

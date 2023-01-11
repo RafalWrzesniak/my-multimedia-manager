@@ -128,6 +128,13 @@
 			<version>3.3.0</version>
 		</dependency>
 
+<!--		Aws -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.12.379</version>
+		</dependency>
+
     </dependencies>
 
 	<build>
