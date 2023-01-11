@@ -1,2 +1,2 @@
-ALTER TABLE MovieContentList ADD is_recently_watched_list boolean;
-ALTER TABLE MovieContentList ADD is_to_watch_list boolean;
+ALTER TABLE movie_content_list ADD is_recently_watched_list boolean;
+ALTER TABLE movie_content_list ADD is_to_watch_list boolean;
