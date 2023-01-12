@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActorContentList implements ContentList {
+public class ActorContentList implements ContentList<Actor> {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -39,7 +39,8 @@ public class ActorContentList implements ContentList {
         return actorList.add(actor);
     }
 
-    public List<Actor> getActors() {
+    @Override
+    public List<Actor> getContent() {
         return new ArrayList<>(actorList);
     }
 

@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ActorContentList;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials.*;
@@ -52,7 +54,7 @@ public class User implements UserDetails {
 
 
     public MovieContentList addNewMovieList(String listName) {
-        Optional<MovieContentList> existingList = movieLists.stream().filter(list -> list.getName().equals(listName)).findFirst();
+        Optional<MovieContentList> existingList = getMovieContentListByName(listName);
         if(existingList.isPresent()) {
             return existingList.get();
         }
@@ -62,7 +64,7 @@ public class User implements UserDetails {
     }
 
     public ActorContentList addNewActorList(String listName) {
-        Optional<ActorContentList> existingList = actorList.stream().filter(list -> list.getName().equals(listName)).findFirst();
+        Optional<ActorContentList> existingList = getActorContentListByName(listName);
         if(existingList.isPresent()) {
             return existingList.get();
         }
@@ -71,14 +73,18 @@ public class User implements UserDetails {
         return actorContentList;
     }
 
+    private <T> Predicate<ContentList<T>> listNameIsEqualTo(String listName) {
+        return list -> list.getName().equals(listName);
+    }
+
     public Optional<MovieContentList> getMovieContentListByName(String listName) {
         return movieLists.stream()
-                .filter(movieContentList -> movieContentList.getName().equals(listName))
+                .filter(listNameIsEqualTo(listName))
                 .findFirst();
     }
     public Optional<ActorContentList> getActorContentListByName(String listName) {
         return actorList.stream()
-                .filter(actorContentList -> actorContentList.getName().equals(listName))
+                .filter(listNameIsEqualTo(listName))
                 .findFirst();
     }
 
