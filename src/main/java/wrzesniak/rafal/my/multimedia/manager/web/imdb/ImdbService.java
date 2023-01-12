@@ -1,6 +1,5 @@
 package wrzesniak.rafal.my.multimedia.manager.web.imdb;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
 
-import javax.annotation.PostConstruct;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -18,15 +16,14 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.slash;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ImdbService {
 
-    private WebClient client;
+    private final WebClient client;
     private final ImdbConfiguration imdbConfiguration;
 
-    @PostConstruct
-    private void init() {
-        client = WebClient.create(imdbConfiguration.getUrlPl());
+    public ImdbService(ImdbConfiguration imdbConfiguration) {
+        this.imdbConfiguration = imdbConfiguration;
+        this.client = WebClient.create(imdbConfiguration.getUrlPl());
     }
 
     public MovieDto getMovieById(String id) {
@@ -42,14 +39,14 @@ public class ImdbService {
         return notFoundInImdb(actorDto) ? Optional.empty() : Optional.of(actorDto);
     }
 
-    public Optional<MovieDto> findBestMovieForSearchByTitle(String polishTitle) {
-        List<Result> bestFoundMovies = findPossibleMoviesByTitle(polishTitle);
+    public Optional<MovieDto> findBestMovieForSearchByTitle(String title) {
+        List<Result> bestFoundMovies = findPossibleMoviesByTitle(title);
         if(bestFoundMovies.isEmpty()) {
             return Optional.empty();
         }
         String bestMovieId = bestFoundMovies.get(0).id();
         MovieDto movieDto = getMovieById(bestMovieId);
-        log.info("For query {} a MovieDTO was chosen as the best choice: {}", polishTitle, movieDto);
+        log.info("For query {} a MovieDTO was chosen as the best choice: {}", title, movieDto);
         return Optional.of(movieDto);
     }
 
