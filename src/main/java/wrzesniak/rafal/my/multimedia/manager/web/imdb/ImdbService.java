@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
+import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 
 import java.net.URL;
 import java.util.List;
@@ -51,7 +52,7 @@ public class ImdbService {
     }
 
     public List<Result> findPossibleMoviesByTitle(String title) {
-        QueryResult queryResult = retrievePathFromApi(imdbConfiguration.getSearchApi(), title)
+        QueryResult queryResult = retrievePathFromApi(imdbConfiguration.getSearchApi(), StringFunctions.withRemovedSlashes(title))
                 .bodyToMono(QueryResult.class)
                 .block();
         if(notFoundInImdb(queryResult)) {

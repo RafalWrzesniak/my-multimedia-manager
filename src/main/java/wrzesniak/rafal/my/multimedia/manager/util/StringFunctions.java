@@ -20,4 +20,8 @@ public class StringFunctions {
         int braceIndex = titleWithDate.lastIndexOf(" (");
         return braceIndex != -1 ? titleWithDate.substring(0, braceIndex) : titleWithDate;
     }
+
+    public static String withRemovedSlashes(String string) {
+        return string.replaceAll("/", "");
+    }
 }
