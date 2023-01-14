@@ -3,9 +3,11 @@ package wrzesniak.rafal.my.multimedia.manager.web.imdb;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 
@@ -24,7 +26,14 @@ public class ImdbService {
 
     public ImdbService(ImdbConfiguration imdbConfiguration) {
         this.imdbConfiguration = imdbConfiguration;
-        this.client = WebClient.create(imdbConfiguration.getUrlPl());
+        final int size = 16 * 1024 * 1024;
+        final ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
+                .build();
+        this.client = WebClient.builder()
+                .exchangeStrategies(strategies)
+                .baseUrl(imdbConfiguration.getUrlPl())
+                .build();
     }
 
     public MovieDto getMovieById(String id) {
@@ -59,6 +68,7 @@ public class ImdbService {
             return List.of();
         }
         List<Result> bestResults = queryResult.results.stream()
+                .filter(result -> Movie.class.getSimpleName().equals(result.resultType()))
                 .limit(4)
                 .toList();
         log.info("For query `{}` found possible results: {}", title, bestResults);
@@ -96,6 +106,7 @@ public class ImdbService {
 
     private record Result(String id,
                           String title,
+                          String resultType,
                           String description) {}
 
 }
