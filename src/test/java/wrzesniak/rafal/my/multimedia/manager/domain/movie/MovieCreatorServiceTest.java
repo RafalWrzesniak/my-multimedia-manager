@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorManagementService;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NotValidFilmwebUrlException;
+import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
@@ -42,6 +43,8 @@ class MovieCreatorServiceTest {
     private ActorManagementService actorManagementService;
     @MockBean
     private MovieRepository movieRepository;
+    @MockBean
+    private S3Service s3Service;
 
     @Autowired
     private MovieCreatorService movieCreatorService;
