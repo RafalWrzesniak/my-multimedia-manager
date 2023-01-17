@@ -68,7 +68,7 @@ public class ImdbService {
             return List.of();
         }
         List<Result> bestResults = queryResult.results.stream()
-                .filter(result -> Movie.class.getSimpleName().equals(result.resultType()))
+                .filter(result -> Movie.class.getSimpleName().equals(result.resultType()) || "Title".equals(result.resultType()))
                 .limit(4)
                 .toList();
         log.info("For query `{}` found possible results: {}", title, bestResults);

@@ -47,11 +47,12 @@ public class WebOperations {
         s3Service.putObject(savePath, tempFile);
     }
 
-    private void downloadImageToDirectory(URL imageUrl, Path pathToSaveImage) {
+    public void downloadImageToDirectory(URL imageUrl, Path pathToSaveImage) {
         try (InputStream inputStream = imageUrl.openStream()) {
             Files.copy(inputStream, pathToSaveImage, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            log.warn("Failed to download image from \"{}\"", imageUrl);
+            log.warn("Failed to download image from \"{}\", because of {}", imageUrl, e.getMessage());
+            e.printStackTrace();
         }
         log.debug("Image downloaded from \"{}\"", imageUrl);
     }
