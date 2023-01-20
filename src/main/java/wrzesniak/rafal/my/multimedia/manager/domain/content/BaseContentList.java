@@ -15,7 +15,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseContentList<T> implements ContentList<T> {
+public class BaseContentList<T> {
+
+    private static final String LIST_NAME_REGEX = "^[\\w ]{4,50}$";
+    private static final String LIST_NAME_MESSAGE = "List name must be between 4-50 characters and contain letters, spaces and digits only";
 
     @Id
     @Column(name = "id", nullable = false)
@@ -28,13 +31,15 @@ public class BaseContentList<T> implements ContentList<T> {
     @ManyToMany
     private List<T> contentList;
 
-    public BaseContentList(String listName) {
+    private ContentListType contentListType;
+
+    public BaseContentList(String listName, ContentListType contentListType) {
         this.name = listName;
+        this.contentListType = contentListType;
         this.contentList = new ArrayList<>();
     }
 
-    @Override
-    public List<T> getContent() {
+    public List<T> getAllContent() {
         return new ArrayList<>(contentList);
     }
 

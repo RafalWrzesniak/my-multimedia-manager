@@ -8,6 +8,8 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 
 import javax.persistence.Entity;
 
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MovieList;
+
 @With
 @Getter
 @Setter
@@ -16,7 +18,7 @@ import javax.persistence.Entity;
 public class MovieContentList extends BaseContentList<Movie> {
 
     public MovieContentList(String listName) {
-        super(listName);
+        super(listName, MovieList);
     }
 
     private boolean isRecentlyWatchedList;
