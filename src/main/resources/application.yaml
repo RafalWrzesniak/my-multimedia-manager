@@ -42,3 +42,8 @@ server:
   error:
     include-message: always
     include-stacktrace: never
+
+aws:
+  access-key: secret
+  secret-key: secret
+  s3-bucket-name: multimedia-images
