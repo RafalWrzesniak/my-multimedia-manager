@@ -1,0 +1,18 @@
+spring:
+  devtools:
+    add-properties: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    driverClassName: org.postgresql.Driver
+    username: postgres
+    password: secret
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  flyway:
+    url: jdbc:postgresql://localhost:5432/postgres
+    schemas: schema
+    user: postgres
+    password: secrert
