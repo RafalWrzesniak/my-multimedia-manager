@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorManagementService;
+import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NotValidFilmwebUrlException;
 import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
@@ -40,7 +40,7 @@ class MovieCreatorServiceTest {
     @Autowired
     private FilmwebService filmwebService;
     @MockBean
-    private ActorManagementService actorManagementService;
+    private ActorCreatorService actorCreatorService;
     @MockBean
     private MovieRepository movieRepository;
     @MockBean
@@ -58,7 +58,7 @@ class MovieCreatorServiceTest {
         // given
         ArgumentCaptor<Movie> movieParam = ArgumentCaptor.forClass(Movie.class);
         when(movieRepository.save(movieParam.capture())).thenAnswer((invocation) -> movieParam.getValue());
-        given(actorManagementService.createActorFromImdbId(any())).willReturn(Optional.empty());
+        given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
 
         // when
         Optional<Movie> optionalMovieFromPolishTitle = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE);
@@ -89,8 +89,8 @@ class MovieCreatorServiceTest {
         // given
         ArgumentCaptor<Movie> movieParam = ArgumentCaptor.forClass(Movie.class);
         when(movieRepository.save(movieParam.capture())).thenAnswer((invocation) -> movieParam.getValue());
-        given(actorManagementService.createActorFromImdbId(any())).willReturn(Optional.empty());
-        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, filmwebService, movieRepository, actorManagementService));
+        given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
+        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, filmwebService, movieRepository, actorCreatorService));
 
         // when
         creatorServiceSpy.createMovieFromFilmwebUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
