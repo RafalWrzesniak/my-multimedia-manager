@@ -3,7 +3,6 @@ package wrzesniak.rafal.my.multimedia.manager.domain.actor;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
-import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebActorUrl;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.persistence.*;
@@ -38,8 +37,6 @@ public class Actor {
     private LocalDate birthDate;
     private LocalDate deathDate;
 
-    @FilmwebActorUrl
-    @Column(unique = true)
     private URL filmwebUrl;
 
     @ManyToMany

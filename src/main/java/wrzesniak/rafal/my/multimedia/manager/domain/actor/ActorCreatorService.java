@@ -9,12 +9,13 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ActorManagementService {
+public class ActorCreatorService {
 
     private final ImdbService imdbService;
     private final WebOperations webOperations;
@@ -30,18 +31,30 @@ public class ActorManagementService {
         }
         Optional<ActorDto> optionalActorDto = imdbService.getActorById(imdbId);
         if(optionalActorDto.isEmpty()) {
+            log.warn("Failed to parse actor data from imdb for: {}", imdbId);
             return Optional.empty();
         }
         ActorDto actorDto = optionalActorDto.get();
         filmwebService.addFilmwebUrlTo(actorDto);
+        enrichActorDtoWithBirthDayFromFilmweb(actorDto);
 
         Actor actor = DtoMapper.mapToActor(actorDto);
-        webOperations.downloadResizedImageToS3(actorDto.getImage(), actor.getImagePath());
-        if(actor.getFilmwebUrl() == null || actor.getBirthDate() == null) {
-            return Optional.empty();
+        if(actor.getFilmwebUrl() == null) {
+            log.warn("Failed to parse filmweb url for: {}", actorDto);
         }
+        webOperations.downloadResizedImageTo(actorDto.getImage(), actor.getImagePath());
         Actor savedActor = actorRepository.save(actor);
         return Optional.of(savedActor);
+    }
+
+    private void enrichActorDtoWithBirthDayFromFilmweb(ActorDto actorDto) {
+        if(actorDto.getFilmwebUrl() == null || actorDto.getBirthDate() != null) {
+            return;
+        }
+        LocalDate birthDay = filmwebService.findDateFor(actorDto.getFilmwebUrl(), "data-birth-date");
+        LocalDate deathDay = filmwebService.findDateFor(actorDto.getFilmwebUrl(), "data-death-date");
+        actorDto.setBirthDate(birthDay);
+        actorDto.setDeathDate(deathDay);
     }
 
 }
