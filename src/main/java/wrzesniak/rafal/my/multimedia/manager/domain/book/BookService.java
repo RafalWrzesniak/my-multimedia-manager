@@ -15,6 +15,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,23 +27,24 @@ public class BookService {
     private final LubimyCzytacService lubimyCzytacService;
     private final WebOperations webOperations;
 
-    public Book createBookFromUrl(URL lubimyCzytacBookUrl) {
-        Optional<BookDto> bookDtoFromUrl = lubimyCzytacService.createBookDtoFromUrl(lubimyCzytacBookUrl);
-        BookDto bookDto = bookDtoFromUrl.orElseThrow(BookNotCreatedException::new);
-        Optional<Book> bookByIsbn = bookRepository.findByIsbn(bookDto.getIsbn());
-        if(bookByIsbn.isPresent()) {
-            return bookByIsbn.get();
+    public Book createBookFromDto(BookDto bookDto) {
+        Optional<Book> bookByUrlOrIsbn = findBookByUrlOrIsbn(bookDto.getUrl(), ISBN.of(bookDto.getIsbn()));
+        if(bookByUrlOrIsbn.isPresent()) {
+            log.info("Book already exist with dto: {}", bookDto);
+            return bookByUrlOrIsbn.get();
         }
         Book book = DtoMapper.mapToBook(bookDto);
         addOrCreateAuthorToBook(book, bookDto.getAuthor());
-        webOperations.downloadImageToDirectory(bookDto.getImage(), book.getImagePath());
+        webOperations.downloadImageToDirectory(toURL(bookDto.getImage()), book.getImagePath());
         Book savedBook = bookRepository.save(book);
         log.info("Book created from URL: {}", book);
         return savedBook;
     }
 
-    public Book markBookAsRead(Book book) {
-        return markBookAsRead(book, LocalDate.now());
+    public Book createBookFromUrl(URL lubimyCzytacBookUrl) {
+        return lubimyCzytacService.createBookDtoFromUrl(lubimyCzytacBookUrl)
+                .map(this::createBookFromDto)
+                .orElseThrow(BookNotCreatedException::new);
     }
 
     public Book markBookAsRead(Book book, LocalDate finishReadingDay) {
@@ -56,6 +59,12 @@ public class BookService {
                     Author author = DtoMapper.mapToAuthor(authorDto);
                     book.setAuthor(author);
                 });
+    }
+
+    public Optional<Book> findBookByUrlOrIsbn(String bookUrl, ISBN isbn) {
+        Optional<Book> existingBookByUrl = bookRepository.findByLubimyCzytacUrl(toURL(bookUrl));
+        Optional<Book> existingBookByIsbn = bookRepository.findByIsbn(isbn);
+        return existingBookByUrl.isPresent() ? existingBookByUrl : existingBookByIsbn;
     }
 
 }

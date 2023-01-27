@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
 
-import java.net.URL;
 import java.time.LocalDate;
 
 @Data
@@ -14,14 +13,14 @@ import java.time.LocalDate;
 public class BookDto {
 
     private String name;
-    private long isbn;
+    private String isbn;
     private LocalDate datePublished;
     private String genre;
     private int numberOfPages;
-    private URL image;
+    private String image;
     private AuthorDto author;
     private String description;
     private String publisher;
-    private URL url;
+    private String url;
 
 }

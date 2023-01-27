@@ -3,6 +3,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.book;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.util.IsbnConverter;
 
 import javax.persistence.*;
 import java.net.URL;
@@ -29,8 +30,8 @@ public class Book {
     private String description;
     private String publisher;
     private int numberOfPages;
-    @Column(unique = true)
-    private long isbn;
+    @Convert(converter = IsbnConverter.class)
+    private ISBN isbn;
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonManagedReference
     private Author author;
