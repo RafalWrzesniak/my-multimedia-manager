@@ -1,6 +1,9 @@
 package wrzesniak.rafal.my.multimedia.manager.util;
 
+import lombok.SneakyThrows;
+
 import java.io.File;
+import java.net.URL;
 
 public class StringFunctions {
 
@@ -23,5 +26,10 @@ public class StringFunctions {
 
     public static String withRemovedSlashes(String string) {
         return string.replaceAll("/", "");
+    }
+
+    @SneakyThrows
+    public static URL toURL(String url) {
+        return new URL(url);
     }
 }

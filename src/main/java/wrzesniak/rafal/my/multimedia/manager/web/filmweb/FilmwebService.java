@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.slash;
+import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Service
@@ -30,13 +31,11 @@ public class FilmwebService {
     private final RetryPolicy<Object> retryPolicy;
     private final FilmwebConfiguration filmwebConfiguration;
 
-    @SneakyThrows
     public URL createFilmwebUrlFromPart(String urlPart) {
         URL url = filmwebConfiguration.getUrl();
-        return new URL(url + urlPart);
+        return toURL(url + urlPart);
     }
 
-    @SneakyThrows
     public String findTitleFromUrl(URL filmwebMovieUrl) {
         log.info("Searching for title in url {}", filmwebMovieUrl);
         AtomicReference<String> foundTitle = new AtomicReference<>();
@@ -64,11 +63,10 @@ public class FilmwebService {
         return urlFromQueryUrlByMatch;
     }
 
-    @SneakyThrows
     private URL createFilmwebQueryFrom(String query) {
         URL url = filmwebConfiguration.getUrl();
         String search = filmwebConfiguration.getSearch();
-        return new URL(url + slash(search) + URLEncoder.encode(query, UTF_8));
+        return toURL(url + slash(search) + URLEncoder.encode(query, UTF_8));
     }
 
     private String findMatchCriteriaBasedOnClass(FilmwebSearchable filmwebSearchable) {

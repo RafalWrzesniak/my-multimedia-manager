@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.slash;
+import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Service
@@ -82,7 +83,7 @@ public class ImdbService {
         String imageSize = imdbConfiguration.getImageSize();
         String apiUrl = imdbConfiguration.getUrl();
         String uri = apiUrl+slash(resizeApi)+"?ApiKey="+apiKey+"&size="+imageSize+"&url="+originalImageUrl;
-        return new URL(uri);
+        return toURL(uri);
     }
 
     private ResponseSpec retrievePathFromApi(String API, String path) {
