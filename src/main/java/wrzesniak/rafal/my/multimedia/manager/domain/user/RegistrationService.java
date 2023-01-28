@@ -6,9 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.UserAlreadyExistException;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
 
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MovieList;
 import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.ADMIN;
 
 @Slf4j
@@ -28,7 +30,7 @@ public class RegistrationService {
         }
         credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
         User user = DtoMapper.mapToUser(credentials);
-        user.addNewMovieList(TO_WATCH).withToWatchList(true);
+        ((MovieContentList) user.addNewContentList(TO_WATCH, MovieList)).withToWatchList(true);
         User savedUser = userRepository.save(user);
         log.info("New user register successfully: {}", savedUser);
         return savedUser;

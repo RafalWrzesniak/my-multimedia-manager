@@ -1,6 +1,5 @@
 package wrzesniak.rafal.my.multimedia.manager.web.imdb;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -76,7 +75,6 @@ public class ImdbService {
         return bestResults;
     }
 
-    @SneakyThrows
     public URL findResizedImageUrl(URL originalImageUrl) {
         String resizeApi = imdbConfiguration.getResizeApi();
         String apiKey = imdbConfiguration.getApiKey();

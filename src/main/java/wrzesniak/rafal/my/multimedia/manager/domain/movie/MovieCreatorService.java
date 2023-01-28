@@ -7,11 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.aop.TrackExecutionTime;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorManagementService;
+import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
@@ -34,7 +35,7 @@ public class MovieCreatorService {
     private final WebOperations webOperations;
     private final FilmwebService filmwebService;
     private final MovieRepository movieRepository;
-    private final ActorManagementService actorManagementService;
+    private final ActorCreatorService actorCreatorService;
 
     @Transactional
     public Optional<Movie> createMovieFromFilmwebUrl(@Valid @FilmwebMovieUrl URL filmwebMovieUrl) {
@@ -54,19 +55,22 @@ public class MovieCreatorService {
     @Transactional
     @TrackExecutionTime
     public Optional<Movie> createMovieFromPolishTitle(String polishTitle) {
-        Optional<MovieDto> optionalBestMovieForSearchByTitle = imdbService.findBestMovieForSearchByTitle(polishTitle);
-        if(optionalBestMovieForSearchByTitle.isEmpty()) {
-            return Optional.empty();
-        }
-        MovieDto movieDto = optionalBestMovieForSearchByTitle.orElseThrow();
-        Optional<Movie> movieInDataBase = movieRepository.findByImdbId(movieDto.getId());
+        Optional<MovieDto> foundByTitle = imdbService.findBestMovieForSearchByTitle(polishTitle);
+        return foundByTitle.flatMap(movieDto -> createMovieFromImdbId(movieDto.getId()));
+    }
+
+    @Transactional
+    @TrackExecutionTime
+    public Optional<Movie> createMovieFromImdbId(@Valid @ImdbId String imdbId) {
+        Optional<Movie> movieInDataBase = movieRepository.findByImdbId(imdbId);
         if(movieInDataBase.isPresent()) {
-            log.info("Movie with title `{}` already exists in database: {}", polishTitle, movieInDataBase.get());
+            log.info("Movie with imdb id `{}` already exists in database: {}", imdbId, movieInDataBase.get());
             return movieInDataBase;
         }
+        MovieDto movieDto = imdbService.getMovieById(imdbId);
         filmwebService.addFilmwebUrlTo(movieDto);
         Movie movie = DtoMapper.mapToMovie(movieDto);
-        webOperations.downloadResizedImageToS3(movieDto.getImage(), movie.getImagePath());
+        webOperations.downloadResizedImageTo(movieDto.getImage(), movie.getImagePath());
         formatPlotLocal(movie);
         addFullCastToMovie(movie, movieDto);
         Movie savedMovie = movieRepository.save(movie);
@@ -101,7 +105,7 @@ public class MovieCreatorService {
     private List<Actor> createActorsFromActorsInMovieDto(List<ActorInMovieDto> actorInMovieDtos, long actorsNumber) {
         return actorInMovieDtos.stream()
                 .map(ActorInMovieDto::id)
-                .map(actorManagementService::createActorFromImdbId)
+                .map(actorCreatorService::createActorFromImdbId)
                 .filter(Optional::isPresent)
                 .limit(actorsNumber)
                 .map(Optional::get)

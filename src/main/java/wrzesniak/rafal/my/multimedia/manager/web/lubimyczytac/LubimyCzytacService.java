@@ -40,7 +40,7 @@ public class LubimyCzytacService {
         bookDto.setDescription(description);
         String publisher = parsePublisher(parsedUrl);
         bookDto.setPublisher(publisher);
-        bookDto.setUrl(lubimyCzytacBookUrl);
+        bookDto.setUrl(lubimyCzytacBookUrl.toString());
         log.info("Created BookDto: {}", bookDto);
         return Optional.of(bookDto);
     }

@@ -52,7 +52,6 @@ public class WebOperations {
             Files.copy(inputStream, pathToSaveImage, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             log.warn("Failed to download image from \"{}\", because of {}", imageUrl, e.getMessage());
-            e.printStackTrace();
         }
         log.debug("Image downloaded from \"{}\"", imageUrl);
     }
