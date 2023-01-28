@@ -20,6 +20,7 @@ public class MovieDto implements ImdbObject, FilmwebSearchable {
 
     private String id;
     private String title;
+    private String originalTitle;
     private LocalDate releaseDate;
     private Integer runtimeMins;
     private double imDbRating;
@@ -42,9 +43,19 @@ public class MovieDto implements ImdbObject, FilmwebSearchable {
 
     @Override
     public String getFilmwebSearchString() {
-        return String.format("%s (%s)", title, releaseDate.getYear());
+        String titleToSearch = originalTitle != null && !originalTitle.isEmpty() ? originalTitle : title;
+        return String.format("%s (%s)", titleToSearch, releaseDate.getYear());
     }
 
     public record WikipediaData(String titleInLanguage) {
+
+        public String titleInLanguage() {
+            String filmSuffix = " (film)";
+            if(titleInLanguage.contains(filmSuffix)) {
+                return titleInLanguage.substring(0, titleInLanguage.lastIndexOf(filmSuffix));
+            }
+            return titleInLanguage;
+        }
+
     }
 }
