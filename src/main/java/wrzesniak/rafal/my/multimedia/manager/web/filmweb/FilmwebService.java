@@ -13,6 +13,8 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,7 +59,7 @@ public class FilmwebService {
     private URL findUrlFor(FilmwebSearchable filmwebSearchable) throws IOException {
         String searchString = filmwebSearchable.getFilmwebSearchString();
         URL query = createFilmwebQueryFrom(searchString);
-        String matchCriteria = findMatchCriteriaBasedOnClass(filmwebSearchable);
+        String matchCriteria = findPrefixFor(filmwebSearchable);
         URL urlFromQueryUrlByMatch = findUrlFromQueryUrlByMatch(query, matchCriteria);
         log.info("URL found for {} is {}", filmwebSearchable.getFilmwebSearchString(), urlFromQueryUrlByMatch);
         return urlFromQueryUrlByMatch;
@@ -69,7 +71,7 @@ public class FilmwebService {
         return toURL(url + slash(search) + URLEncoder.encode(query, UTF_8));
     }
 
-    private String findMatchCriteriaBasedOnClass(FilmwebSearchable filmwebSearchable) {
+    private String findPrefixFor(FilmwebSearchable filmwebSearchable) {
         String match = filmwebSearchable.getClass().getSimpleName().toLowerCase();
         int dtoIndex = match.indexOf("dto");
         if(dtoIndex > 0) {
@@ -85,4 +87,10 @@ public class FilmwebService {
         return foundElementWithUrl != null ? createFilmwebUrlFromPart(foundElementWithUrl.attr(HREF)) : null;
     }
 
+    @SneakyThrows
+    public LocalDate findDateFor(URL filmwebUrl, String attribute) {
+        Document document = webOperations.parseUrl(filmwebUrl);
+        Element element = document.getElementsByAttribute(attribute).first();
+        return element != null ? LocalDate.parse(element.attr(attribute), DateTimeFormatter.ofPattern("yyyy-[M][MM]-[d][dd]")) : null;
+    }
 }
