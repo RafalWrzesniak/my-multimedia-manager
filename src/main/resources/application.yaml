@@ -35,7 +35,7 @@ application:
     search: search?q=
 
   jwt:
-    secret: asdsalqrk1232115dfas@!#!@sds
+    secret: secret
     expirationTime: 3600000
 
 server:
