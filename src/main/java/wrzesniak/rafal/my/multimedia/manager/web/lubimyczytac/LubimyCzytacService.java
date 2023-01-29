@@ -12,6 +12,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LubimyCzytacService {
 
+    private final LubimyCzytacConfiguration configuration;
     private final WebOperations webOperations;
     private final ObjectMapper objectMapper;
 
@@ -26,7 +28,8 @@ public class LubimyCzytacService {
     public Optional<BookDto> createBookDtoFromUrl(URL lubimyCzytacBookUrl) {
         log.info("Trying to parse book information from {}", lubimyCzytacBookUrl);
         Document parsedUrl = webOperations.parseUrl(lubimyCzytacBookUrl);
-        Element dataElement = parsedUrl.getElementsByAttributeValue("type", "application/ld+json")
+        Map<String, String> parsing = configuration.getParsing();
+        Element dataElement = parsedUrl.getElementsByAttributeValue(parsing.get("main-attribute"), parsing.get("main-attribute-value"))
                 .first();
         String data = dataElement != null ? dataElement.data() : "Failed to find book data";
         BookDto bookDto;
@@ -46,22 +49,24 @@ public class LubimyCzytacService {
     }
 
     private String parsePublisher(Document parsedUrl) {
-        Element publisherElement = parsedUrl.getElementsByAttributeValueContaining("href", "wydawnictwo")
+        Map<String, String> parsing = configuration.getParsing();
+        Element publisherElement = parsedUrl.getElementsByAttributeValueContaining(parsing.get("href"), parsing.get("publisher"))
                 .first();
-        return publisherElement != null ? publisherElement.text() : "Nieznany wydawca";
+        return publisherElement != null ? publisherElement.text() : configuration.getUnknownPublisher();
     }
 
     private String parseDescription(Document parsedUrl) {
+        Map<String, String> parsing = configuration.getParsing();
         String description;
         try {
-            description = parsedUrl.getElementsByAttributeValue("id", "book-description")
+            description = parsedUrl.getElementsByAttributeValue(parsing.get("id"), parsing.get("description"))
                     .first()
                     .getElementsByTag("p")
                     .first()
                     .text();
         } catch (NullPointerException ignored) {
             log.warn("Could not find description for this document");
-            return "Ta książka nie ma opisu..";
+            return configuration.getDefaultDescription();
         }
         return description;
     }
