@@ -40,9 +40,10 @@ public class RecentlyWatchedService {
     private void addMovieToUserRecentlyWatchedMovies(User user, Movie movie) {
         MovieContentList recentlyWatchedList = findUsersRecentlyWatchedList(user);
         recentlyWatchedList.addContent(movie);
-        if(recentlyWatchedList.getAllContent().size() > MAX_RECENTLY_WATCHED_SIZE) {
-            recentlyWatchedList.getAllContent().remove(0);
+        if(recentlyWatchedList.getContentList().size() > MAX_RECENTLY_WATCHED_SIZE) {
+            recentlyWatchedList.getContentList().remove(0);
         }
+        movieRepository.save(movie);
     }
 
     private void removeMovieFromToWatchList(User user, Movie movie) {
@@ -51,18 +52,20 @@ public class RecentlyWatchedService {
     }
 
     private MovieContentList findUsersRecentlyWatchedList(User user) {
-        return (MovieContentList) user.getMovieLists().stream()
-                .filter(contentList -> ((MovieContentList) contentList).isRecentlyWatchedList())
+        return user.getMovieLists().stream()
+                .filter(MovieContentList::isRecentlyWatchedList)
                 .findFirst()
-                .orElse(new MovieContentList(RECENTLY_WATCHED)
-                        .withRecentlyWatchedList(true));
+                .orElseGet(() -> {
+                    MovieContentList recentlyWatched = new MovieContentList(RECENTLY_WATCHED);
+                    recentlyWatched.setRecentlyWatchedList(true);
+                    return recentlyWatched;
+                });
     }
 
     private Optional<MovieContentList> findUsersToWatchList(User user) {
         return user.getMovieLists().stream()
-                .filter(contentList -> ((MovieContentList) contentList).isToWatchList())
-                .findFirst()
-                .map(movieBaseContentList -> (MovieContentList) movieBaseContentList);
+                .filter(MovieContentList::isToWatchList)
+                .findFirst();
     }
 
 }

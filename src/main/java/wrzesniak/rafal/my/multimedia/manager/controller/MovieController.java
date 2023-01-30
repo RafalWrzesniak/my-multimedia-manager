@@ -62,8 +62,8 @@ public class MovieController {
         return movie;
     }
 
-    @GetMapping("/markAsWatched/")
-    public void markMovieAsRecentlyWatched(@RequestParam long movieId,
+    @GetMapping("/markAsWatched/{movieId}")
+    public void markMovieAsRecentlyWatched(@PathVariable long movieId,
                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
         recentlyWatchedService.markMovieAsRecentlyWatched(movie, date);
@@ -100,8 +100,8 @@ public class MovieController {
         userService.removeContentListFromUser(userController.getCurrentUser(), listName, MovieList);
     }
 
-    @PostMapping("/list/{listName}/")
-    public void addMovieToUserContentList(@PathVariable String listName, @RequestParam long movieId) {
+    @PostMapping("/list/{listName}/{movieId}")
+    public void addMovieToUserContentList(@PathVariable String listName, @PathVariable long movieId) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
         userService.addObjectToContentList(userController.getCurrentUser(), listName, MovieList, movie);
     }
