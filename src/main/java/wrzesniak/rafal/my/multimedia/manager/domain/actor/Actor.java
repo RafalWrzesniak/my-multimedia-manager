@@ -2,12 +2,12 @@ package wrzesniak.rafal.my.multimedia.manager.domain.actor;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.persistence.*;
 import java.net.URL;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Actor {
+public class Actor implements Imagable {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -54,8 +54,9 @@ public class Actor {
 
     private LocalDate createdOn;
 
-    public Path getImagePath() {
-        return Path.of("images", "actor", imdbId.concat(".jpg"));
+    @Override
+    public String getUniqueId() {
+        return imdbId;
     }
 
     public Integer getAge() {

@@ -3,11 +3,11 @@ package wrzesniak.rafal.my.multimedia.manager.domain.book;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.util.IsbnConverter;
 
 import javax.persistence.*;
 import java.net.URL;
-import java.nio.file.Path;
 import java.time.LocalDate;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -18,7 +18,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
+public class Book implements Imagable {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -42,8 +42,9 @@ public class Book {
     private LocalDate readOn;
     private LocalDate createdOn;
 
-    public Path getImagePath() {
-        return Path.of("images", "book", String.valueOf(isbn).concat(".jpg"));
+    @Override
+    public String getUniqueId() {
+        return isbn.isEmpty() ? id.toString() : isbn.getValue();
     }
 
     public void setAuthor(Author author) {

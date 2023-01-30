@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.persistence.*;
 import java.net.URL;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Movie {
+public class Movie implements Imagable {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -69,8 +69,9 @@ public class Movie {
     private LocalDate createdOn;
     private LocalDate watchedOn;
 
-    public Path getImagePath() {
-        return Path.of("images", "movie", imdbId.concat(".jpg"));
+    @Override
+    public String getUniqueId() {
+        return imdbId;
     }
 
     public void addRole(Actor actor, Role role) {
