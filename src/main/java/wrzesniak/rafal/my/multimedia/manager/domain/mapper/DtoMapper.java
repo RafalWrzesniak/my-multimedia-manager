@@ -69,6 +69,7 @@ public class DtoMapper {
                 .enabled(true)
                 .movieLists(new ArrayList<>())
                 .actorList(new ArrayList<>())
+                .bookLists(new ArrayList<>())
                 .build();
     }
 

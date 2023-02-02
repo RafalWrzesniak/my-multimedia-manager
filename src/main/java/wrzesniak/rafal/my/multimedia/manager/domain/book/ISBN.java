@@ -33,7 +33,6 @@ public class ISBN {
         return 13 == isbn.length() && checkChecksumISBN13(isbn);
     }
 
-
     /**
      * Check the digits for ISBN 13 using algorithm from
      * <a href="https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation">Wikipedia</a>.
@@ -45,6 +44,10 @@ public class ISBN {
         }
 
         return ( sum % 10 ) == 0;
+    }
+
+    public boolean isEmpty() {
+        return value == null;
     }
 
 }
