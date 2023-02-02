@@ -68,7 +68,6 @@ public class MovieCreatorService {
             return movieInDataBase;
         }
         MovieDto movieDto = imdbService.getMovieById(imdbId);
-        filmwebService.addFilmwebUrlTo(movieDto);
         Movie movie = DtoMapper.mapToMovie(movieDto);
         webOperations.downloadResizedImageTo(movieDto.getImage(), movie.getImagePath());
         formatPlotLocal(movie);

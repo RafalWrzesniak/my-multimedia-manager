@@ -35,13 +35,7 @@ public class ActorCreatorService {
             return Optional.empty();
         }
         ActorDto actorDto = optionalActorDto.get();
-        filmwebService.addFilmwebUrlTo(actorDto);
-        enrichActorDtoWithBirthDayFromFilmweb(actorDto);
-
         Actor actor = DtoMapper.mapToActor(actorDto);
-        if(actor.getFilmwebUrl() == null) {
-            log.warn("Failed to parse filmweb url for: {}", actorDto);
-        }
         webOperations.downloadResizedImageTo(actorDto.getImage(), actor.getImagePath());
         Actor savedActor = actorRepository.save(actor);
         return Optional.of(savedActor);
