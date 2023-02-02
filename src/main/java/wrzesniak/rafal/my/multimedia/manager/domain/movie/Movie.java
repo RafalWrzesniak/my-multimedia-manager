@@ -7,6 +7,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
+import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;
 
 import javax.persistence.*;
 import java.net.URL;
@@ -23,7 +24,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Movie implements Imagable {
+public class Movie implements ImdbObject, Imagable {
 
     @Id
     @Column(name = "id", nullable = false)

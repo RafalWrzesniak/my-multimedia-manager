@@ -4,7 +4,7 @@ import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.SingleFieldDto;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebSearchable;
-import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;
+import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbDtoObject;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MovieDto implements ImdbObject, FilmwebSearchable {
+public class MovieDto implements ImdbDtoObject, FilmwebSearchable {
 
     private String id;
     private String title;

@@ -88,15 +88,15 @@ public class ImdbService {
         return client.get().uri(slash(API) + slash(imdbConfiguration.getApiKey()) + slash(path)).retrieve();
     }
 
-    private boolean notFoundInImdb(ImdbObject imdbObject) {
-        return imdbObject == null || imdbConfiguration.getNotFound().equals(imdbObject.getErrorMessage());
+    private boolean notFoundInImdb(ImdbDtoObject imdbDtoObject) {
+        return imdbDtoObject == null || imdbConfiguration.getNotFound().equals(imdbDtoObject.getErrorMessage());
     }
 
 
     private record QueryResult(String searchType,
                                String expression,
                                List<Result> results,
-                               String errorMessage) implements ImdbObject {
+                               String errorMessage) implements ImdbDtoObject {
 
         public String getErrorMessage(){
             return errorMessage;
