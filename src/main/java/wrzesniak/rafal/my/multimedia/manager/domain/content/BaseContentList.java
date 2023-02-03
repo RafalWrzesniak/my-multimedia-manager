@@ -17,7 +17,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 public class BaseContentList<T> {
 
-    private static final String LIST_NAME_REGEX = "^[\\w ]{4,50}$";
+    private static final String LIST_NAME_REGEX = "^[\\s\\p{L}\\w ]{4,50}$";
     private static final String LIST_NAME_MESSAGE = "List name must be between 4-50 characters and contain letters, spaces and digits only";
 
     @Id
@@ -37,10 +37,6 @@ public class BaseContentList<T> {
         this.name = listName;
         this.contentListType = contentListType;
         this.contentList = new ArrayList<>();
-    }
-
-    public List<T> getAllContent() {
-        return new ArrayList<>(contentList);
     }
 
     public boolean addContent(T content) {
