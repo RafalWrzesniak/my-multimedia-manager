@@ -1,5 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -46,6 +47,7 @@ public class ISBN {
         return ( sum % 10 ) == 0;
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return value == null;
     }

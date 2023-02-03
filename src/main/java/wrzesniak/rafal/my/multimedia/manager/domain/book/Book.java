@@ -1,5 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
@@ -42,6 +43,7 @@ public class Book implements Imagable {
     private LocalDate readOn;
     private LocalDate createdOn;
 
+    @JsonIgnore
     @Override
     public String getUniqueId() {
         return isbn.isEmpty() ? id.toString() : isbn.getValue();
