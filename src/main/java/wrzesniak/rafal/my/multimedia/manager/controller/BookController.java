@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BookContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.BookNotFoundException;
@@ -31,6 +33,7 @@ public class BookController {
     private final BookRepository bookRepository;
     private final UserController userController;
     private final UserService userService;
+    private final AuthorRepository authorRepository;
 
     @PostMapping("/{bookUrl}/{listName}")
     public Book createBookFromUrl(String bookUrl, @RequestParam(required = false) String listName) {
@@ -56,8 +59,18 @@ public class BookController {
         return bookRepository.findByIsbn(ISBN.of(isbn));
     }
 
+    @GetMapping("/findByAuthor/{authorId}")
+    public List<Book> getBookByAuthorId(long authorId) {
+        return bookRepository.findByAuthorId(authorId);
+    }
+
+    @GetMapping("/authors")
+    public List<Author> getAllAuthors() {
+        return authorRepository.findAll();
+    }
+
     @GetMapping("/")
-    public List<Book> getALlBooks() {
+    public List<Book> getAllBooks() {
         return bookRepository.findAll();
     }
 
