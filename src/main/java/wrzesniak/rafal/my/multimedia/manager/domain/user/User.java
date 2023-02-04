@@ -6,9 +6,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import wrzesniak.rafal.my.multimedia.manager.domain.content.ActorContentList;
-import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentList;
-import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -16,10 +14,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials.*;
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.*;
 
 @With
 @Data
@@ -52,40 +50,58 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<ActorContentList> actorList;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonManagedReference
+    private List<BookContentList> bookLists;
 
-    public MovieContentList addNewMovieList(String listName) {
-        Optional<MovieContentList> existingList = getMovieContentListByName(listName);
+    public <T extends BaseContentList<?>> T addNewContentList(String listName, ContentListType type) {
+        List<T> contentLists = findContentListByType(type);
+        Optional<T> existingList = contentLists.stream()
+                .filter(list -> list.getName().equals(listName))
+                .findFirst();
         if(existingList.isPresent()) {
             return existingList.get();
         }
-        MovieContentList movieContentList = new MovieContentList(listName);
-        movieLists.add(movieContentList);
-        return movieContentList;
-    }
-
-    public ActorContentList addNewActorList(String listName) {
-        Optional<ActorContentList> existingList = getActorContentListByName(listName);
-        if(existingList.isPresent()) {
-            return existingList.get();
+        BaseContentList<?> list;
+        if(type.equals(MovieList)) {
+            list = new MovieContentList(listName);
+        } else if(type.equals(ActorList)) {
+            list = new ActorContentList(listName);
+        } else if (type.equals(BookList)) {
+            list = new BookContentList(listName);
+        } else {
+            return null;
         }
-        ActorContentList actorContentList = new ActorContentList(listName);
-        actorList.add(actorContentList);
-        return actorContentList;
+        contentLists.add((T) list);
+        return (T) list;
     }
 
-    private <T> Predicate<ContentList<T>> listNameIsEqualTo(String listName) {
-        return list -> list.getName().equals(listName);
+    public <T extends BaseContentList<?>> void removeContentList(String listName, ContentListType type) {
+        List<T> contentLists = findContentListByType(type);
+        Optional<T> list = getContentListByName(listName, type);
+        list.ifPresent(contentLists::remove);
     }
 
-    public Optional<MovieContentList> getMovieContentListByName(String listName) {
-        return movieLists.stream()
-                .filter(listNameIsEqualTo(listName))
+    public <T extends BaseContentList<?>> Optional<T> getContentListByName(String listName, ContentListType type) {
+        List<T> contentLists = findContentListByType(type);
+        return contentLists.stream()
+                .filter(list -> list.getName().equals(listName))
                 .findFirst();
     }
-    public Optional<ActorContentList> getActorContentListByName(String listName) {
-        return actorList.stream()
-                .filter(listNameIsEqualTo(listName))
-                .findFirst();
+
+    public <T extends BaseContentList<?>> List<T> findContentListByType(ContentListType type) {
+        List<?> list;
+        if(type.equals(MovieList)) {
+            list = movieLists;
+        } else if(type.equals(ActorList)) {
+            list = actorList;
+        } else if(type.equals(BookList)) {
+            list = bookLists;
+        } else {
+            throw new IllegalArgumentException();
+        }
+        return (List<T>) list;
     }
 
     @Override
