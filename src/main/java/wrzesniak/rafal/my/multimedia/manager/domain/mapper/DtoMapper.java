@@ -9,6 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFormat;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.ISBN;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
@@ -93,6 +94,7 @@ public class DtoMapper {
                 .isbn(ISBN.of(bookDto.getIsbn()))
                 .lubimyCzytacUrl(toURL(bookDto.getUrl()))
                 .datePublished(bookDto.getDatePublished())
+                .bookFormat(bookDto.getBookFormat() != null ? bookDto.getBookFormat() : BookFormat.Paper)
                 .createdOn(LocalDate.now())
                 .build();
     }

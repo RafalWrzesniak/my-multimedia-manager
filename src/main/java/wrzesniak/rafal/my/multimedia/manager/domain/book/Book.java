@@ -38,6 +38,8 @@ public class Book implements Imagable {
     private Author author;
     @Column(unique = true)
     private URL lubimyCzytacUrl;
+    @Enumerated(EnumType.STRING)
+    private BookFormat bookFormat;
 
     private LocalDate datePublished;
     private LocalDate readOn;

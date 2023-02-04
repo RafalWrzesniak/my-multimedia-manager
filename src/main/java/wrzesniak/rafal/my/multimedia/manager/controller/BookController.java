@@ -36,8 +36,10 @@ public class BookController {
     private final AuthorRepository authorRepository;
 
     @PostMapping("/{bookUrl}/{listName}")
-    public Book createBookFromUrl(String bookUrl, @RequestParam(required = false) String listName) {
-        Book book = bookService.createBookFromUrl(toURL(bookUrl));
+    public Book createBookFromUrl(String bookUrl,
+                                  @RequestParam(required = false) BookFormat bookFormat,
+                                  @RequestParam(required = false) String listName) {
+        Book book = bookService.createBookFromUrl(toURL(bookUrl), bookFormat);
         addBookToListIfExist(book, listName);
         return book;
     }

@@ -35,14 +35,15 @@ public class BookService {
         }
         Book book = DtoMapper.mapToBook(bookDto);
         addOrCreateAuthorToBook(book, bookDto.getAuthor());
-        webOperations.downloadImageToDirectory(toURL(bookDto.getImage()), book.getImagePath());
         Book savedBook = bookRepository.save(book);
+        webOperations.downloadImageToDirectory(toURL(bookDto.getImage()), savedBook.getImagePath());
         log.info("Book created from URL: {}", book);
         return savedBook;
     }
 
-    public Book createBookFromUrl(URL lubimyCzytacBookUrl) {
+    public Book createBookFromUrl(URL lubimyCzytacBookUrl, BookFormat bookFormat) {
         return lubimyCzytacService.createBookDtoFromUrl(lubimyCzytacBookUrl)
+                .map(bookDto -> bookDto.withBookFormat(bookFormat))
                 .map(this::createBookFromDto)
                 .orElseThrow(BookNotCreatedException::new);
     }
