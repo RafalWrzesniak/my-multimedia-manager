@@ -4,6 +4,8 @@ spring:
     allow-bean-definition-overriding: true
   jpa:
     properties:
+        hibernate:
+          default_schema: MULTIMEDIA
         javax:
           persistence:
             schema-generation:
