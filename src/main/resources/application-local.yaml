@@ -13,6 +13,7 @@ spring:
     show-sql: false
   flyway:
     url: jdbc:postgresql://localhost:5432/postgres
-    schemas: schema
+    default-schema: multimedia
+    schemas: multimedia
     user: postgres
     password: secrert
