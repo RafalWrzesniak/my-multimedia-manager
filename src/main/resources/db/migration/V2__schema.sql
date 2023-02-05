@@ -1,1 +1,0 @@
-ALTER TABLE Movie ALTER COLUMN plot_local type VARCHAR (1024);

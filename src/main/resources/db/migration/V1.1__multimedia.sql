@@ -1,0 +1,1 @@
+ALTER TABLE Book ALTER COLUMN description type VARCHAR (4096);
