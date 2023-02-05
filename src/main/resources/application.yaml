@@ -36,6 +36,17 @@ application:
         actor: /person/
     search: search?q=
 
+  lubimy-czytac:
+    default-descritption: Ta książka nie ma opisu..
+    unknown-publisher: Nieznany wydawca
+    parsing:
+      main-attribute: type
+      main-attribute-value: application/ld+json
+      href: href
+      publisher: wydawnictwo
+      id: id
+      description: book-description
+
   jwt:
     secret: secret
     expirationTime: 3600000
