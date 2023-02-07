@@ -15,6 +15,8 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +52,7 @@ public class DtoMapper {
                 .polishTitle(movieDto.getWikipedia().titleInLanguage())
                 .releaseDate(movieDto.getReleaseDate())
                 .runtimeMins(movieDto.getRuntimeMins())
-                .imDbRating(movieDto.getImDbRating())
+                .imDbRating(BigDecimal.valueOf(movieDto.getImDbRating()).setScale(1, RoundingMode.HALF_UP))
                 .imDbRatingVotes(movieDto.getImDbRatingVotes())
                 .genreList(getAsStrings(movieDto.getGenreList()))
                 .countryList(getAsStrings(movieDto.getCountryList()))

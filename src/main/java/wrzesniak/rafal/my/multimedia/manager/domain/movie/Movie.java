@@ -10,6 +10,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,11 +40,10 @@ public class Movie implements ImdbObject, Imagable {
     private String polishTitle;
     private LocalDate releaseDate;
     private Integer runtimeMins;
-    private double imDbRating;
+    private BigDecimal imDbRating;
     private Integer imDbRatingVotes;
 
     @FilmwebMovieUrl
-    @Column(unique = true)
     private URL filmwebUrl;
 
     @ManyToMany
@@ -68,7 +68,6 @@ public class Movie implements ImdbObject, Imagable {
     private String plotLocal;
 
     private LocalDate createdOn;
-    private LocalDate watchedOn;
 
     @Override
     public String getUniqueId() {

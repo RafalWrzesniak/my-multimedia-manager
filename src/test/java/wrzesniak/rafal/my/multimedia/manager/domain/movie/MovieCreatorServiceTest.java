@@ -17,6 +17,7 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -63,7 +64,7 @@ class MovieCreatorServiceTest {
         // when
         Optional<Movie> optionalMovieFromPolishTitle = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE);
         Movie createdMovie = optionalMovieFromPolishTitle.orElseThrow();
-        createdMovie.setImDbRating(8.7);
+        createdMovie.setImDbRating(BigDecimal.valueOf(8.7));
         createdMovie.setImDbRatingVotes(1000);
 
         // then
