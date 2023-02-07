@@ -1,0 +1,1 @@
+ALTER TABLE movie DROP CONSTRAINT UK_eoh10u1dqe9qte40nuhqj9d5d;

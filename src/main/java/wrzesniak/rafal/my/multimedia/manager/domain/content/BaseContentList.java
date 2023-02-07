@@ -31,6 +31,7 @@ public class BaseContentList<T> {
     @ManyToMany
     private List<T> contentList;
 
+    @Enumerated(EnumType.STRING)
     private ContentListType contentListType;
 
     public BaseContentList(String listName, ContentListType contentListType) {
