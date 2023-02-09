@@ -42,7 +42,6 @@ public class Book implements Imagable {
     private BookFormat bookFormat;
 
     private LocalDate datePublished;
-    private LocalDate readOn;
     private LocalDate createdOn;
 
     @JsonIgnore
