@@ -2,6 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,11 +14,15 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.RecentlyWatchedService;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.UserObjectDetailsFounder;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.validation.Valid;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +39,7 @@ public class MovieController {
 
     private final RecentlyWatchedService recentlyWatchedService;
     private final MovieCreatorService movieCreatorService;
+    private final UserObjectDetailsFounder detailsFounder;
     private final MovieRepository movieRepository;
     private final UserController userController;
     private final UserService userService;
@@ -55,18 +61,25 @@ public class MovieController {
     }
 
     @PostMapping("/create/imdb/{imdbId}")
-    public Movie findAndCreateMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId, @RequestParam(required = false) String listName) {
-        Optional<Movie> potentialMovie = movieCreatorService.createMovieFromImdbId(imdbId);
+    public Movie findAndCreateMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId,
+                                            @RequestParam URL filmwebUrl,
+                                            @RequestParam(required = false) String listName) {
+        Optional<Movie> potentialMovie = movieCreatorService.createMovieFromImdbId(imdbId, filmwebUrl);
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
         addMovieToListIfExist(movie, listName);
         return movie;
+    }
+
+    @PostMapping("/create/bulk/imdb")
+    public void findAndCreateBulkMoviesByImdb(@RequestBody List<Pair<String, String>> imdbFilmwebUrl, @RequestParam(required = false) String listName) {
+        imdbFilmwebUrl.forEach(pair -> findAndCreateMovieByImdbId(pair.getFirst(), toURL(pair.getSecond()), listName));
     }
 
     @GetMapping("/markAsWatched/{movieId}")
     public void markMovieAsRecentlyWatched(@PathVariable long movieId,
                                            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
-        recentlyWatchedService.markMovieAsRecentlyWatched(movie, date);
+        recentlyWatchedService.markMovieAsRecentlyWatched(userController.getCurrentUser(), movie, date);
     }
 
     @GetMapping("/")
@@ -75,24 +88,29 @@ public class MovieController {
     }
 
     @GetMapping("/findById/{id}")
-    public Optional<Movie> getMovieById(@PathVariable long id) {
-        return movieRepository.findById(id);
+    public Optional<MovieWithUserDetailsDto> getMovieById(@PathVariable long id) {
+        return movieRepository.findById(id)
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(userController.getCurrentUser(), movie));
     }
 
     @GetMapping("/findByImdb/{imdbId}")
-    public Optional<Movie> getMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId) {
-        return movieRepository.findByImdbId(imdbId);
+    public Optional<MovieWithUserDetailsDto> getMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId) {
+        return movieRepository.findByImdbId(imdbId)
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(userController.getCurrentUser(), movie));
     }
 
     @GetMapping("/list/{listName}")
-    public MovieContentList getMovieContentListByName(@PathVariable String listName) {
-        return (MovieContentList) userController.getCurrentUser().getContentListByName(listName, MovieList).orElseThrow(NoListWithSuchNameException::new);
+    public MovieListWithUserDetails getMovieContentListByName(@PathVariable String listName) {
+        return userController.getCurrentUser().getContentListByName(listName, MovieList)
+                .map(baseList -> detailsFounder.findDetailedMovieDataFor((MovieContentList) baseList, userController.getCurrentUser()))
+                .orElseThrow(NoListWithSuchNameException::new);
     }
 
     @PostMapping("/list/{listName}")
-    public MovieContentList addMovieContentListToUser(@PathVariable String listName) {
+    public MovieListWithUserDetails addMovieContentListToUser(@PathVariable String listName) {
         User user = userController.getCurrentUser();
-        return userService.addNewContentListToUser(user, listName, MovieList);
+        MovieContentList movieContentList = userService.addNewContentListToUser(user, listName, MovieList);
+        return detailsFounder.findDetailedMovieDataFor(movieContentList, user);
     }
 
     @DeleteMapping("/list/{listName}")
@@ -116,7 +134,9 @@ public class MovieController {
         try {
             userService.addObjectToContentList(userController.getCurrentUser(), listName, MovieList, movie);
         } catch (NoListWithSuchNameException e) {
-            log.warn("Could not add movie `{}` to list `{}`, because list does not exist!", movie.getTitle(), listName);
+            if(listName != null) {
+                log.warn("Could not add movie `{}` to list `{}`, because list does not exist!", movie.getTitle(), listName);
+            }
         }
         catch(NoSuchUserException noSuchUserException) {
             log.warn("Could not add movie `{}` to list `{}`, because user is unknown!", movie.getTitle(), listName);

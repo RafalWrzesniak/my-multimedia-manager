@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.*;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookListWithUserDetails;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BookContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.BookNotFoundException;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchNameException;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.UserObjectDetailsFounder;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import java.time.LocalDate;
@@ -34,6 +37,7 @@ public class BookController {
     private final UserController userController;
     private final UserService userService;
     private final AuthorRepository authorRepository;
+    private final UserObjectDetailsFounder detailsFounder;
 
     @PostMapping("/{bookUrl}/{listName}")
     public Book createBookFromUrl(String bookUrl,
@@ -52,23 +56,34 @@ public class BookController {
     }
 
     @GetMapping("/findById/{id}")
-    public Optional<Book> getBookById(long bookId) {
-        return bookRepository.findById(bookId);
+    public Optional<BookWithUserDetailsDto> getBookById(long bookId) {
+        return bookRepository.findById(bookId)
+                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book));
     }
 
     @GetMapping("/findByIsbn/{isbn}")
-    public Optional<Book> getBookByIsbn(String isbn) {
-        return bookRepository.findByIsbn(ISBN.of(isbn));
+    public Optional<BookWithUserDetailsDto> getBookByIsbn(String isbn) {
+        return bookRepository.findByIsbn(ISBN.of(isbn))
+                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book));
     }
 
     @GetMapping("/findByAuthor/{authorId}")
-    public List<Book> getBookByAuthorId(long authorId) {
-        return bookRepository.findByAuthorId(authorId);
+    public List<BookWithUserDetailsDto> getBookByAuthorId(long authorId) {
+        return bookRepository.findByAuthorId(authorId).stream()
+                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book))
+                .toList();
     }
 
     @GetMapping("/authors")
     public List<Author> getAllAuthors() {
         return authorRepository.findAll();
+    }
+
+    @GetMapping("/publisher/{publisherName}")
+    public List<BookWithUserDetailsDto> getAllBookFromPublisher(@PathVariable String publisherName) {
+        return bookRepository.findByPublisher(publisherName).stream()
+                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book))
+                .toList();
     }
 
     @GetMapping("/")
@@ -77,21 +92,25 @@ public class BookController {
     }
 
     @GetMapping("/markAsRead/{bookId}/{date}")
-    public Book markBookAsRead(long bookId,
+    public void markBookAsRead(long bookId,
                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
-        return bookService.markBookAsRead(book, date != null ? date : LocalDate.now());
+        bookService.markBookAsRead(book, userController.getCurrentUser(), date);
     }
 
     @GetMapping("/list/{listName}")
-    public BookContentList getBookContentListByName(@RequestParam String listName) {
-        return (BookContentList) userController.getCurrentUser().getContentListByName(listName, BookList).orElseThrow(NoListWithSuchNameException::new);
+    public BookListWithUserDetails getBookContentListByName(@RequestParam String listName) {
+        return userController.getCurrentUser()
+                .getContentListByName(listName, BookList)
+                .map(baseContentList -> detailsFounder.findDetailedBookDataFor((BookContentList) baseContentList, userController.getCurrentUser()))
+                .orElseThrow(NoListWithSuchNameException::new);
     }
 
     @PostMapping("/list/{listName}")
-    public BookContentList addBookContentListToUser(@RequestParam String listName) {
+    public BookListWithUserDetails addBookContentListToUser(@RequestParam String listName) {
         User user = userController.getCurrentUser();
-        return userService.addNewContentListToUser(user, listName, BookList);
+        BookContentList bookContentList = userService.addNewContentListToUser(user, listName, BookList);
+        return detailsFounder.findDetailedBookDataFor(bookContentList, user);
     }
 
     @DeleteMapping("/list/{listName}")
