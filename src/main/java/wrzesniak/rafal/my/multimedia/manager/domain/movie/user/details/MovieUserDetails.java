@@ -22,4 +22,8 @@ public class MovieUserDetails {
     public MovieUserDetails(MovieUserId movieUserId) {
         this.id = movieUserId;
     }
+
+    public static MovieUserDetails empty() {
+        return new MovieUserDetails();
+    }
 }

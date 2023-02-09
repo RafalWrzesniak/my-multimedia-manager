@@ -51,7 +51,7 @@ public class MovieDto implements ImdbDtoObject, FilmwebSearchable {
 
         public String titleInLanguage() {
             String filmSuffix = " (film)";
-            if(titleInLanguage.contains(filmSuffix)) {
+            if(titleInLanguage != null && titleInLanguage.contains(filmSuffix)) {
                 return titleInLanguage.substring(0, titleInLanguage.lastIndexOf(filmSuffix));
             }
             return titleInLanguage;

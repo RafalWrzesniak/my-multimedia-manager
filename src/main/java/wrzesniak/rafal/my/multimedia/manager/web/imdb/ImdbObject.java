@@ -9,7 +9,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 public interface ImdbObject {
 
-    String IMDB_BASE_URL = "https://www.imdb.com/";
+    String IMDB_BASE_URL = "https://www.imdb.com";
 
     String getImdbId();
 
