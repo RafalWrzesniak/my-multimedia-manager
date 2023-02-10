@@ -1,0 +1,1 @@
+ALTER TABLE movie ALTER COLUMN im_db_rating TYPE numeric(2, 1);
