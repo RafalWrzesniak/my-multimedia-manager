@@ -39,12 +39,14 @@ public class ImdbService {
     public MovieDto getMovieById(String id) {
         return retrievePathFromApi(imdbConfiguration.getMovieApi(), id + slash(imdbConfiguration.getWikipedia()))
                 .bodyToMono(MovieDto.class)
+                .filter(dto -> verifyMaxImdbUsage(dto.getErrorMessage()))
                 .block();
     }
 
     public Optional<ActorDto> getActorById(String id) {
         ActorDto actorDto = retrievePathFromApi(imdbConfiguration.getActorApi(), id)
                 .bodyToMono(ActorDto.class)
+                .filter(dto -> verifyMaxImdbUsage(dto.getErrorMessage()))
                 .block();
         return notFoundInImdb(actorDto) ? Optional.empty() : Optional.of(actorDto);
     }
@@ -63,6 +65,7 @@ public class ImdbService {
     public List<Result> findPossibleMoviesByTitle(String title) {
         QueryResult queryResult = retrievePathFromApi(imdbConfiguration.getSearchApi(), StringFunctions.withRemovedSlashes(title))
                 .bodyToMono(QueryResult.class)
+                .filter(result -> verifyMaxImdbUsage(result.errorMessage()))
                 .block();
         if(notFoundInImdb(queryResult)) {
             return List.of();
@@ -92,6 +95,12 @@ public class ImdbService {
         return imdbDtoObject == null || imdbConfiguration.getNotFound().equals(imdbDtoObject.getErrorMessage());
     }
 
+    private boolean verifyMaxImdbUsage(String errorMessage) {
+        if(errorMessage != null && errorMessage.contains("Maximum usage")) {
+            throw new IllegalStateException("Maximum usage of imdb is reached! Please try tomorrow.");
+        }
+        return true;
+    }
 
     private record QueryResult(String searchType,
                                String expression,
