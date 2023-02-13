@@ -49,19 +49,19 @@ public class MovieCreatorService {
             log.warn("Cannot find movie title basing on provided url: {}", filmwebMovieUrl);
             return Optional.empty();
         }
-        return createMovieFromPolishTitle(polishTitle);
+        return createMovieFromPolishTitle(polishTitle, filmwebMovieUrl);
     }
 
     @Transactional
     @TrackExecutionTime
-    public Optional<Movie> createMovieFromPolishTitle(String polishTitle) {
+    public Optional<Movie> createMovieFromPolishTitle(String polishTitle, URL filmwebUrl) {
         Optional<MovieDto> foundByTitle = imdbService.findBestMovieForSearchByTitle(polishTitle);
-        return foundByTitle.flatMap(movieDto -> createMovieFromImdbId(movieDto.getId()));
+        return foundByTitle.flatMap(movieDto -> createMovieFromImdbId(movieDto.getId(), filmwebUrl));
     }
 
     @Transactional
     @TrackExecutionTime
-    public Optional<Movie> createMovieFromImdbId(@Valid @ImdbId String imdbId) {
+    public Optional<Movie> createMovieFromImdbId(@Valid @ImdbId String imdbId, URL filmwebUrl) {
         Optional<Movie> movieInDataBase = movieRepository.findByImdbId(imdbId);
         if(movieInDataBase.isPresent()) {
             log.info("Movie with imdb id `{}` already exists in database: {}", imdbId, movieInDataBase.get());
@@ -72,6 +72,7 @@ public class MovieCreatorService {
         webOperations.downloadResizedImageTo(movieDto.getImage(), movie.getImagePath());
         formatPlotLocal(movie);
         addFullCastToMovie(movie, movieDto);
+        movie.setFilmwebUrl(filmwebUrl);
         Movie savedMovie = movieRepository.save(movie);
         log.info("Movie saved in database: {}", savedMovie);
         return Optional.of(savedMovie);
