@@ -25,6 +25,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Movie implements ImdbObject, Imagable {
 
     @Id
@@ -34,6 +35,7 @@ public class Movie implements ImdbObject, Imagable {
 
     @ImdbId
     @Column(unique = true)
+    @EqualsAndHashCode.Include
     private String imdbId;
 
     private String title;

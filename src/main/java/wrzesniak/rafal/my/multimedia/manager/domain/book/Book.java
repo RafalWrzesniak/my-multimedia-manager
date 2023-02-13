@@ -17,8 +17,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Book implements Imagable {
 
     @Id
@@ -26,17 +27,20 @@ public class Book implements Imagable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
     private String title;
     private String category;
     private String description;
     private String publisher;
     private int numberOfPages;
+    @EqualsAndHashCode.Include
     @Convert(converter = IsbnConverter.class)
     private ISBN isbn;
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonManagedReference
     private Author author;
     @Column(unique = true)
+    @EqualsAndHashCode.Include
     private URL lubimyCzytacUrl;
     @Enumerated(EnumType.STRING)
     private BookFormat bookFormat;

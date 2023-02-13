@@ -21,8 +21,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Actor implements ImdbObject, Imagable {
 
     @Id
@@ -32,6 +33,7 @@ public class Actor implements ImdbObject, Imagable {
 
     @ImdbId
     @Column(unique = true)
+    @EqualsAndHashCode.Include
     private String imdbId;
 
     private String name;
