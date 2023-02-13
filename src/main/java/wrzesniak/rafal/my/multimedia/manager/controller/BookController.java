@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.BookList;
+import static wrzesniak.rafal.my.multimedia.manager.domain.user.RegistrationService.ALL_BOOKS;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
@@ -44,6 +45,7 @@ public class BookController {
                                   @RequestParam(required = false) BookFormat bookFormat,
                                   @RequestParam(required = false) String listName) {
         Book book = bookService.createBookFromUrl(toURL(bookUrl), bookFormat);
+        addBookToListIfExist(book, ALL_BOOKS);
         addBookToListIfExist(book, listName);
         return book;
     }
@@ -51,6 +53,7 @@ public class BookController {
     @PostMapping("/create")
     public Book createBookFromDto(@RequestBody BookDto bookDto, @RequestParam(required = false) String listName) {
         Book book = bookService.createBookFromDto(bookDto);
+        addBookToListIfExist(book, ALL_BOOKS);
         addBookToListIfExist(book, listName);
         return book;
     }
@@ -58,19 +61,19 @@ public class BookController {
     @GetMapping("/findById/{id}")
     public Optional<BookWithUserDetailsDto> getBookById(long bookId) {
         return bookRepository.findById(bookId)
-                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book));
+                .map(book -> detailsFounder.findDetailedBookDataFor(book, userController.getCurrentUser()));
     }
 
     @GetMapping("/findByIsbn/{isbn}")
     public Optional<BookWithUserDetailsDto> getBookByIsbn(String isbn) {
         return bookRepository.findByIsbn(ISBN.of(isbn))
-                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book));
+                .map(book -> detailsFounder.findDetailedBookDataFor(book, userController.getCurrentUser()));
     }
 
     @GetMapping("/findByAuthor/{authorId}")
     public List<BookWithUserDetailsDto> getBookByAuthorId(long authorId) {
         return bookRepository.findByAuthorId(authorId).stream()
-                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book))
+                .map(book -> detailsFounder.findDetailedBookDataFor(book, userController.getCurrentUser()))
                 .toList();
     }
 
@@ -82,7 +85,7 @@ public class BookController {
     @GetMapping("/publisher/{publisherName}")
     public List<BookWithUserDetailsDto> getAllBookFromPublisher(@PathVariable String publisherName) {
         return bookRepository.findByPublisher(publisherName).stream()
-                .map(book -> detailsFounder.findDetailedBookDataFor(userController.getCurrentUser(), book))
+                .map(book -> detailsFounder.findDetailedBookDataFor(book, userController.getCurrentUser()))
                 .toList();
     }
 

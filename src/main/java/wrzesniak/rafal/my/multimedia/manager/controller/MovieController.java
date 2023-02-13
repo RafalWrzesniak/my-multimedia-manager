@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MovieList;
+import static wrzesniak.rafal.my.multimedia.manager.domain.user.RegistrationService.ALL_MOVIES;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
@@ -46,9 +47,10 @@ public class MovieController {
 
     @PostMapping("/create/title/{title}")
     public Movie findAndCreateMovieByTitle(@PathVariable String title, @RequestParam(required = false) String listName) {
-        Optional<Movie> potentialMovie = movieCreatorService.createMovieFromPolishTitle(title);
+        Optional<Movie> potentialMovie = movieCreatorService.createMovieFromPolishTitle(title, null);
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
         addMovieToListIfExist(movie, listName);
+        addMovieToListIfExist(movie, ALL_MOVIES);
         return movie;
     }
 
@@ -57,16 +59,18 @@ public class MovieController {
         Optional<Movie> potentialMovie = movieCreatorService.createMovieFromFilmwebUrl(toURL(filmwebUrl));
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
         addMovieToListIfExist(movie, listName);
+        addMovieToListIfExist(movie, ALL_MOVIES);
         return movie;
     }
 
     @PostMapping("/create/imdb/{imdbId}")
     public Movie findAndCreateMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId,
-                                            @RequestParam URL filmwebUrl,
+                                            @RequestParam(required = false) URL filmwebUrl,
                                             @RequestParam(required = false) String listName) {
         Optional<Movie> potentialMovie = movieCreatorService.createMovieFromImdbId(imdbId, filmwebUrl);
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
         addMovieToListIfExist(movie, listName);
+        addMovieToListIfExist(movie, ALL_MOVIES);
         return movie;
     }
 
@@ -90,13 +94,13 @@ public class MovieController {
     @GetMapping("/findById/{id}")
     public Optional<MovieWithUserDetailsDto> getMovieById(@PathVariable long id) {
         return movieRepository.findById(id)
-                .map(movie -> detailsFounder.findDetailedMovieDataFor(userController.getCurrentUser(), movie));
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser()));
     }
 
     @GetMapping("/findByImdb/{imdbId}")
     public Optional<MovieWithUserDetailsDto> getMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId) {
         return movieRepository.findByImdbId(imdbId)
-                .map(movie -> detailsFounder.findDetailedMovieDataFor(userController.getCurrentUser(), movie));
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser()));
     }
 
     @GetMapping("/list/{listName}")
@@ -124,10 +128,12 @@ public class MovieController {
         userService.addObjectToContentList(userController.getCurrentUser(), listName, MovieList, movie);
     }
 
-    @DeleteMapping("/list/{listName}/")
-    public void removeMovieFromList(@PathVariable String listName, @RequestParam long movieId) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
-        userService.removeObjectFromContentList(userController.getCurrentUser(), listName, MovieList, movie);
+    @DeleteMapping("/list/{listName}/remove")
+    public void removeMovieFromList(@PathVariable String listName, @RequestBody List<Long> movieIds) {
+        for (Long movieId : movieIds) {
+            Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
+            userService.removeObjectFromContentList(userController.getCurrentUser(), listName, MovieList, movie);
+        }
     }
 
     private void addMovieToListIfExist(Movie movie, String listName) {
