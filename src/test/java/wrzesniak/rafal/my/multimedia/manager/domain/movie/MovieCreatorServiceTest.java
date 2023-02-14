@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NotValidFilmwebUrlException;
 import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
+import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
@@ -62,7 +63,7 @@ class MovieCreatorServiceTest {
         given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
 
         // when
-        Optional<Movie> optionalMovieFromPolishTitle = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE);
+        Optional<Movie> optionalMovieFromPolishTitle = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE, StringFunctions.toURL("https://www.filmweb.pl/film/Matrix-1999-628"));
         Movie createdMovie = optionalMovieFromPolishTitle.orElseThrow();
         createdMovie.setImDbRating(BigDecimal.valueOf(8.7));
         createdMovie.setImDbRatingVotes(1000);
@@ -97,7 +98,7 @@ class MovieCreatorServiceTest {
         creatorServiceSpy.createMovieFromFilmwebUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
 
         // then
-        verify(creatorServiceSpy).createMovieFromPolishTitle("Matrix (1999)");
+        verify(creatorServiceSpy).createMovieFromPolishTitle("Matrix (1999)", new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
     }
 
 }

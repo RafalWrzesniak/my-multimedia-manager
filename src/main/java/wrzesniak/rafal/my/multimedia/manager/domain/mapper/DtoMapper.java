@@ -24,6 +24,7 @@ import java.util.List;
 import static lombok.AccessLevel.PRIVATE;
 import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.USER;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
+import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.withRemovedDate;
 
 @Slf4j
 @NoArgsConstructor(access = PRIVATE)
@@ -49,7 +50,7 @@ public class DtoMapper {
                 .imdbId(movieDto.getId())
                 .title(firstNotEmpty(movieDto.getOriginalTitle(), movieDto.getTitle()))
                 .filmwebUrl(movieDto.getFilmwebUrl())
-                .polishTitle(movieDto.getWikipedia().titleInLanguage())
+                .polishTitle(withRemovedDate(movieDto.getWikipedia().titleInLanguage()))
                 .releaseDate(movieDto.getReleaseDate())
                 .runtimeMins(movieDto.getRuntimeMins())
                 .imDbRating(BigDecimal.valueOf(movieDto.getImDbRating()).setScale(1, RoundingMode.HALF_UP))

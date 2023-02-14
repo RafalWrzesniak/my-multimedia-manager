@@ -20,6 +20,9 @@ public class StringFunctions {
     }
 
     public static String withRemovedDate(String titleWithDate) {
+        if(titleWithDate == null || titleWithDate.isEmpty()) {
+            return titleWithDate;
+        }
         int braceIndex = titleWithDate.lastIndexOf(" (");
         return braceIndex != -1 ? titleWithDate.substring(0, braceIndex) : titleWithDate;
     }

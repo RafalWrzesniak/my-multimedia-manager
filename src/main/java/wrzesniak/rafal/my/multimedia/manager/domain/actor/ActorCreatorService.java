@@ -26,7 +26,7 @@ public class ActorCreatorService {
     public Optional<Actor> createActorFromImdbId(String imdbId) {
         Optional<Actor> actorInDataBase = actorRepository.findByImdbId(imdbId);
         if(actorInDataBase.isPresent()) {
-            log.info("Actor with imdbId {} already exists in database: {}", imdbId, actorInDataBase.get());
+            log.debug("Actor with imdbId {} already exists in database: {}", imdbId, actorInDataBase.get());
             return actorInDataBase;
         }
         Optional<ActorDto> optionalActorDto = imdbService.getActorById(imdbId);

@@ -22,7 +22,7 @@ public class UserService {
         LIST contentList = user.addNewContentList(listName, listType);
         userRepository.save(user);
         log.info("Added new list `{}` for user: {}", listName, user.getUsername());
-        return contentList;
+        return (LIST) user.getContentListByName(listName, listType).orElseThrow(NoListWithSuchNameException::new);
     }
 
     public void removeContentListFromUser(User user, String listName, ContentListType listType) {
@@ -33,9 +33,13 @@ public class UserService {
 
     public <CONTENT, LIST extends BaseContentList<CONTENT>> void addObjectToContentList(User user, String listName, ContentListType listType, CONTENT objectToAdd) {
         BaseContentList<CONTENT> list = (LIST) user.getContentListByName(listName, listType).orElseThrow(NoListWithSuchNameException::new);
-        list.addContent(objectToAdd);
+        if(list.addContent(objectToAdd)) {
+            log.info("Added to list `{}` object: {}", list.getName(), objectToAdd);
+        }
+         else {
+             log.debug("List `{}` already have object: {}", list.getName(), objectToAdd);
+        }
         userRepository.save(user);
-        log.info("Added to list `{}` object: {}", list.getName(), objectToAdd);
     }
 
     public <CONTENT, LIST extends BaseContentList<CONTENT>> void removeObjectFromContentList(User user, String listName, ContentListType listType, CONTENT objectToRemove) {
