@@ -34,6 +34,8 @@ public class BaseContentList<T> {
     @Enumerated(EnumType.STRING)
     private ContentListType contentListType;
 
+    private boolean isAllContentList;
+
     public BaseContentList(String listName, ContentListType contentListType) {
         this.name = listName;
         this.contentListType = contentListType;
@@ -48,6 +50,8 @@ public class BaseContentList<T> {
     }
 
     public void removeContent(T content) {
-        contentList.remove(content);
+        if(!isAllContentList) {
+            contentList.remove(content);
+        }
     }
 }
