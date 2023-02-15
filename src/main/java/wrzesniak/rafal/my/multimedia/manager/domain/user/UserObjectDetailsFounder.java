@@ -16,36 +16,28 @@ public class UserObjectDetailsFounder {
     private final BookUserDetailsRepository bookUserDetailsRepository;
     private final MovieUserDetailsRepository movieUserDetailsRepository;
 
-    public MovieWithUserDetailsDto findDetailedMovieDataFor(User user, Movie movie) {
+    public MovieWithUserDetailsDto findDetailedMovieDataFor(Movie movie, User user) {
         MovieUserDetails details = movieUserDetailsRepository.findById(MovieUserId.of(movie, user)).orElse(MovieUserDetails.empty());
         return MovieWithUserDetailsDto.of(movie, details);
     }
 
     public MovieListWithUserDetails findDetailedMovieDataFor(MovieContentList movieContentList, User user) {
-        return MovieListWithUserDetails.builder()
-                .id(movieContentList.getId())
-                .name(movieContentList.getName())
-                .isToWatchList(movieContentList.isToWatchList())
-                .isRecentlyWatchedList(movieContentList.isRecentlyWatchedList())
-                .movieWithUserDetailsDtos(movieContentList.getContentList().stream()
-                        .map(movie -> findDetailedMovieDataFor(user, movie))
-                        .toList())
-                .build();
+        return MovieListWithUserDetails.of(movieContentList)
+                        .withMovieWithUserDetailsDtos(movieContentList.getContentList().stream()
+                                .map(movie -> findDetailedMovieDataFor(movie, user))
+                                .toList());
     }
 
-    public BookWithUserDetailsDto findDetailedBookDataFor(User user, Book book) {
+    public BookWithUserDetailsDto findDetailedBookDataFor(Book book, User user) {
         BookUserDetails details = bookUserDetailsRepository.findById(BookUserId.of(book, user)).orElse(BookUserDetails.empty());
         return BookWithUserDetailsDto.of(book, details);
     }
 
     public BookListWithUserDetails findDetailedBookDataFor(BookContentList bookContentList, User user) {
-        return BookListWithUserDetails.builder()
-                .id(bookContentList.getId())
-                .name(bookContentList.getName())
-                .bookWithUserDetailsDtos(bookContentList.getContentList().stream()
-                        .map(book -> findDetailedBookDataFor(user, book))
-                        .toList())
-                .build();
+        return BookListWithUserDetails.of(bookContentList)
+                .withBookWithUserDetailsDtos(bookContentList.getContentList().stream()
+                        .map(book -> findDetailedBookDataFor(book, user))
+                        .toList());
     }
 
 }
