@@ -1,0 +1,1 @@
+web: java -jar -Dspring.profiles.active=dev target/my-multimedia-manager-0.0.2.jar
