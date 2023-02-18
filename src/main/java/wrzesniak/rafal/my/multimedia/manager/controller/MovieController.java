@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.MovieNotFoundException;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchNameException;
-import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieRepository;
@@ -49,8 +48,8 @@ public class MovieController {
     public Movie findAndCreateMovieByTitle(@PathVariable String title, @RequestParam(required = false) String listName) {
         Optional<Movie> potentialMovie = movieCreatorService.createMovieFromPolishTitle(title, null);
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
-        addMovieToListIfExist(movie, listName);
-        addMovieToListIfExist(movie, ALL_MOVIES);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), ALL_MOVIES, MovieList, movie);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), listName, MovieList, movie);
         return movie;
     }
 
@@ -58,8 +57,8 @@ public class MovieController {
     public Movie findAndCreateMovieByFilmwebUrl(String filmwebUrl, @RequestParam(required = false) String listName) {
         Optional<Movie> potentialMovie = movieCreatorService.createMovieFromFilmwebUrl(toURL(filmwebUrl));
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
-        addMovieToListIfExist(movie, listName);
-        addMovieToListIfExist(movie, ALL_MOVIES);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), ALL_MOVIES, MovieList, movie);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), listName, MovieList, movie);
         return movie;
     }
 
@@ -69,8 +68,8 @@ public class MovieController {
                                             @RequestParam(required = false) String listName) {
         Optional<Movie> potentialMovie = movieCreatorService.createMovieFromImdbId(imdbId, filmwebUrl);
         Movie movie = potentialMovie.orElseThrow(MovieNotFoundException::new);
-        addMovieToListIfExist(movie, listName);
-        addMovieToListIfExist(movie, ALL_MOVIES);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), ALL_MOVIES, MovieList, movie);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), listName, MovieList, movie);
         return movie;
     }
 
@@ -136,16 +135,10 @@ public class MovieController {
         }
     }
 
-    private void addMovieToListIfExist(Movie movie, String listName) {
-        try {
-            userService.addObjectToContentList(userController.getCurrentUser(), listName, MovieList, movie);
-        } catch (NoListWithSuchNameException e) {
-            if(listName != null) {
-                log.warn("Could not add movie `{}` to list `{}`, because list does not exist!", movie.getTitle(), listName);
-            }
-        }
-        catch(NoSuchUserException noSuchUserException) {
-            log.warn("Could not add movie `{}` to list `{}`, because user is unknown!", movie.getTitle(), listName);
-        }
+    @PostMapping("/move/movie")
+    public void moveMovieFromOneListToAnother(long movieId, String originalList, String targetList, boolean removeFromOriginal) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
+        userService.moveObjectFromListToList(userController.getCurrentUser(), movie, MovieList, originalList, targetList, removeFromOriginal);
     }
+
 }

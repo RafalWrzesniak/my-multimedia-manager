@@ -13,7 +13,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookWithUs
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BookContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.BookNotFoundException;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchNameException;
-import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserObjectDetailsFounder;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
@@ -45,16 +44,16 @@ public class BookController {
                                   @RequestParam(required = false) BookFormat bookFormat,
                                   @RequestParam(required = false) String listName) {
         Book book = bookService.createBookFromUrl(toURL(bookUrl), bookFormat);
-        addBookToListIfExist(book, ALL_BOOKS);
-        addBookToListIfExist(book, listName);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), ALL_BOOKS, BookList, book);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), listName, BookList, book);
         return book;
     }
 
     @PostMapping("/create")
     public Book createBookFromDto(@RequestBody BookDto bookDto, @RequestParam(required = false) String listName) {
         Book book = bookService.createBookFromDto(bookDto);
-        addBookToListIfExist(book, ALL_BOOKS);
-        addBookToListIfExist(book, listName);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), ALL_BOOKS, BookList, book);
+        userService.addObjectToListIfExists(userController.getCurrentUser(), listName, BookList, book);
         return book;
     }
 
@@ -140,15 +139,9 @@ public class BookController {
         userService.addObjectToContentList(userController.getCurrentUser(), newListName, BookList, book);
     }
 
-
-    private void addBookToListIfExist(Book book, String listName) {
-        try {
-            userService.addObjectToContentList(userController.getCurrentUser(), listName, BookList, book);
-        } catch (NoListWithSuchNameException e) {
-            log.warn("Could not add movie `{}` to list `{}`, because list does not exist!", book.getTitle(), listName);
-        }
-        catch(NoSuchUserException noSuchUserException) {
-            log.warn("Could not add movie `{}` to list `{}`, because user is unknown!", book.getTitle(), listName);
-        }
+    @PostMapping("/move/book")
+    public void moveBookFromOneListToAnother(long bookId, String originalList, String targetList, boolean removeFromOriginal) {
+        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        userService.moveObjectFromListToList(userController.getCurrentUser(), book, BookList, originalList, targetList, removeFromOriginal);
     }
 }

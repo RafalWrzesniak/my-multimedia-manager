@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BaseContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchNameException;
+import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 
 @Slf4j
 @Service
@@ -47,6 +48,26 @@ public class UserService {
         list.removeContent(objectToRemove);
         userRepository.save(user);
         log.info("Removed from list `{}` object: {}", list.getName(), objectToRemove);
+    }
+
+    public <CONTENT> void addObjectToListIfExists(User user, String listName, ContentListType listType, CONTENT objectToAdd) {
+        try {
+            addObjectToContentList(user, listName, listType, objectToAdd);
+        } catch (NoListWithSuchNameException e) {
+            if(listName != null) {
+                log.warn("Could not add object `{}` to list `{}`, because list does not exist!", objectToAdd, listName);
+            }
+        }
+        catch(NoSuchUserException noSuchUserException) {
+            log.warn("Could not add object `{}` to list `{}`, because user is unknown!", objectToAdd, listName);
+        }
+    }
+
+    public <T> void moveObjectFromListToList(User user, T object, ContentListType listType, String originalList, String targetList, boolean removeFromOriginal) {
+        addObjectToContentList(user, targetList, listType, object);
+        if(removeFromOriginal) {
+            removeObjectFromContentList(user, originalList, listType, object);
+        }
     }
 
 }
