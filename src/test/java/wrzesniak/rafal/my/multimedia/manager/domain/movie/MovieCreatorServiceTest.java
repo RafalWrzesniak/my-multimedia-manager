@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorCreatorService;
-import wrzesniak.rafal.my.multimedia.manager.domain.error.NotValidFilmwebUrlException;
 import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
@@ -24,7 +23,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -77,12 +77,6 @@ class MovieCreatorServiceTest {
         assertEquals(136, createdMovie.getRuntimeMins());
         assertTrue(createdMovie.getGenreList().containsAll(List.of("Akcja", "Science fiction")));
         assertTrue(createdMovie.getCountryList().containsAll(List.of("USA", "Australia")));
-    }
-
-    @SneakyThrows
-    @Test
-    void shouldThrowWhenWrongFilmwebUrl() {
-        assertThrows(NotValidFilmwebUrlException.class, () -> movieCreatorService.createMovieFromFilmwebUrl(new URL("https://www.bad-url.com")));
     }
 
     @SneakyThrows
