@@ -50,8 +50,6 @@ public class BaseContentList<T> {
     }
 
     public void removeContent(T content) {
-        if(!isAllContentList) {
-            contentList.remove(content);
-        }
+        contentList.remove(content);
     }
 }
