@@ -3,9 +3,11 @@ package wrzesniak.rafal.my.multimedia.manager.domain.book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.regex.Pattern;
 
+@ToString
 @EqualsAndHashCode
 public class ISBN {
 

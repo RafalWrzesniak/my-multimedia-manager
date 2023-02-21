@@ -6,6 +6,7 @@ import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.util.IsbnConverter;
+import wrzesniak.rafal.my.multimedia.manager.util.SeriesConverter;
 
 import javax.persistence.*;
 import java.net.URL;
@@ -44,6 +45,8 @@ public class Book implements Imagable {
     private URL lubimyCzytacUrl;
     @Enumerated(EnumType.STRING)
     private BookFormat bookFormat;
+    @Convert(converter = SeriesConverter.class)
+    private Series series;
 
     private LocalDate datePublished;
     private LocalDate createdOn;

@@ -25,5 +25,6 @@ public class BookDto {
     private String publisher;
     private String url;
     private BookFormat bookFormat;
+    private Series series;
 
 }

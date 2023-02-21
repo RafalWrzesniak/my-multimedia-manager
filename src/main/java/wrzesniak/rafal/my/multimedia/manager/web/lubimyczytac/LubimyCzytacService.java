@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.util.SeriesConverter;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class LubimyCzytacService {
 
     private final LubimyCzytacConfiguration configuration;
+    private final SeriesConverter seriesConverter;
     private final WebOperations webOperations;
     private final ObjectMapper objectMapper;
 
@@ -39,13 +41,22 @@ public class LubimyCzytacService {
             log.warn("Failed to map objet to BookDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
         }
+        bookDto.setUrl(lubimyCzytacBookUrl.toString());
         String description = parseDescription(parsedUrl);
         bookDto.setDescription(description);
         String publisher = parsePublisher(parsedUrl);
         bookDto.setPublisher(publisher);
-        bookDto.setUrl(lubimyCzytacBookUrl.toString());
+        String series = parseSeries(parsedUrl);
+        bookDto.setSeries(seriesConverter.convertToEntityAttribute(series));
         log.info("Created BookDto: {}", bookDto);
         return Optional.of(bookDto);
+    }
+
+    private String parseSeries(Document parsedUrl) {
+        Map<String, String> parsing = configuration.getParsing();
+        Element seriesElement = parsedUrl.getElementsByAttributeValueContaining(parsing.get("href"), parsing.get("series"))
+                .first();
+        return seriesElement != null ? seriesElement.text() : null;
     }
 
     private String parsePublisher(Document parsedUrl) {

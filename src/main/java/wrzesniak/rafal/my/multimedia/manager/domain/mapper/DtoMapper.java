@@ -98,6 +98,7 @@ public class DtoMapper {
                 .lubimyCzytacUrl(toURL(bookDto.getUrl()))
                 .datePublished(bookDto.getDatePublished())
                 .bookFormat(bookDto.getBookFormat() != null ? bookDto.getBookFormat() : BookFormat.Paper)
+                .series(bookDto.getSeries())
                 .createdOn(LocalDate.now())
                 .build();
     }

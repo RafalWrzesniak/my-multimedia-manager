@@ -46,6 +46,7 @@ application:
       publisher: wydawnictwo
       id: id
       description: book-description
+      series: /cykl/
 
   jwt:
     secret: secret
