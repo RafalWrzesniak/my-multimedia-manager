@@ -100,6 +100,12 @@ public class BookController {
         bookService.markBookAsRead(book, userController.getCurrentUser(), date);
     }
 
+    @DeleteMapping("/book/delete")
+    public void removeBookFromDatabase(long bookId) {
+        bookRepository.deleteById(bookId);
+        log.info("Book with id {} deleted from database", bookId);
+    }
+
     @GetMapping("/list/{listName}")
     public BookListWithUserDetails getBookContentListByName(@RequestParam String listName) {
         return userController.getCurrentUser()

@@ -48,16 +48,18 @@ public class Movie implements ImdbObject, Imagable {
     @FilmwebMovieUrl
     private URL filmwebUrl;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.DETACH)
     @ToString.Exclude
     @JsonManagedReference
     private List<Actor> actorList;
     @ManyToMany
     @ToString.Exclude
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JsonManagedReference
     private List<Actor> directorList;
     @ManyToMany
     @ToString.Exclude
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JsonManagedReference
     private List<Actor> writerList;
 

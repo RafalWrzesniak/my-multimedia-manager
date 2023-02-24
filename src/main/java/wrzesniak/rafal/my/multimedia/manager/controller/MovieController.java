@@ -141,4 +141,10 @@ public class MovieController {
         userService.moveObjectFromListToList(userController.getCurrentUser(), movie, MovieList, originalList, targetList, removeFromOriginal);
     }
 
+    @DeleteMapping("/movie/delete")
+    public void removeMovieFromDatabase(long movieId) {
+        movieRepository.deleteById(movieId);
+        log.info("Movie with id {} deleted from database", movieId);
+    }
+
 }

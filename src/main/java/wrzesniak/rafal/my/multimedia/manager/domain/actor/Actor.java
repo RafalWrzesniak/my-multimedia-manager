@@ -42,15 +42,15 @@ public class Actor implements ImdbObject, Imagable {
 
     private URL filmwebUrl;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JsonBackReference
     @ToString.Exclude
     private List<Movie> playedInMovies;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JsonBackReference
     @ToString.Exclude
     private List<Movie> directedMovies;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JsonBackReference
     @ToString.Exclude
     private List<Movie> wroteMovies;
