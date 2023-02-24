@@ -32,8 +32,8 @@ public class MovieWithUserDetailsDto {
     LocalDate createdOn;
     LocalDate watchedOn;
 
-    public static MovieWithUserDetailsDto of(Movie movie, MovieUserDetails details) {
-        return MovieWithUserDetailsDto.builder()
+    public static MovieWithUserDetailsDto of(Movie movie, MovieUserDetails details, boolean withActors) {
+        MovieWithUserDetailsDto detailsDto = MovieWithUserDetailsDto.builder()
                 .id(movie.getId())
                 .imdbId(movie.getImdbId())
                 .title(movie.getTitle())
@@ -52,5 +52,12 @@ public class MovieWithUserDetailsDto {
                 .createdOn(movie.getCreatedOn())
                 .watchedOn(details.getWatchedOn())
                 .build();
+        if(withActors) {
+            detailsDto = detailsDto
+                    .withActorList(movie.getActorList())
+                    .withDirectorList(movie.getDirectorList())
+                    .withWriterList(movie.getWriterList());
+        }
+        return detailsDto;
     }
 }

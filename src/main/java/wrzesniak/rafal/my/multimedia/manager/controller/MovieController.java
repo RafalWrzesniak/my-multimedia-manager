@@ -2,6 +2,9 @@ package wrzesniak.rafal.my.multimedia.manager.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.util.Pair;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +24,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -98,29 +102,29 @@ public class MovieController {
     }
 
     @GetMapping("/findById/{id}")
-    public Optional<MovieWithUserDetailsDto> getMovieById(@PathVariable long id) {
+    public Optional<MovieWithUserDetailsDto> getMovieById(@PathVariable long id, @RequestParam(defaultValue = "false") boolean withActors) {
         return movieRepository.findById(id)
-                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser()));
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser(), withActors));
     }
 
     @GetMapping("/findByImdb/{imdbId}")
-    public Optional<MovieWithUserDetailsDto> getMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId) {
+    public Optional<MovieWithUserDetailsDto> getMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId, @RequestParam(defaultValue = "false") boolean withActors) {
         return movieRepository.findByImdbId(imdbId)
-                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser()));
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser(), withActors));
     }
 
     @GetMapping("/list/{listName}")
-    public MovieListWithUserDetails getMovieContentListByName(@PathVariable String listName) {
+    public MovieListWithUserDetails getMovieContentListByName(@PathVariable String listName, @RequestParam(defaultValue = "false") boolean withActors) {
         return userController.getCurrentUser().getContentListByName(listName, MovieList)
-                .map(baseList -> detailsFounder.findDetailedMovieDataFor((MovieContentList) baseList, userController.getCurrentUser()))
+                .map(baseList -> detailsFounder.findDetailedMovieDataFor((MovieContentList) baseList, userController.getCurrentUser(), withActors))
                 .orElseThrow(NoListWithSuchNameException::new);
     }
 
     @PostMapping("/list/{listName}")
-    public MovieListWithUserDetails addMovieContentListToUser(@PathVariable String listName) {
+    public MovieListWithUserDetails addMovieContentListToUser(@PathVariable String listName, @RequestParam(defaultValue = "false") boolean withActors) {
         User user = userController.getCurrentUser();
         MovieContentList movieContentList = userService.addNewContentListToUser(user, listName, MovieList);
-        return detailsFounder.findDetailedMovieDataFor(movieContentList, user);
+        return detailsFounder.findDetailedMovieDataFor(movieContentList, user, withActors);
     }
 
     @DeleteMapping("/list/{listName}")

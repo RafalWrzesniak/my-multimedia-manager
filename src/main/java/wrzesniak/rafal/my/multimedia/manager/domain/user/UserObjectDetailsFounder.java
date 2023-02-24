@@ -16,15 +16,15 @@ public class UserObjectDetailsFounder {
     private final BookUserDetailsRepository bookUserDetailsRepository;
     private final MovieUserDetailsRepository movieUserDetailsRepository;
 
-    public MovieWithUserDetailsDto findDetailedMovieDataFor(Movie movie, User user) {
+    public MovieWithUserDetailsDto findDetailedMovieDataFor(Movie movie, User user, boolean withActors) {
         MovieUserDetails details = movieUserDetailsRepository.findById(MovieUserId.of(movie, user)).orElse(MovieUserDetails.empty());
-        return MovieWithUserDetailsDto.of(movie, details);
+        return MovieWithUserDetailsDto.of(movie, details, withActors);
     }
 
-    public MovieListWithUserDetails findDetailedMovieDataFor(MovieContentList movieContentList, User user) {
+    public MovieListWithUserDetails findDetailedMovieDataFor(MovieContentList movieContentList, User user, boolean withActors) {
         return MovieListWithUserDetails.of(movieContentList)
                         .withMovieWithUserDetailsDtos(movieContentList.getContentList().stream()
-                                .map(movie -> findDetailedMovieDataFor(movie, user))
+                                .map(movie -> findDetailedMovieDataFor(movie, user, withActors))
                                 .toList());
     }
 
