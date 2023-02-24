@@ -85,6 +85,13 @@ public class MovieController {
         recentlyWatchedService.markMovieAsRecentlyWatched(userController.getCurrentUser(), movie, date);
     }
 
+    @GetMapping("/find/title")
+    public List<MovieWithUserDetailsDto> findMoviesByTitle(String title) {
+        return movieRepository.findByPolishTitleContainingIgnoreCaseOrTitleContainingIgnoreCase(title, title).stream()
+                .map(movie -> detailsFounder.findDetailedMovieDataFor(movie, userController.getCurrentUser(), false))
+                .toList();
+    }
+
     @GetMapping("/")
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
