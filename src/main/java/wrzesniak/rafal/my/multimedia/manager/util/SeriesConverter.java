@@ -16,7 +16,7 @@ public class SeriesConverter implements AttributeConverter<Series, String> {
 
     @Override
     public String convertToDatabaseColumn(Series series) {
-        return series.toString();
+        return series != null ? series.toString() : null;
     }
 
     @Override

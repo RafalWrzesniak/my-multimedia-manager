@@ -135,13 +135,13 @@ public class MovieController {
         }
     }
 
-    @PostMapping("/move/movie")
+    @PostMapping("/move")
     public void moveMovieFromOneListToAnother(long movieId, String originalList, String targetList, boolean removeFromOriginal) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(MovieNotFoundException::new);
         userService.moveObjectFromListToList(userController.getCurrentUser(), movie, MovieList, originalList, targetList, removeFromOriginal);
     }
 
-    @DeleteMapping("/movie/delete")
+    @DeleteMapping("/delete")
     public void removeMovieFromDatabase(long movieId) {
         movieRepository.deleteById(movieId);
         log.info("Movie with id {} deleted from database", movieId);
