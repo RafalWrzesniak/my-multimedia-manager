@@ -9,7 +9,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
 import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFormat;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.ISBN;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
@@ -19,7 +18,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.USER;
@@ -58,9 +60,9 @@ public class DtoMapper {
                 .genreList(getAsStrings(movieDto.getGenreList()))
                 .countryList(getAsStrings(movieDto.getCountryList()))
                 .plotLocal(movieDto.getPlotLocal())
-                .actorList(new ArrayList<>())
-                .directorList(new ArrayList<>())
-                .writerList(new ArrayList<>())
+                .actorList(new HashSet<>())
+                .directorList(new HashSet<>())
+                .writerList(new HashSet<>())
                 .createdOn(LocalDate.now())
                 .build();
     }
@@ -77,10 +79,10 @@ public class DtoMapper {
                 .build();
     }
 
-    public static List<String> getAsStrings(List<SingleFieldDto> singleFieldDtos) {
+    public static Set<String> getAsStrings(List<SingleFieldDto> singleFieldDtos) {
         return singleFieldDtos.stream()
                 .map(SingleFieldDto::value)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     private static String firstNotEmpty(String title1, String title2) {

@@ -2,14 +2,16 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details;
 
 import lombok.Builder;
 import lombok.Value;
+import lombok.With;
 import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
+@With
 @Value
 @Builder
 public class MovieWithUserDetailsDto {
@@ -23,11 +25,11 @@ public class MovieWithUserDetailsDto {
     BigDecimal imDbRating;
     Integer imDbRatingVotes;
     URL filmwebUrl;
-    List<Actor> actorList;
-    List<Actor> directorList;
-    List<Actor> writerList;
-    List<String> genreList;
-    List<String> countryList;
+    Set<Actor> actorList;
+    Set<Actor> directorList;
+    Set<Actor> writerList;
+    Set<String> genreList;
+    Set<String> countryList;
     String plotLocal;
     LocalDate createdOn;
     LocalDate watchedOn;
@@ -43,9 +45,6 @@ public class MovieWithUserDetailsDto {
                 .imDbRating(movie.getImDbRating())
                 .imDbRatingVotes(movie.getImDbRatingVotes())
                 .filmwebUrl(movie.getFilmwebUrl())
-                .actorList(movie.getActorList())
-                .directorList(movie.getDirectorList())
-                .writerList(movie.getWriterList())
                 .genreList(movie.getGenreList())
                 .countryList(movie.getCountryList())
                 .plotLocal(movie.getPlotLocal())

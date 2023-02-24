@@ -13,8 +13,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -51,22 +52,20 @@ public class Movie implements ImdbObject, Imagable {
     @ManyToMany(cascade = CascadeType.DETACH)
     @ToString.Exclude
     @JsonManagedReference
-    private List<Actor> actorList;
-    @ManyToMany
+    private Set<Actor> actorList;
     @ToString.Exclude
     @ManyToMany(cascade = CascadeType.DETACH)
     @JsonManagedReference
-    private List<Actor> directorList;
-    @ManyToMany
+    private Set<Actor> directorList;
     @ToString.Exclude
     @ManyToMany(cascade = CascadeType.DETACH)
     @JsonManagedReference
-    private List<Actor> writerList;
+    private Set<Actor> writerList;
 
     @ElementCollection
-    private List<String> genreList = new ArrayList<>();
+    private Set<String> genreList = new HashSet<>();
     @ElementCollection
-    private List<String> countryList = new ArrayList<>();
+    private Set<String> countryList = new HashSet<>();
 
     @ToString.Exclude
     private String plotLocal;
@@ -95,13 +94,11 @@ public class Movie implements ImdbObject, Imagable {
         actorsToAdd.forEach(actor -> addRole(actor, role));
     }
 
-    private void addToListIfDoNotExist(List<Actor> list, Actor actor) {
-        if(list == null) {
-            list = new ArrayList<>();
+    private void addToListIfDoNotExist(Set<Actor> set, Actor actor) {
+        if(set == null) {
+            set = new HashSet<>();
         }
-        if(!list.contains(actor)) {
-            list.add(actor);
-        }
+        set.add(actor);
     }
 
 }
