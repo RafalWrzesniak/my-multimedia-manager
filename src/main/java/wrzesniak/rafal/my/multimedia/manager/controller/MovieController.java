@@ -97,8 +97,10 @@ public class MovieController {
     }
 
     @GetMapping("/")
-    public List<Movie> getAllMovies() {
-        return movieRepository.findAll();
+    public List<Movie> getAllMovies(@RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+                                    @RequestParam(defaultValue = "id") String sortKey,
+                                    @RequestParam(defaultValue = "ASC") Direction direction) {
+        return movieRepository.findAllMovies(PageRequest.of(page, 20, Sort.by(direction, sortKey)));
     }
 
     @GetMapping("/findById/{id}")
