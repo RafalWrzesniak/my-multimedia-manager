@@ -2,6 +2,8 @@ package wrzesniak.rafal.my.multimedia.manager.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserObjectDetailsFounder;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 @RequiredArgsConstructor
 public class BookController {
 
+    private static final int PAGE_SIZE = 20;
     private final BookService bookService;
     private final BookRepository bookRepository;
     private final UserController userController;
@@ -107,10 +111,13 @@ public class BookController {
     }
 
     @GetMapping("/list/{listName}")
-    public BookListWithUserDetails getBookContentListByName(@RequestParam String listName) {
+    public BookListWithUserDetails getBookContentListByName(@RequestParam String listName,
+                                                            @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+                                                            @RequestParam(defaultValue = "id") String sortKey,
+                                                            @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
         return userController.getCurrentUser()
                 .getContentListByName(listName, BookList)
-                .map(baseContentList -> detailsFounder.findDetailedBookDataFor((BookContentList) baseContentList, userController.getCurrentUser()))
+                .map(baseContentList -> detailsFounder.findDetailedBookDataFor((BookContentList) baseContentList, userController.getCurrentUser(), PageRequest.of(page, PAGE_SIZE, Sort.by(direction, sortKey))))
                 .orElseThrow(NoListWithSuchNameException::new);
     }
 
@@ -118,7 +125,7 @@ public class BookController {
     public BookListWithUserDetails addBookContentListToUser(@RequestParam String listName) {
         User user = userController.getCurrentUser();
         BookContentList bookContentList = userService.addNewContentListToUser(user, listName, BookList);
-        return detailsFounder.findDetailedBookDataFor(bookContentList, user);
+        return detailsFounder.findDetailedBookDataFor(bookContentList, user, PageRequest.ofSize(PAGE_SIZE));
     }
 
     @DeleteMapping("/list/{listName}")

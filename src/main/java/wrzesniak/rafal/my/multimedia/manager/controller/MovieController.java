@@ -41,6 +41,8 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 @RequiredArgsConstructor
 public class MovieController {
 
+    private final static int PAGE_SIZE = 20;
+
     private final RecentlyWatchedService recentlyWatchedService;
     private final MovieCreatorService movieCreatorService;
     private final UserObjectDetailsFounder detailsFounder;
@@ -100,7 +102,7 @@ public class MovieController {
     public List<Movie> getAllMovies(@RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
                                     @RequestParam(defaultValue = "id") String sortKey,
                                     @RequestParam(defaultValue = "ASC") Direction direction) {
-        return movieRepository.findAllMovies(PageRequest.of(page, 20, Sort.by(direction, sortKey)));
+        return movieRepository.findAllMovies(PageRequest.of(page, PAGE_SIZE, Sort.by(direction, sortKey)));
     }
 
     @GetMapping("/findById/{id}")
@@ -116,9 +118,13 @@ public class MovieController {
     }
 
     @GetMapping("/list/{listName}")
-    public MovieListWithUserDetails getMovieContentListByName(@PathVariable String listName, @RequestParam(defaultValue = "false") boolean withActors) {
+    public MovieListWithUserDetails getMovieContentListByName(@PathVariable String listName,
+                                                              @RequestParam(defaultValue = "false") boolean withActors,
+                                                              @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+                                                              @RequestParam(defaultValue = "id") String sortKey,
+                                                              @RequestParam(defaultValue = "ASC") Direction direction) {
         return userController.getCurrentUser().getContentListByName(listName, MovieList)
-                .map(baseList -> detailsFounder.findDetailedMovieDataFor((MovieContentList) baseList, userController.getCurrentUser(), withActors))
+                .map(baseList -> detailsFounder.findDetailedMovieDataFor((MovieContentList) baseList, userController.getCurrentUser(), withActors, PageRequest.of(page, PAGE_SIZE, Sort.by(direction, sortKey))))
                 .orElseThrow(NoListWithSuchNameException::new);
     }
 
@@ -126,7 +132,7 @@ public class MovieController {
     public MovieListWithUserDetails addMovieContentListToUser(@PathVariable String listName, @RequestParam(defaultValue = "false") boolean withActors) {
         User user = userController.getCurrentUser();
         MovieContentList movieContentList = userService.addNewContentListToUser(user, listName, MovieList);
-        return detailsFounder.findDetailedMovieDataFor(movieContentList, user, withActors);
+        return detailsFounder.findDetailedMovieDataFor(movieContentList, user, withActors, PageRequest.ofSize(PAGE_SIZE));
     }
 
     @DeleteMapping("/list/{listName}")
