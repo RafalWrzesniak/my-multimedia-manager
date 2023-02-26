@@ -7,7 +7,11 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BookContentList;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.GameContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.Game;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.GameRepository;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.*;
@@ -18,13 +22,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserObjectDetailsFounder {
 
+    private final GameRepository gameRepository;
     private final BookRepository bookRepository;
     private final MovieRepository movieRepository;
+    private final GameUserDetailsRepository gameUserDetailsRepository;
     private final BookUserDetailsRepository bookUserDetailsRepository;
     private final MovieUserDetailsRepository movieUserDetailsRepository;
 
     public MovieWithUserDetailsDto findDetailedMovieDataFor(Movie movie, User user, boolean withActors) {
-        MovieUserDetails details = movieUserDetailsRepository.findById(MovieUserId.of(movie, user)).orElse(MovieUserDetails.empty());
+        MovieUserId movieUserId = MovieUserId.of(movie, user);
+        MovieUserDetails details = movieUserDetailsRepository.findById(movieUserId).orElse(new MovieUserDetails(movieUserId));
         return MovieWithUserDetailsDto.of(movie, details, withActors);
     }
 
@@ -37,7 +44,8 @@ public class UserObjectDetailsFounder {
     }
 
     public BookWithUserDetailsDto findDetailedBookDataFor(Book book, User user) {
-        BookUserDetails details = bookUserDetailsRepository.findById(BookUserId.of(book, user)).orElse(BookUserDetails.empty());
+        BookUserId bookUserId = BookUserId.of(book, user);
+        BookUserDetails details = bookUserDetailsRepository.findById(bookUserId).orElse(new BookUserDetails(bookUserId));
         return BookWithUserDetailsDto.of(book, details);
     }
 
@@ -49,4 +57,17 @@ public class UserObjectDetailsFounder {
                         .toList());
     }
 
+    public GameWithUserDetailsDto findDetailedGameDataFor(Game game, User user) {
+        GameUserId gameUserId = GameUserId.of(game, user);
+        GameUserDetails details = gameUserDetailsRepository.findById(gameUserId).orElse(new GameUserDetails(gameUserId));
+        return GameWithUserDetailsDto.of(game, details);
+    }
+
+    public GameListWithUserDetails findDetailedGameDataFor(GameContentList gameContentList, User user, Pageable pageRequest) {
+        GameListWithUserDetails rawList = GameListWithUserDetails.of(gameContentList);
+        List<Game> gamesFromList = gameRepository.findGamesInContentList(rawList.getId(), pageRequest);
+        return rawList.withGameWithUserDetailsDtos(gamesFromList.stream()
+                .map(game -> findDetailedGameDataFor(game, user))
+                .toList());
+    }
 }

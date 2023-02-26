@@ -1,0 +1,10 @@
+package wrzesniak.rafal.my.multimedia.manager.domain.game;
+
+public enum GamePlatform {
+
+    PC,
+    PS3, PS4, PS5,
+    XBOX_ONE, XSX, X360,
+    Switch
+
+}

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BookContentList;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.GameContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.UserAlreadyExistException;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
@@ -22,6 +23,7 @@ public class RegistrationService {
     private static final String TO_WATCH = "Do oglądnięcia";
     public static final String ALL_MOVIES = "Wszystkie filmy";
     public static final String ALL_BOOKS = "Wszystkie książki";
+    public static final String ALL_GAMES = "Wszystkie gry";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -50,6 +52,10 @@ public class RegistrationService {
         BookContentList allBooks = new BookContentList(ALL_BOOKS);
         allBooks.setAllContentList(true);
         user.getBookLists().add(allBooks);
+
+        GameContentList allGames = new GameContentList(ALL_GAMES);
+        allGames.setAllContentList(true);
+        user.getGameLists().add(allGames);
     }
 
     public User registerAdminUser(LoginCredentials credentials) throws UserAlreadyExistException {

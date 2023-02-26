@@ -10,6 +10,8 @@ import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.ISBN;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.Game;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.GameDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
@@ -76,6 +78,7 @@ public class DtoMapper {
                 .movieLists(new ArrayList<>())
                 .actorList(new ArrayList<>())
                 .bookLists(new ArrayList<>())
+                .gameLists(new ArrayList<>())
                 .build();
     }
 
@@ -110,6 +113,22 @@ public class DtoMapper {
                 .name(authorDto.getName())
                 .writtenBooks(new ArrayList<>())
                 .createdOn(LocalDate.now())
+                .build();
+    }
+
+    public static Game mapToGame(GameDto gameDto) {
+        return Game.builder()
+                .title(gameDto.getName())
+                .gryOnlineUrl(gameDto.getUrl())
+                .description(gameDto.getDescription())
+                .ratingValue(gameDto.getAggregateRating().ratingValue())
+                .ratingCount(gameDto.getAggregateRating().ratingCount())
+                .studio(gameDto.getAuthor().name())
+                .publisher(gameDto.getPublisher())
+                .playModes(new HashSet<>(gameDto.getPlayMode()))
+                .gamePlatform(new HashSet<>(gameDto.getGamePlatform()))
+                .genreList(new HashSet<>(gameDto.getGenre()))
+                .releaseDate(gameDto.getReleaseDate())
                 .build();
     }
 }

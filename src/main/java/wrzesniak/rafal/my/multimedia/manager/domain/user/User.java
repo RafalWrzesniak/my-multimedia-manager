@@ -55,6 +55,11 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<BookContentList> bookLists;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonManagedReference
+    private List<GameContentList> gameLists;
+
     public <T extends BaseContentList<?>> T addNewContentList(String listName, ContentListType type) {
         List<T> contentLists = findContentListByType(type);
         Optional<T> existingList = contentLists.stream()
@@ -70,6 +75,8 @@ public class User implements UserDetails {
             list = new ActorContentList(listName);
         } else if (type.equals(BookList)) {
             list = new BookContentList(listName);
+        } else if(type.equals(GameList)) {
+            list = new GameContentList(listName);
         } else {
             return null;
         }
@@ -98,6 +105,8 @@ public class User implements UserDetails {
             list = actorList;
         } else if(type.equals(BookList)) {
             list = bookLists;
+        } else if(type.equals(GameList)) {
+            list = gameLists;
         } else {
             throw new IllegalArgumentException();
         }
