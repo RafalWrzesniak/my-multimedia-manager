@@ -47,7 +47,7 @@ public class Game implements Imagable {
     @JsonIgnore
     @Override
     public String getUniqueId() {
-        return "game_".concat(id.toString());
+        return "game_".concat(id.toString().concat("_").concat(createdOn.toString()));
     }
 
 }
