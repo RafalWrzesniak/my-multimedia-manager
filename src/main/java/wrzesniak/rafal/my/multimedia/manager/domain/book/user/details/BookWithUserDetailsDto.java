@@ -38,7 +38,7 @@ public class BookWithUserDetailsDto {
                 .isbn(book.getIsbn().getValue())
                 .author(book.getAuthor())
                 .lubimyCzytacUrl(book.getLubimyCzytacUrl())
-                .bookFormat(book.getBookFormat())
+                .bookFormat(details.getBookFormat())
                 .datePublished(book.getDatePublished())
                 .createdOn(book.getCreatedOn())
                 .readOn(details.getReadOn())

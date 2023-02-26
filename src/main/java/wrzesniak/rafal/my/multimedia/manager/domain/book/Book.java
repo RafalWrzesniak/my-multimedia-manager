@@ -43,8 +43,6 @@ public class Book implements Imagable {
     @Column(unique = true)
     @EqualsAndHashCode.Include
     private URL lubimyCzytacUrl;
-    @Enumerated(EnumType.STRING)
-    private BookFormat bookFormat;
     @Convert(converter = SeriesConverter.class)
     private Series series;
 

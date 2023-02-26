@@ -1,9 +1,12 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book.user.details;
 
 import lombok.*;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFormat;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 @With
@@ -18,6 +21,8 @@ public class BookUserDetails {
     private BookUserId id;
 
     private LocalDate readOn;
+    @Enumerated(EnumType.STRING)
+    private BookFormat bookFormat;
 
     public BookUserDetails(BookUserId id) {
         this.id = id;

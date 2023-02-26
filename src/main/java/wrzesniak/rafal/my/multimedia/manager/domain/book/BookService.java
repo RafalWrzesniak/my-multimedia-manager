@@ -47,9 +47,8 @@ public class BookService {
         return savedBook;
     }
 
-    public Book createBookFromUrl(URL lubimyCzytacBookUrl, BookFormat bookFormat) {
+    public Book createBookFromUrl(URL lubimyCzytacBookUrl) {
         return lubimyCzytacService.createBookDtoFromUrl(lubimyCzytacBookUrl)
-                .map(bookDto -> bookDto.withBookFormat(bookFormat))
                 .map(this::createBookFromDto)
                 .orElseThrow(BookNotCreatedException::new);
     }
@@ -77,4 +76,11 @@ public class BookService {
         return existingBookByUrl.isPresent() ? existingBookByUrl : existingBookByIsbn;
     }
 
+    public void setFormatForUserBook(User user, Book book, BookFormat bookFormat) {
+        BookUserId bookUserId = BookUserId.of(book, user);
+        Optional<BookUserDetails> repoDetails = bookUserDetailsRepository.findById(bookUserId);
+        BookUserDetails bookDetails = repoDetails.orElse(new BookUserDetails(bookUserId));
+        bookDetails.setBookFormat(bookFormat);
+        bookUserDetailsRepository.save(bookDetails);
+    }
 }

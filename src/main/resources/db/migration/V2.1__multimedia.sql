@@ -1,0 +1,1 @@
+alter table book_user_details add book_format varchar(50);
