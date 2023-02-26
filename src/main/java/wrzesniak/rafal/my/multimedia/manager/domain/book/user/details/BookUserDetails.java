@@ -23,8 +23,4 @@ public class BookUserDetails {
         this.id = id;
     }
 
-    public static BookUserDetails empty() {
-        return new BookUserDetails();
-    }
-
 }

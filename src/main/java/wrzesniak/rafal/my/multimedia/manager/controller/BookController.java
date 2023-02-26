@@ -47,7 +47,8 @@ public class BookController {
     public Book createBookFromUrl(String bookUrl,
                                   @RequestParam(required = false) BookFormat bookFormat,
                                   @RequestParam(required = false) String listName) {
-        Book book = bookService.createBookFromUrl(toURL(bookUrl), bookFormat);
+        Book book = bookService.createBookFromUrl(toURL(bookUrl));
+        bookService.setFormatForUserBook(userController.getCurrentUser(), book, bookFormat);
         userService.addObjectToListIfExists(userController.getCurrentUser(), ALL_BOOKS, BookList, book);
         userService.addObjectToListIfExists(userController.getCurrentUser(), listName, BookList, book);
         return book;

@@ -22,5 +22,4 @@ public class BookUserId implements Serializable {
         return new BookUserId(book.getId(), user.getId());
     }
 
-
 }
