@@ -112,9 +112,9 @@ public class GameController {
     }
 
     @PostMapping("/markAsFinished/{gameId}/{date}")
-    public void markGameAsFinished(long gamedId,
+    public void markGameAsFinished(long gameId,
                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        Game game = gameRepository.findById(gamedId).orElseThrow(GameNotCreatedException::new);
+        Game game = gameRepository.findById(gameId).orElseThrow(GameNotCreatedException::new);
         gameService.markGameAsFinished(game, userController.getCurrentUser(), date);
     }
 

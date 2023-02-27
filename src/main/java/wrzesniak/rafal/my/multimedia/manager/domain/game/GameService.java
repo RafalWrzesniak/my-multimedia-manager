@@ -16,6 +16,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,7 @@ public class GameService {
         Optional<GameUserDetails> repoDetails = gameUserDetailsRepository.findById(gameUserId);
         GameUserDetails gameDetails = repoDetails.orElse(new GameUserDetails(gameUserId));
         gameDetails.setGamePlatform(gamePlatform);
+        log.info("Marking game `{}` as playing on {} for {}", game.getTitle(), gameDetails.getGamePlatform(), user.getUsername());
         gameUserDetailsRepository.save(gameDetails);
     }
 
@@ -52,7 +55,8 @@ public class GameService {
         GameUserId gameUserId = GameUserId.of(game, user);
         Optional<GameUserDetails> repoDetails = gameUserDetailsRepository.findById(gameUserId);
         GameUserDetails gameDetails = repoDetails.orElse(new GameUserDetails(gameUserId));
-        gameDetails.setFinishedOn(finishPlayingDate);
+        gameDetails.setFinishedOn(firstNonNull(finishPlayingDate, LocalDate.now()));
+        log.info("Marking game `{}` as finished on {} for {}", game.getTitle(), gameDetails.getFinishedOn(), user.getUsername());
         gameUserDetailsRepository.save(gameDetails);
     }
 }
