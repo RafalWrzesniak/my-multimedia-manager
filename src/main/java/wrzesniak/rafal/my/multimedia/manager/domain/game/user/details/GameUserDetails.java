@@ -25,6 +25,8 @@ public class GameUserDetails {
     @Enumerated(EnumType.STRING)
     private GamePlatform gamePlatform;
 
+    private int playedHours;
+
     public GameUserDetails(GameUserId id) {
         this.id = id;
     }

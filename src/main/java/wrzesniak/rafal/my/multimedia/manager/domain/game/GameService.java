@@ -43,20 +43,29 @@ public class GameService {
     }
 
     public void setPlatformForUserGame(Game game, User user, GamePlatform gamePlatform) {
-        GameUserId gameUserId = GameUserId.of(game, user);
-        Optional<GameUserDetails> repoDetails = gameUserDetailsRepository.findById(gameUserId);
-        GameUserDetails gameDetails = repoDetails.orElse(new GameUserDetails(gameUserId));
+        GameUserDetails gameDetails = getGameUserDetails(game, user);
         gameDetails.setGamePlatform(gamePlatform);
         log.info("Marking game `{}` as playing on {} for {}", game.getTitle(), gameDetails.getGamePlatform(), user.getUsername());
         gameUserDetailsRepository.save(gameDetails);
     }
 
     public void markGameAsFinished(Game game, User user, LocalDate finishPlayingDate) {
-        GameUserId gameUserId = GameUserId.of(game, user);
-        Optional<GameUserDetails> repoDetails = gameUserDetailsRepository.findById(gameUserId);
-        GameUserDetails gameDetails = repoDetails.orElse(new GameUserDetails(gameUserId));
+        GameUserDetails gameDetails = getGameUserDetails(game, user);
         gameDetails.setFinishedOn(firstNonNull(finishPlayingDate, LocalDate.now()));
         log.info("Marking game `{}` as finished on {} for {}", game.getTitle(), gameDetails.getFinishedOn(), user.getUsername());
         gameUserDetailsRepository.save(gameDetails);
+    }
+
+    public void setHoursPlayedForUser(Game game, User user, int playedHours) {
+        GameUserDetails gameDetails = getGameUserDetails(game, user);
+        gameDetails.setPlayedHours(playedHours);
+        log.info("Marking game `{}` as spent on {} hours for {}", game.getTitle(), gameDetails.getPlayedHours(), user.getUsername());
+        gameUserDetailsRepository.save(gameDetails);
+    }
+
+    private GameUserDetails getGameUserDetails(Game game, User user) {
+        GameUserId gameUserId = GameUserId.of(game, user);
+        Optional<GameUserDetails> repoDetails = gameUserDetailsRepository.findById(gameUserId);
+        return repoDetails.orElse(new GameUserDetails(gameUserId));
     }
 }

@@ -111,11 +111,13 @@ public class GameController {
         return gameRepository.findAllGames(pageRequest);
     }
 
-    @PostMapping("/markAsFinished/{gameId}/{date}")
+    @PostMapping("/markAsFinished/{gameId}")
     public void markGameAsFinished(long gameId,
-                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                   @RequestParam(required = false) int playedHours) {
         Game game = gameRepository.findById(gameId).orElseThrow(GameNotCreatedException::new);
         gameService.markGameAsFinished(game, userController.getCurrentUser(), date);
+        gameService.setHoursPlayedForUser(game, userController.getCurrentUser(), playedHours);
     }
 
     @DeleteMapping("/delete")

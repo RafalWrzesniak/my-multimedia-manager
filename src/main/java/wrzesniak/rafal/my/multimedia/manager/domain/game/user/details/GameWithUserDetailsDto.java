@@ -29,6 +29,7 @@ public class GameWithUserDetailsDto {
     LocalDate createdOn;
     GamePlatform userGamePlatform;
     LocalDate finishedOn;
+    int playedHours;
 
     public static GameWithUserDetailsDto of(Game game, GameUserDetails details) {
         return GameWithUserDetailsDto.builder()
@@ -46,6 +47,7 @@ public class GameWithUserDetailsDto {
                 .createdOn(game.getCreatedOn())
                 .userGamePlatform(details.getGamePlatform())
                 .finishedOn(details.getFinishedOn())
+                .playedHours(details.getPlayedHours())
                 .build();
     }
 

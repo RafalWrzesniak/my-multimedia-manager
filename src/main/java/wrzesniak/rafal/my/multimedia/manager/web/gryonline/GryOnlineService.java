@@ -49,23 +49,24 @@ public class GryOnlineService {
 
     private LocalDate getDateReleaseDateForPlatform(Document parsedUrl, GamePlatform platform) {
         Elements premiereElements = parsedUrl.getElementsByAttributeValue("class", "multi-p");
-        Optional<Element> platformReleaseDateElement = getReleaseDateElementForPlatform(premiereElements, platform);
-        Optional<String> stringDate = platformReleaseDateElement.flatMap(this::buildStringDateFromElement);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[d][dd] MMM yyyy", new Locale("pl"));
+        Element platformReleaseDateElement = getReleaseDateElementForPlatform(premiereElements, platform);
+        Optional<String> stringDate = buildStringDateFromElement(platformReleaseDateElement);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[d][dd] [MMM] yyyy", new Locale("pl"));
         return stringDate.map(dateString -> LocalDate.parse(dateString, formatter)).orElse(null);
     }
 
     private Optional<String> buildStringDateFromElement(Element element) {
-        return element.getElementsByTag("span").stream()
-                .map(Element::text)
-                .reduce((s1, s2) -> s1 + " " + s2);
+        return Optional.ofNullable(element).flatMap(e -> e.getElementsByTag("span").stream()
+                .map(el -> el.attr("class").equals("s2") ? el.text().substring(0, 3) : el.text())
+                .reduce((s1, s2) -> s1 + " " + s2));
     }
 
-    private Optional<Element> getReleaseDateElementForPlatform(Elements premiereElements, GamePlatform platform) {
+    private Element getReleaseDateElementForPlatform(Elements premiereElements, GamePlatform platform) {
         return premiereElements.stream()
                 .filter(element -> element.getElementsByTag("a").stream().
                         anyMatch(element1 -> platform == null || element1.text().equals(platform.name())))
-                .findFirst();
+                .findFirst()
+                .orElse(premiereElements.first());
     }
 
 }
