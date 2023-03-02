@@ -29,7 +29,7 @@ public class GameWithUserDetailsDto {
     LocalDate createdOn;
     GamePlatform userGamePlatform;
     LocalDate finishedOn;
-    int playedHours;
+    Integer playedHours;
 
     public static GameWithUserDetailsDto of(Game game, GameUserDetails details) {
         return GameWithUserDetailsDto.builder()
