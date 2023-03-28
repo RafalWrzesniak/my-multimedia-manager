@@ -58,7 +58,7 @@ public class BookService {
         Optional<BookUserDetails> repoDetails = bookUserDetailsRepository.findById(bookUserId);
         BookUserDetails bookDetails = repoDetails.orElse(new BookUserDetails(bookUserId));
         bookDetails.setReadOn(firstNonNull(finishReadingDay, LocalDate.now()));
-        log.info("Marking book `{}` as read on {}", book.getTitle(), bookDetails.getReadOn());
+        log.info("Marking book `{}` as read on {} for {}", book.getTitle(), bookDetails.getReadOn(), user.getUsername());
         bookUserDetailsRepository.save(bookDetails);
     }
 

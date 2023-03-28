@@ -31,7 +31,7 @@ public class RecentlyWatchedService {
     private final MovieUserDetailsRepository movieUserDetailsRepository;
 
     public void markMovieAsRecentlyWatched(User user, Movie movie, LocalDate date) {
-        log.info("Marking movie `{}` as recently watched", movie.getTitle());
+        log.info("Marking movie `{}` as recently watched for {}", movie.getTitle(), user.getUsername());
         setMovieWatchedOnDate(movie, user, date);
         addMovieToUserRecentlyWatchedMovies(user, movie);
         removeMovieFromToWatchList(user, movie);
