@@ -16,6 +16,7 @@ import java.util.Set;
 public class GameWithUserDetailsDto {
 
     long id;
+    String title;
     URL gryOnlineUrl;
     String description;
     BigDecimal ratingValue;
@@ -34,6 +35,7 @@ public class GameWithUserDetailsDto {
     public static GameWithUserDetailsDto of(Game game, GameUserDetails details) {
         return GameWithUserDetailsDto.builder()
                 .id(game.getId())
+                .title(game.getTitle())
                 .gryOnlineUrl(game.getGryOnlineUrl())
                 .description(game.getDescription())
                 .ratingValue(game.getRatingValue())
