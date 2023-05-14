@@ -24,4 +24,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "where bclcl.book_content_list_id = ?1",
             nativeQuery = true)
     List<Book> findBooksInContentList(Long contentListId, Pageable pageRequest);
+
+    List<Book> findByTitleContainingIgnoreCase(String title);
 }

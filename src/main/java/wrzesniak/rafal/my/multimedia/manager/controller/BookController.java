@@ -81,6 +81,13 @@ public class BookController {
                 .toList();
     }
 
+    @GetMapping("/find/title")
+    public List<BookWithUserDetailsDto> findBooksByTitle(String title) {
+        return bookRepository.findByTitleContainingIgnoreCase(title).stream()
+                .map(book -> detailsFounder.findDetailedBookDataFor(book, userController.getCurrentUser()))
+                .toList();
+    }
+
     @GetMapping("/authors")
     public List<Author> getAllAuthors() {
         return authorRepository.findAll();
