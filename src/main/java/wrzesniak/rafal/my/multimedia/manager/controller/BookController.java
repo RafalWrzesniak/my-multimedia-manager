@@ -153,16 +153,11 @@ public class BookController {
         userService.removeObjectFromContentList(userController.getCurrentUser(), listName, BookList, book);
     }
 
-    @PostMapping("/list/{currentListName}/{newListName}/{bookId}")
-    public void moveBookToAnotherList(@RequestParam String currentListName, @RequestParam String newListName, @RequestParam long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
-        userService.removeObjectFromContentList(userController.getCurrentUser(), currentListName, BookList, book);
-        userService.addObjectToContentList(userController.getCurrentUser(), newListName, BookList, book);
-    }
 
-    @PostMapping("/move/book")
-    public void moveBookFromOneListToAnother(long bookId, String originalList, String targetList, boolean removeFromOriginal) {
-        Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
-        userService.moveObjectFromListToList(userController.getCurrentUser(), book, BookList, originalList, targetList, removeFromOriginal);
+    @PostMapping("/list/{currentListName}/{newListName}")
+    public void moveBookToAnotherList(@RequestParam List<Long> bookIds, @RequestParam String currentListName, @RequestParam String newListName, boolean removeFromOriginal) {
+        bookIds.stream()
+                .map(bookId -> bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new))
+                .forEach(book -> userService.moveObjectFromListToList(userController.getCurrentUser(), book, BookList, currentListName, newListName, removeFromOriginal));
     }
 }
