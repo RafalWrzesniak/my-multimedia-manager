@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 
 import java.net.URL;

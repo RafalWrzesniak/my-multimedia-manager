@@ -1,10 +1,10 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.book;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.AuthorDto;
 
 import java.time.LocalDate;
 

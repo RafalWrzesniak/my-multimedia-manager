@@ -12,6 +12,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.UserAlreadyExistException;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
 
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.*;
 import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.ADMIN;
 
 @Slf4j
@@ -21,9 +22,6 @@ import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.ADMIN;
 public class RegistrationService {
 
     private static final String TO_WATCH = "Do oglądnięcia";
-    public static final String ALL_MOVIES = "Wszystkie filmy";
-    public static final String ALL_BOOKS = "Wszystkie książki";
-    public static final String ALL_GAMES = "Wszystkie gry";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -45,15 +43,15 @@ public class RegistrationService {
         toWatchList.setToWatchList(true);
         user.getMovieLists().add(toWatchList);
 
-        MovieContentList allMovies = new MovieContentList(ALL_MOVIES);
+        MovieContentList allMovies = new MovieContentList(MOVIE_LIST.getAllProductsListName());
         allMovies.setAllContentList(true);
         user.getMovieLists().add(allMovies);
 
-        BookContentList allBooks = new BookContentList(ALL_BOOKS);
+        BookContentList allBooks = new BookContentList(BOOK_LIST.getAllProductsListName());
         allBooks.setAllContentList(true);
         user.getBookLists().add(allBooks);
 
-        GameContentList allGames = new GameContentList(ALL_GAMES);
+        GameContentList allGames = new GameContentList(GAME_LIST.getAllProductsListName());
         allGames.setAllContentList(true);
         user.getGameLists().add(allGames);
     }

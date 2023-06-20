@@ -9,7 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 
 import java.util.List;
 
-import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.BookList;
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.BOOK_LIST;
 
 @With
 @Value
@@ -30,7 +30,7 @@ public class BookListWithUserDetails {
                 .name(bookContentList.getName())
                 .isAllBooksList(bookContentList.isAllContentList())
                 .booksNumber(bookContentList.getContentList().size())
-                .listType(BookList)
+                .listType(BOOK_LIST)
                 .build();
     }
 }

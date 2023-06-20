@@ -35,4 +35,18 @@ public class StringFunctions {
     public static URL toURL(String url) {
         return new URL(url);
     }
+    
+    public static String toSnakeCase(String camelCaseString) {
+        StringBuilder output = new StringBuilder();
+        output.append(Character.toLowerCase(camelCaseString.charAt(0)));
+        for (int i = 1; i < camelCaseString.length(); i++) {
+            char currentChar = camelCaseString.charAt(i);
+            if(Character.isUpperCase(currentChar)) {
+                output.append("_");
+            }
+            output.append(Character.toLowerCase(currentChar));
+        }
+        return output.toString();
+    }
+
 }

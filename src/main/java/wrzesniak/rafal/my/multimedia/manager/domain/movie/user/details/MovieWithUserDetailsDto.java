@@ -3,8 +3,8 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
 
 import java.math.BigDecimal;
 import java.net.URL;

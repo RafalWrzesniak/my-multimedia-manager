@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.movie;
+package wrzesniak.rafal.my.multimedia.manager.domain.movie.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,12 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.aop.TrackExecutionTime;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorCreatorService;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
+import wrzesniak.rafal.my.multimedia.manager.domain.ProductCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
-import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorCreatorService;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Role;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.repository.MovieRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
@@ -26,7 +29,7 @@ import java.util.Optional;
 @Service
 @Validated
 @RequiredArgsConstructor
-public class MovieCreatorService {
+public class MovieCreatorService implements ProductCreatorService<Movie> {
 
     private static final int ACTORS_TO_DOWNLOAD = 10;
     private static final int CREW_TO_DOWNLOAD = 4;
@@ -37,35 +40,39 @@ public class MovieCreatorService {
     private final MovieRepository movieRepository;
     private final ActorCreatorService actorCreatorService;
 
+    @Override
     @Transactional
-    public Optional<Movie> createMovieFromFilmwebUrl(@Valid @FilmwebMovieUrl URL filmwebMovieUrl) {
+    @TrackExecutionTime
+    public Movie createProductFromUrl(URL filmwebMovieUrl) {
         Optional<Movie> movieInDatabase = movieRepository.findByFilmwebUrl(filmwebMovieUrl);
         if(movieInDatabase.isPresent()) {
             log.info("Movie with url `{}` already exists in database: {}", filmwebMovieUrl, movieInDatabase);
-            return movieInDatabase;
+            return movieInDatabase.get();
         }
         String polishTitle = filmwebService.findTitleFromUrl(filmwebMovieUrl);
         if(polishTitle == null) {
             log.warn("Cannot find movie title basing on provided url: {}", filmwebMovieUrl);
-            return Optional.empty();
+            throw new IllegalArgumentException("Cannot find polish title in this url");
         }
         return createMovieFromPolishTitle(polishTitle, filmwebMovieUrl);
     }
 
     @Transactional
     @TrackExecutionTime
-    public Optional<Movie> createMovieFromPolishTitle(String polishTitle, URL filmwebUrl) {
+    public Movie createMovieFromPolishTitle(String polishTitle, URL filmwebUrl) {
         Optional<MovieDto> foundByTitle = imdbService.findBestMovieForSearchByTitle(polishTitle);
-        return foundByTitle.flatMap(movieDto -> createMovieFromImdbId(movieDto.getId(), filmwebUrl));
+        return foundByTitle
+                .map(movieDto -> createMovieFromImdbId(movieDto.getId(), filmwebUrl))
+                .orElseThrow();
     }
 
     @Transactional
     @TrackExecutionTime
-    public Optional<Movie> createMovieFromImdbId(@Valid @ImdbId String imdbId, URL filmwebUrl) {
+    public Movie createMovieFromImdbId(@Valid @ImdbId String imdbId, URL filmwebUrl) {
         Optional<Movie> movieInDataBase = movieRepository.findByImdbId(imdbId);
         if(movieInDataBase.isPresent()) {
             log.info("Movie with imdb id `{}` already exists in database: {}", imdbId, movieInDataBase.get());
-            return movieInDataBase;
+            return movieInDataBase.get();
         }
         MovieDto movieDto = imdbService.getMovieById(imdbId);
         Movie movie = DtoMapper.mapToMovie(movieDto);
@@ -75,7 +82,7 @@ public class MovieCreatorService {
         movie.setFilmwebUrl(filmwebUrl);
         Movie savedMovie = movieRepository.save(movie);
         log.info("Movie saved in database: {}", savedMovie);
-        return Optional.of(savedMovie);
+        return savedMovie;
     }
 
     private void formatPlotLocal(Movie movie) {

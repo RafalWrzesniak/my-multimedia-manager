@@ -2,9 +2,9 @@ package wrzesniak.rafal.my.multimedia.manager.domain.book.user.details;
 
 import lombok.Builder;
 import lombok.Value;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFormat;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
 
 import java.net.URL;
 import java.time.LocalDate;

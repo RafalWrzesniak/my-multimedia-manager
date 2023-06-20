@@ -1,31 +1,31 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.book;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorRepository;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookUserDetails;
+import wrzesniak.rafal.my.multimedia.manager.domain.ProductCreatorService;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.AuthorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.AuthorRepository;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.ISBN;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.repository.BookRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookUserDetailsRepository;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookUserId;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.BookNotCreatedException;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.lubimyczytac.LubimyCzytacService;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BookService {
+public class BookCreatorService implements ProductCreatorService<Book> {
 
     private final WebOperations webOperations;
     private final BookRepository bookRepository;
@@ -47,19 +47,17 @@ public class BookService {
         return savedBook;
     }
 
-    public Book createBookFromUrl(URL lubimyCzytacBookUrl) {
+    @Override
+    public Book createProductFromUrl(URL lubimyCzytacBookUrl) {
         return lubimyCzytacService.createBookDtoFromUrl(lubimyCzytacBookUrl)
                 .map(this::createBookFromDto)
                 .orElseThrow(BookNotCreatedException::new);
     }
 
-    public void markBookAsRead(Book book, User user, LocalDate finishReadingDay) {
-        BookUserId bookUserId = BookUserId.of(book, user);
-        Optional<BookUserDetails> repoDetails = bookUserDetailsRepository.findById(bookUserId);
-        BookUserDetails bookDetails = repoDetails.orElse(new BookUserDetails(bookUserId));
-        bookDetails.setReadOn(firstNonNull(finishReadingDay, LocalDate.now()));
-        log.info("Marking book `{}` as read on {} for {}", book.getTitle(), bookDetails.getReadOn(), user.getUsername());
-        bookUserDetailsRepository.save(bookDetails);
+    private Optional<Book> findBookByUrlOrIsbn(String bookUrl, ISBN isbn) {
+        Optional<Book> existingBookByUrl = bookRepository.findByLubimyCzytacUrl(toURL(bookUrl));
+        Optional<Book> existingBookByIsbn = bookRepository.findByIsbn(isbn);
+        return existingBookByUrl.isPresent() ? existingBookByUrl : existingBookByIsbn;
     }
 
     private void addOrCreateAuthorToBook(Book book, AuthorDto authorDto) {
@@ -70,17 +68,4 @@ public class BookService {
                 });
     }
 
-    public Optional<Book> findBookByUrlOrIsbn(String bookUrl, ISBN isbn) {
-        Optional<Book> existingBookByUrl = bookRepository.findByLubimyCzytacUrl(toURL(bookUrl));
-        Optional<Book> existingBookByIsbn = bookRepository.findByIsbn(isbn);
-        return existingBookByUrl.isPresent() ? existingBookByUrl : existingBookByIsbn;
-    }
-
-    public void setFormatForUserBook(User user, Book book, BookFormat bookFormat) {
-        BookUserId bookUserId = BookUserId.of(book, user);
-        Optional<BookUserDetails> repoDetails = bookUserDetailsRepository.findById(bookUserId);
-        BookUserDetails bookDetails = repoDetails.orElse(new BookUserDetails(bookUserId));
-        bookDetails.setBookFormat(bookFormat);
-        bookUserDetailsRepository.save(bookDetails);
-    }
 }

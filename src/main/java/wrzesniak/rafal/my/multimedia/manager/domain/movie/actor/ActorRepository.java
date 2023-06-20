@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.actor;
+package wrzesniak.rafal.my.multimedia.manager.domain.movie.actor;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;

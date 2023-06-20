@@ -1,10 +1,11 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.movie;
+package wrzesniak.rafal.my.multimedia.manager.domain.movie.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserId;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MovieList;
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MOVIE_LIST;
 
 @Slf4j
 @Service
@@ -30,7 +31,8 @@ public class RecentlyWatchedService {
     private final UserService userService;
     private final MovieUserDetailsRepository movieUserDetailsRepository;
 
-    public void markMovieAsRecentlyWatched(User user, Movie movie, LocalDate date) {
+    public void markMovieAsRecentlyWatched(Movie movie, LocalDate date) {
+        User user = userService.getCurrentUser();
         log.info("Marking movie `{}` as recently watched for {}", movie.getTitle(), user.getUsername());
         setMovieWatchedOnDate(movie, user, date);
         addMovieToUserRecentlyWatchedMovies(user, movie);
@@ -47,19 +49,19 @@ public class RecentlyWatchedService {
 
     private void addMovieToUserRecentlyWatchedMovies(User user, Movie movie) {
         MovieContentList recentlyWatchedList = findUsersRecentlyWatchedList(user);
-        userService.addObjectToContentList(user, recentlyWatchedList.getName(), MovieList, movie);
+        userService.addObjectToContentList(user, recentlyWatchedList.getName(), MOVIE_LIST, movie);
         List<Movie> moviesToRemove = recentlyWatchedList.getContentList().stream()
                 .map(movie1 -> Pair.of(movie1, movieUserDetailsRepository.findById(MovieUserId.of(movie1, user))))
                 .sorted(Comparator.comparing(pair -> pair.getSecond().orElseThrow().getWatchedOn()))
                 .skip(MAX_RECENTLY_WATCHED_SIZE)
                 .map(Pair::getFirst)
                 .toList();
-        moviesToRemove.forEach(movieToRemove -> userService.removeObjectFromContentList(user, recentlyWatchedList.getName(), MovieList, movieToRemove));
+        moviesToRemove.forEach(movieToRemove -> userService.removeObjectFromContentList(user, recentlyWatchedList.getName(), MOVIE_LIST, movieToRemove));
     }
 
     private void removeMovieFromToWatchList(User user, Movie movie) {
         Optional<MovieContentList> list = findUsersToWatchList(user);
-        list.ifPresent(movieContentList -> userService.removeObjectFromContentList(user, movieContentList.getName(), MovieList, movie));
+        list.ifPresent(movieContentList -> userService.removeObjectFromContentList(user, movieContentList.getName(), MOVIE_LIST, movie));
     }
 
     private MovieContentList findUsersRecentlyWatchedList(User user) {
@@ -67,7 +69,7 @@ public class RecentlyWatchedService {
                 .filter(MovieContentList::isRecentlyWatchedList)
                 .findFirst()
                 .orElseGet(() -> {
-                    MovieContentList recentlyWatched = userService.addNewContentListToUser(user, RECENTLY_WATCHED, MovieList);
+                    MovieContentList recentlyWatched = userService.addNewContentListToUser(user, RECENTLY_WATCHED, MOVIE_LIST);
                     recentlyWatched.setRecentlyWatchedList(true);
                     return recentlyWatched;
                 });

@@ -1,10 +1,10 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.movie;
+package wrzesniak.rafal.my.multimedia.manager.domain.movie.objects;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Role;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Role;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;

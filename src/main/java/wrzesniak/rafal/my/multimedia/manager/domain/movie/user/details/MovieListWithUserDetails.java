@@ -9,7 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 
 import java.util.List;
 
-import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MovieList;
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MOVIE_LIST;
 
 @With
 @Value
@@ -34,7 +34,7 @@ public class MovieListWithUserDetails {
                 .isRecentlyWatchedList(movieContentList.isRecentlyWatchedList())
                 .moviesNumber(movieContentList.getContentList().size())
                 .isAllMoviesList(movieContentList.isAllContentList())
-                .listType(MovieList)
+                .listType(MOVIE_LIST)
                 .build();
     }
 }

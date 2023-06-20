@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.game;
+package wrzesniak.rafal.my.multimedia.manager.domain.game.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

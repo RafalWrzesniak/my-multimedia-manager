@@ -1,6 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.web.imdb;
 
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
 
 import java.net.URL;
 

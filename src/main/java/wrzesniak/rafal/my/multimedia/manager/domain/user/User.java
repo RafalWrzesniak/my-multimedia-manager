@@ -45,10 +45,6 @@ public class User implements UserDetails {
     @ToString.Exclude
     @JsonManagedReference
     private List<MovieContentList> movieLists;
-    @OneToMany(cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<ActorContentList> actorList;
 
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
@@ -69,13 +65,11 @@ public class User implements UserDetails {
             return existingList.get();
         }
         BaseContentList<?> list;
-        if(type.equals(MovieList)) {
+        if(type.equals(MOVIE_LIST)) {
             list = new MovieContentList(listName);
-        } else if(type.equals(ActorList)) {
-            list = new ActorContentList(listName);
-        } else if (type.equals(BookList)) {
+        } else if (type.equals(BOOK_LIST)) {
             list = new BookContentList(listName);
-        } else if(type.equals(GameList)) {
+        } else if(type.equals(GAME_LIST)) {
             list = new GameContentList(listName);
         } else {
             return null;
@@ -99,13 +93,11 @@ public class User implements UserDetails {
 
     public <T extends BaseContentList<?>> List<T> findContentListByType(ContentListType type) {
         List<?> list;
-        if(type.equals(MovieList)) {
+        if(type.equals(MOVIE_LIST)) {
             list = movieLists;
-        } else if(type.equals(ActorList)) {
-            list = actorList;
-        } else if(type.equals(BookList)) {
+        } else if(type.equals(BOOK_LIST)) {
             list = bookLists;
-        } else if(type.equals(GameList)) {
+        } else if(type.equals(GAME_LIST)) {
             list = gameLists;
         } else {
             throw new IllegalArgumentException();

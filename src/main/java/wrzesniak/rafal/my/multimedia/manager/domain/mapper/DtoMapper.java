@@ -3,17 +3,17 @@ package wrzesniak.rafal.my.multimedia.manager.domain.mapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.AuthorDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.ISBN;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.Game;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.GameDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.Movie;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.AuthorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.ISBN;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.Game;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 
 import java.math.BigDecimal;
@@ -76,7 +76,6 @@ public class DtoMapper {
                 .userRole(USER)
                 .enabled(true)
                 .movieLists(new ArrayList<>())
-                .actorList(new ArrayList<>())
                 .bookLists(new ArrayList<>())
                 .gameLists(new ArrayList<>())
                 .build();

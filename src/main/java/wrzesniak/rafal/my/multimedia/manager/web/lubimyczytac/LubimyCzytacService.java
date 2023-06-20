@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
 import wrzesniak.rafal.my.multimedia.manager.util.SeriesConverter;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 

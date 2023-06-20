@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.actor;
+package wrzesniak.rafal.my.multimedia.manager.domain.movie.actor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

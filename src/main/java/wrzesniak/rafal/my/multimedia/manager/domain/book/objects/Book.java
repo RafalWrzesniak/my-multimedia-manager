@@ -1,9 +1,9 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.book;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import wrzesniak.rafal.my.multimedia.manager.domain.author.Author;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.author.Author;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.util.IsbnConverter;
 import wrzesniak.rafal.my.multimedia.manager.util.SeriesConverter;

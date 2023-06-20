@@ -2,7 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.Series;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Series;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

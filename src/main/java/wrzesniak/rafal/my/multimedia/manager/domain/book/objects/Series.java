@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.book;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.objects;
 
 import static java.lang.String.format;
 

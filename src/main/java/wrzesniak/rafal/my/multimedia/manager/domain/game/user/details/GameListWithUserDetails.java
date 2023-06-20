@@ -9,7 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.GameContentList;
 
 import java.util.List;
 
-import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.GameList;
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.GAME_LIST;
 
 @With
 @Value
@@ -30,7 +30,7 @@ public class GameListWithUserDetails {
                 .name(gameContentList.getName())
                 .isAllGamesList(gameContentList.isAllContentList())
                 .gamesNumber(gameContentList.getContentList().size())
-                .listType(GameList)
+                .listType(GAME_LIST)
                 .build();
     }
 

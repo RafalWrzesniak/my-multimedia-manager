@@ -1,8 +1,8 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.author;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.author;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.Book;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
 
 import javax.persistence.*;
 import java.time.LocalDate;

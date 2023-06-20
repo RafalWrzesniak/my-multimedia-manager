@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.book;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;

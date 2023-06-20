@@ -1,6 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.util;
 
-import wrzesniak.rafal.my.multimedia.manager.domain.book.ISBN;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.ISBN;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

@@ -2,9 +2,9 @@ package wrzesniak.rafal.my.multimedia.manager.domain.game.user.details;
 
 import lombok.Builder;
 import lombok.Value;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.Game;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.GamePlatform;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.PlayMode;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.Game;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode;
 
 import java.math.BigDecimal;
 import java.net.URL;

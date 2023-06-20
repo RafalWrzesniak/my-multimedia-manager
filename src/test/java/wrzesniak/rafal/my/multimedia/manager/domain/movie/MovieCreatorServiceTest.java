@@ -10,7 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import wrzesniak.rafal.my.multimedia.manager.domain.actor.ActorCreatorService;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorCreatorService;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.repository.MovieRepository;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.service.MovieCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
@@ -63,8 +66,7 @@ class MovieCreatorServiceTest {
         given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
 
         // when
-        Optional<Movie> optionalMovieFromPolishTitle = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE, StringFunctions.toURL("https://www.filmweb.pl/film/Matrix-1999-628"));
-        Movie createdMovie = optionalMovieFromPolishTitle.orElseThrow();
+        Movie createdMovie = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE, StringFunctions.toURL("https://www.filmweb.pl/film/Matrix-1999-628"));
         createdMovie.setImDbRating(BigDecimal.valueOf(8.7));
         createdMovie.setImDbRatingVotes(1000);
 
@@ -89,7 +91,7 @@ class MovieCreatorServiceTest {
         MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, filmwebService, movieRepository, actorCreatorService));
 
         // when
-        creatorServiceSpy.createMovieFromFilmwebUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
+        creatorServiceSpy.createProductFromUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
 
         // then
         verify(creatorServiceSpy).createMovieFromPolishTitle("Matrix (1999)", new URL("https://www.filmweb.pl/film/Matrix-1999-628"));

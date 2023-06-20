@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.author;
+package wrzesniak.rafal.my.multimedia.manager.domain.book.author;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -9,8 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.GameDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.GamePlatform;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;

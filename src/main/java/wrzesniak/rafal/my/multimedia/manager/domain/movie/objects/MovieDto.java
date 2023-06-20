@@ -1,4 +1,4 @@
-package wrzesniak.rafal.my.multimedia.manager.domain.movie;
+package wrzesniak.rafal.my.multimedia.manager.domain.movie.objects;
 
 import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
