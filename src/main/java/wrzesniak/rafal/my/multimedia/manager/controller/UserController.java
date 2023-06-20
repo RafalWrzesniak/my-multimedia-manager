@@ -24,8 +24,9 @@ public class UserController {
 
     @GetMapping("/")
     public User getCurrentUser() {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(username).orElseThrow(NoSuchUserException::new);
+//        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        return userRepository.findByUsername(username).orElseThrow(NoSuchUserException::new);
+        return userRepository.findByUsername("windxore").orElseThrow(NoSuchUserException::new);
     }
 
     @GetMapping("/lists")
