@@ -1,7 +1,8 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book.user.details;
 
 import lombok.*;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFormat;
+import wrzesniak.rafal.my.multimedia.manager.domain.ProductUserId;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -24,8 +25,8 @@ public class BookUserDetails {
     @Enumerated(EnumType.STRING)
     private BookFormat bookFormat;
 
-    public BookUserDetails(BookUserId id) {
-        this.id = id;
+    public BookUserDetails(ProductUserId productUserId) {
+        this.id = new BookUserId(productUserId.getProductId(), productUserId.getUserId());
     }
 
 }

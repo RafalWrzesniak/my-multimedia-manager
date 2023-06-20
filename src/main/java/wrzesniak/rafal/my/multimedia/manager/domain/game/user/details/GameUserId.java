@@ -3,7 +3,8 @@ package wrzesniak.rafal.my.multimedia.manager.domain.game.user.details;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.Game;
+import wrzesniak.rafal.my.multimedia.manager.domain.ProductUserId;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.Game;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 
 import javax.persistence.Embeddable;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameUserId implements Serializable {
+public class GameUserId implements Serializable, ProductUserId {
 
     private long gameId;
     private long userId;
@@ -22,4 +23,8 @@ public class GameUserId implements Serializable {
         return new GameUserId(game.getId(), user.getId());
     }
 
+    @Override
+    public long getProductId() {
+        return gameId;
+    }
 }

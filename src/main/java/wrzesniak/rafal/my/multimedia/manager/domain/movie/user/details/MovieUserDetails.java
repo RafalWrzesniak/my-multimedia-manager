@@ -1,6 +1,7 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details;
 
 import lombok.*;
+import wrzesniak.rafal.my.multimedia.manager.domain.ProductUserId;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -19,8 +20,8 @@ public class MovieUserDetails {
 
     private LocalDate watchedOn;
 
-    public MovieUserDetails(MovieUserId movieUserId) {
-        this.id = movieUserId;
+    public MovieUserDetails(ProductUserId movieUserId) {
+        this.id = new MovieUserId(movieUserId.getProductId(), movieUserId.getUserId());
     }
 
 }
