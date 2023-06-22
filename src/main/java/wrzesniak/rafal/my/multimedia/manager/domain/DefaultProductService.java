@@ -44,7 +44,6 @@ public class DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT, PRODUCT_U
     }
 
     public void addProductToList(PRODUCT product, String listName) {
-        log.info("Adding to list `{}` object {}", listName, product);
         userService.addObjectToContentList(userService.getCurrentUser(), listName, contentListType, product);
     }
 

@@ -38,7 +38,7 @@ public class UserService {
             log.info("Added to list `{}` object: {}", list.getName(), objectToAdd);
         }
          else {
-             log.debug("List `{}` already have object: {}", list.getName(), objectToAdd);
+             log.info("List `{}` already have object: {}", list.getName(), objectToAdd);
         }
         userRepository.save(user);
     }
