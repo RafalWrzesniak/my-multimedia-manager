@@ -2,6 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,11 @@ import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public User getCurrentUser() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(username).orElseThrow(NoSuchUserException::new);
+    }
 
     public <LIST extends BaseContentList<?>> LIST addNewContentListToUser(User user, String listName, ContentListType listType) {
         LIST contentList = user.addNewContentList(listName, listType);
