@@ -52,7 +52,7 @@ public class DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT, PRODUCT_U
         PRODUCT_USER_DETAILS productUserDetails = genericUserObjectDetailsFounder.getProductUserDetails(product, userService.getCurrentUser());
         LocalDate realFinishDate = firstNonNull(finishDate, LocalDate.now());
         PRODUCT_USER_DETAILS updatedDetails = setFinishedOn.apply(productUserDetails, realFinishDate);
-        log.info("Marking {} as finished on {} for {}", product, realFinishDate, userService.getCurrentUser());
+        log.info("Marking {} as finished on {} for {}", product, realFinishDate, userService.getCurrentUser().getUsername());
         genericUserObjectDetailsFounder.saveUserProductDetails(updatedDetails);
     }
 
