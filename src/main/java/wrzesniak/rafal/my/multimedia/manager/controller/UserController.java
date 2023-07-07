@@ -5,11 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookListWithUserDetails;
-import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameListWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserRepository;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,21 +18,14 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
-
-    @GetMapping("/")
-    public User getCurrentUser() {
-//        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        return userRepository.findByUsername(username).orElseThrow(NoSuchUserException::new);
-        return userRepository.findByUsername("windxore").orElseThrow(NoSuchUserException::new);
-    }
+    private final UserService userService;
 
     @GetMapping("/lists")
     public List<?> getGeneralListsInfo() {
         return Stream.of(
-                        getCurrentUser().getMovieLists().stream().map(MovieListWithUserDetails::of).toList(),
-                        getCurrentUser().getGameLists().stream().map(GameListWithUserDetails::of).toList(),
-                        getCurrentUser().getBookLists().stream().map(BookListWithUserDetails::of).toList()
+                        userService.getCurrentUser().getMovieLists().stream().map(MovieListWithUserDetails::of).toList(),
+                        userService.getCurrentUser().getGameLists().stream().map(GameListWithUserDetails::of).toList(),
+                        userService.getCurrentUser().getBookLists().stream().map(BookListWithUserDetails::of).toList()
                 )
                 .flatMap(Collection::stream)
                 .toList();
