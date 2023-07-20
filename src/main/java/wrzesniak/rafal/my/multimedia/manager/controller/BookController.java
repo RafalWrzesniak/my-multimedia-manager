@@ -18,6 +18,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Validated
+@CrossOrigin
 @RestController
 @RequestMapping("book")
 public class BookController extends BaseProductController<BookWithUserDetailsDto, Book, BookUserDetails, BookListWithUserDetails> {

@@ -20,7 +20,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 @RequiredArgsConstructor
 public abstract class BaseProductController<PRODUCT_WITH_USER_DETAILS, PRODUCT, PRODUCT_USER_DETAILS, LIST_DETAILED_PRODUCTS> {
 
-    private static final int PAGE_SIZE = 20;
+    private static final String PAGE_SIZE = "20";
 
     private final DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT, PRODUCT_USER_DETAILS, LIST_DETAILED_PRODUCTS> defaultProductService;
 
@@ -39,20 +39,26 @@ public abstract class BaseProductController<PRODUCT_WITH_USER_DETAILS, PRODUCT, 
 
     @GetMapping("/property")
     public List<PRODUCT_WITH_USER_DETAILS> findProductsByProperty(@RequestParam String propertyName,
-                                                                  @RequestParam @Size(min = 3, max = 10) String value) {
-        return defaultProductService.findByPropertyName(toSnakeCase(propertyName), value.replaceAll("[^a-zA-Z0-9]", ""));
+                                                                  @RequestParam @Size(min = 3, max = 15) String value,
+                                                                  @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+                                                                  @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
+                                                                  @RequestParam(defaultValue = "id") @Size(min = 2, max = 20) String sortKey,
+                                                                  @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(direction, toSnakeCase(sortKey)));
+        return defaultProductService.findByPropertyName(propertyName, value.replaceAll("[^a-zA-Z0-9 ]", ""), pageRequest);
     }
 
     @GetMapping("/lastFinished")
-    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "10") Integer numberOfPositions) {
+    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "20") Integer numberOfPositions) {
         return defaultProductService.findLastFinished(numberOfPositions);
     }
 
     @GetMapping("/")
     public List<PRODUCT_WITH_USER_DETAILS> findAllProducts(@RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+                                                           @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
                                                            @RequestParam(defaultValue = "id") @Size(min = 2, max = 20) String sortKey,
                                                            @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
-        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE, Sort.by(direction, toSnakeCase(sortKey)));
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(direction, toSnakeCase(sortKey)));
         return defaultProductService.findAllUserProducts(pageRequest);
     }
 
@@ -78,9 +84,10 @@ public abstract class BaseProductController<PRODUCT_WITH_USER_DETAILS, PRODUCT, 
     @GetMapping("/list")
     public LIST_DETAILED_PRODUCTS findProductListByName(@RequestParam String listName,
                                                         @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
+                                                        @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
                                                         @RequestParam(defaultValue = "id") String sortKey,
                                                         @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
-        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE, Sort.by(direction, toSnakeCase(sortKey)));
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(direction, toSnakeCase(sortKey)));
         return defaultProductService.getContentListByName(listName, pageRequest);
     }
 

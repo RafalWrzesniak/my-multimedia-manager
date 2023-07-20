@@ -1,6 +1,7 @@
 package wrzesniak.rafal.my.multimedia.manager.controller;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
@@ -8,6 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
 import javax.validation.Valid;
 
 @Validated
+@CrossOrigin
 @RestController
 public class LoginController {
 

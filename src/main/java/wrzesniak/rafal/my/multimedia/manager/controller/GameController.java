@@ -19,6 +19,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Validated
+@CrossOrigin
 @RestController
 @RequestMapping("game")
 public class GameController extends BaseProductController<GameWithUserDetailsDto, Game, GameUserDetails, GameListWithUserDetails> {

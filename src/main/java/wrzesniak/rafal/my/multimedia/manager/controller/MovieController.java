@@ -15,6 +15,7 @@ import java.net.URL;
 
 @Slf4j
 @Validated
+@CrossOrigin
 @RestController
 @RequestMapping("movie")
 public class MovieController extends BaseProductController<MovieWithUserDetailsDto, Movie, MovieUserDetails, MovieListWithUserDetails> {
@@ -26,16 +27,16 @@ public class MovieController extends BaseProductController<MovieWithUserDetailsD
         this.movieFacade = movieFacade;
     }
 
-    @PostMapping("/create/title/")
+    @PostMapping("/create/title/{polishTitle}")
     public Movie findAndCreateMovieByPolishTitle(@PathVariable String polishTitle,
-                                           @RequestParam(required = false) URL filmwebUrl,
-                                           @RequestParam(required = false) String listName) {
+                                                 @RequestParam(required = false) URL filmwebUrl,
+                                                 @RequestParam(required = false) String listName) {
         Movie movie = movieFacade.createMovieFromPolishTitle(polishTitle, filmwebUrl);
         movieFacade.addProductToList(movie, listName);
         return movie;
     }
 
-    @PostMapping("/create/imdb/")
+    @PostMapping("/create/imdb/{imdbId}")
     public Movie findAndCreateMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId,
                                             @RequestParam(required = false) URL filmwebUrl,
                                             @RequestParam(required = false) String listName) {
