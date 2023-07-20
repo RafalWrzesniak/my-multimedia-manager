@@ -3,6 +3,7 @@ package wrzesniak.rafal.my.multimedia.manager.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import wrzesniak.rafal.my.multimedia.manager.domain.GenericUserObjectDetailsFounder;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.repository.BookRepository;
@@ -58,4 +59,14 @@ public class GenericServiceConfig {
         return new GenericUserObjectDetailsFounder<>(movieUserDetailsRepository, movieRepository, movieUserOperation);
     }
 
+
+    @Bean
+    public CommonsRequestLoggingFilter logFilter() {
+        CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
+        filter.setIncludeQueryString(true);
+        filter.setIncludePayload(true);
+        filter.setMaxPayloadLength(10000);
+        filter.setIncludeHeaders(false);
+        return filter;
+    }
 }
