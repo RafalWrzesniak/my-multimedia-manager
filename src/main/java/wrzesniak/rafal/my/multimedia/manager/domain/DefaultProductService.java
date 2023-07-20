@@ -2,6 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.BaseContentList;
@@ -60,12 +61,19 @@ public class DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT, PRODUCT_U
         return genericUserObjectDetailsFounder.getUserDetailsForProduct(id, userService.getCurrentUser());
     }
 
-    public List<PRODUCT_WITH_USER_DETAILS> findByPropertyName(String propertyName, String propertyValue) {
-        List<PRODUCT> contentList = getAllUserProducts();
+    public List<PRODUCT_WITH_USER_DETAILS> findByPropertyName(String propertyName, String propertyValue, Pageable pageable) {
         Specification<PRODUCT> likeIgnoreCase = (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(criteriaBuilder.lower(root.get(propertyName)), "%" + propertyValue.toLowerCase() + "%");
-
-        return productRepository.findAll(likeIgnoreCase).stream()
+            criteriaBuilder.like(criteriaBuilder.lower(root.get(propertyName)), "%" + propertyValue.toLowerCase() + "%");
+        Specification<PRODUCT> inSetLikeIgnoreCase = (root, query, criteriaBuilder) ->
+            criteriaBuilder.like(criteriaBuilder.lower(root.join(propertyName)), "%" + propertyValue.toLowerCase() + "%");
+        Page<PRODUCT> foundProducts;
+        try {
+            foundProducts = productRepository.findAll(likeIgnoreCase, pageable);
+        } catch (IllegalArgumentException e) {
+            foundProducts = productRepository.findAll(inSetLikeIgnoreCase, pageable);
+        }
+        List<PRODUCT> contentList = getAllUserProducts();
+        return foundProducts.stream()
                 .filter(contentList::contains)
                 .map(this::mapToProductWithUserDetails)
                 .toList();
