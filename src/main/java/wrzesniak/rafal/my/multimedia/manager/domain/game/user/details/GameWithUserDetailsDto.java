@@ -31,6 +31,7 @@ public class GameWithUserDetailsDto {
     GamePlatform userGamePlatform;
     LocalDate finishedOn;
     Integer playedHours;
+    String imagePath;
 
     public static GameWithUserDetailsDto of(Game game, GameUserDetails details) {
         return GameWithUserDetailsDto.builder()
@@ -50,6 +51,7 @@ public class GameWithUserDetailsDto {
                 .userGamePlatform(details.getGamePlatform())
                 .finishedOn(details.getFinishedOn())
                 .playedHours(details.getPlayedHours())
+                .imagePath("/" + game.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
                 .build();
     }
 

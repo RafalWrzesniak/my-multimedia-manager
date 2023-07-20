@@ -33,6 +33,7 @@ public class MovieWithUserDetailsDto {
     String plotLocal;
     LocalDate createdOn;
     LocalDate watchedOn;
+    String imagePath;
 
     public static MovieWithUserDetailsDto of(Movie movie, MovieUserDetails details, boolean withActors) {
         MovieWithUserDetailsDto detailsDto = MovieWithUserDetailsDto.builder()
@@ -50,6 +51,7 @@ public class MovieWithUserDetailsDto {
                 .plotLocal(movie.getPlotLocal())
                 .createdOn(movie.getCreatedOn())
                 .watchedOn(details.getWatchedOn())
+                .imagePath("/" + movie.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
                 .build();
         if(withActors) {
             detailsDto = detailsDto

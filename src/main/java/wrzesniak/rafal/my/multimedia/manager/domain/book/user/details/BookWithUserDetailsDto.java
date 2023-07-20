@@ -26,6 +26,7 @@ public class BookWithUserDetailsDto {
     LocalDate datePublished;
     LocalDate createdOn;
     LocalDate readOn;
+    String imagePath;
 
     public static BookWithUserDetailsDto of(Book book, BookUserDetails details) {
         return BookWithUserDetailsDto.builder()
@@ -42,6 +43,7 @@ public class BookWithUserDetailsDto {
                 .datePublished(book.getDatePublished())
                 .createdOn(book.getCreatedOn())
                 .readOn(details.getReadOn())
+                .imagePath("/" + book.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
                 .build();
     }
 }
