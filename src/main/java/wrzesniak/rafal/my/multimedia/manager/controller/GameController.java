@@ -31,7 +31,7 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
         this.gameFacade = gameFacade;
     }
 
-    @PostMapping("/createGame")
+    @PostMapping("/createGameUrl")
     public Game createProductFromUrl(@RequestParam String url,
                                      @RequestParam GamePlatform gamePlatform,
                                      @RequestParam(required = false) String listName) {
