@@ -52,4 +52,9 @@ public class BaseContentList<T> {
     public void removeContent(T content) {
         contentList.remove(content);
     }
+
+    public boolean contains(T content) {
+        return contentList.contains(content);
+    }
+
 }

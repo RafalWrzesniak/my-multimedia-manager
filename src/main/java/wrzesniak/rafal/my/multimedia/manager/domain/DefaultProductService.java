@@ -48,6 +48,14 @@ public class DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT, PRODUCT_U
         userService.addObjectToContentList(userService.getCurrentUser(), listName, contentListType, product);
     }
 
+    public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(long productId) {
+        PRODUCT product = productRepository.findById(productId).orElseThrow();
+        return userService.getCurrentUser().findContentListByType(contentListType).stream()
+                .filter(baseContentList -> ((BaseContentList<PRODUCT>) baseContentList).contains(product))
+                .map(list -> genericUserObjectDetailsFounder.getUserDetailsOfList((BaseContentList<PRODUCT>) list, null))
+                .toList();
+    }
+
     public void markProductAsFinished(long productId, LocalDate finishDate) {
         PRODUCT product = productRepository.findById(productId).orElseThrow();
         PRODUCT_USER_DETAILS productUserDetails = genericUserObjectDetailsFounder.getProductUserDetails(product, userService.getCurrentUser());

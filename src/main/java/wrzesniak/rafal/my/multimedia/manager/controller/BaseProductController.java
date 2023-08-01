@@ -101,6 +101,10 @@ public abstract class BaseProductController<PRODUCT_WITH_USER_DETAILS, PRODUCT, 
         defaultProductService.removeContentList(listName);
     }
 
+    @GetMapping("/list/with/{productId}")
+    public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(@PathVariable long productId) {
+        return defaultProductService.findListsContainingProduct(productId);
+    }
 
     @PostMapping("/list/add")
     public void addProductToContentList(@RequestParam String listName,
