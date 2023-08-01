@@ -5,6 +5,7 @@ import lombok.Value;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.author.Author;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Series;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class BookWithUserDetailsDto {
     BookFormat bookFormat;
     LocalDate datePublished;
     LocalDate createdOn;
+    Series series;
     LocalDate readOn;
     String imagePath;
 
@@ -43,6 +45,7 @@ public class BookWithUserDetailsDto {
                 .datePublished(book.getDatePublished())
                 .createdOn(book.getCreatedOn())
                 .readOn(details.getReadOn())
+                .series(book.getSeries())
                 .imagePath("/" + book.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
                 .build();
     }
