@@ -55,10 +55,15 @@ public class BookController extends BaseProductController<BookWithUserDetailsDto
         throw new IllegalStateException("This endpoint is not accessible for this controller. Please try /book/createBookUrl");
     }
 
-
     @GetMapping("/findByAuthorId")
     public List<BookWithUserDetailsDto> getBooksByAuthorId(@RequestParam long authorId) {
         return bookFacade.findByAuthorId(authorId);
+    }
+
+    @PostMapping("/{bookId}/format")
+    public void setBookFormat(@PathVariable long bookId,
+                              @RequestParam BookFormat bookFormat) {
+        bookFacade.setFormatForUserBook(bookId, bookFormat);
     }
 
 }

@@ -37,6 +37,10 @@ public class BookFacade extends DefaultProductService<BookWithUserDetailsDto, Bo
         return book;
     }
 
+    public void setFormatForUserBook(long bookId, BookFormat bookFormat) {
+        bookRepository.findById(bookId).ifPresent(book -> setFormatForUserBook(book, bookFormat));
+    }
+
     public void setFormatForUserBook(Book book, BookFormat bookFormat) {
         BookUserDetails bookDetails = super.getProductUserDetails(book);
         bookDetails.setBookFormat(bookFormat);

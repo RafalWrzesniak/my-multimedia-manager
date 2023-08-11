@@ -34,6 +34,10 @@ public class GameFacade extends DefaultProductService<GameWithUserDetailsDto, Ga
         return game;
     }
 
+    public void setPlatformForUserGame(long gameId, GamePlatform gamePlatform) {
+        super.findRawProductById(gameId).ifPresent(game -> setPlatformForUserGame(game, gamePlatform));
+    }
+
     public void setPlatformForUserGame(Game game, GamePlatform gamePlatform) {
         GameUserDetails gameDetails = super.getProductUserDetails(game);
         gameDetails.setGamePlatform(gamePlatform);

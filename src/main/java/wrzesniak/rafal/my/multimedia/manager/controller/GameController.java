@@ -13,6 +13,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDe
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUserDetailsDto;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.GAME_LIST;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
@@ -41,12 +42,18 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
         return game;
     }
 
-    @PostMapping("/{id}/finishGame")
-    public void markGameAsFinished(long gameId,
-                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                   @RequestParam(required = false) int playedHours) {
-        super.markProductAsFinished(gameId, date);
-        gameFacade.setHoursPlayedForUser(gameId, playedHours);
+    @PostMapping("/{gameId}/finishGame")
+    public void markGameAsFinished(@PathVariable long gameId,
+                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate,
+                                   @RequestParam(required = false) Integer playedHours) {
+        super.markProductAsFinished(gameId, finishDate);
+        Optional.of(playedHours).ifPresent(timeSpent -> gameFacade.setHoursPlayedForUser(gameId, timeSpent));
+    }
+
+    @PostMapping("/{gameId}/platform")
+    public void setGamePlatform(@PathVariable long gameId,
+                                @RequestParam GamePlatform gamePlatform) {
+        gameFacade.setPlatformForUserGame(gameId, gamePlatform);
     }
 
     @Override
