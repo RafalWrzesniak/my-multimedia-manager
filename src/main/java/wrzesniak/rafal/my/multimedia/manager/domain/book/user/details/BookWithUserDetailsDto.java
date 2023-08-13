@@ -46,7 +46,7 @@ public class BookWithUserDetailsDto {
                 .createdOn(book.getCreatedOn())
                 .readOn(details.getReadOn())
                 .series(book.getSeries())
-                .imagePath("/" + book.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
+                .imagePath("/" + book.getImagePath().get(0).subpath(3, 6).toString().replaceAll("\\\\", "/"))
                 .build();
     }
 }

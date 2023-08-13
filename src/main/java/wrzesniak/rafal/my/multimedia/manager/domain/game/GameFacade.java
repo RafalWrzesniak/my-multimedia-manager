@@ -14,6 +14,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUs
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import java.net.URL;
+import java.util.Optional;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.GAME_LIST;
 
@@ -30,7 +31,7 @@ public class GameFacade extends DefaultProductService<GameWithUserDetailsDto, Ga
 
     public Game createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform) {
         Game game = gameCreatorService.createGameFromUrl(gryOnlineUrl, gamePlatform);
-        setPlatformForUserGame(game, gamePlatform);
+        Optional.ofNullable(gamePlatform).ifPresent(platform -> setPlatformForUserGame(game, platform));
         return game;
     }
 

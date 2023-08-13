@@ -76,7 +76,7 @@ public class MovieCreatorService implements ProductCreatorService<Movie> {
         }
         MovieDto movieDto = imdbService.getMovieById(imdbId);
         Movie movie = DtoMapper.mapToMovie(movieDto);
-        webOperations.downloadResizedImageTo(movieDto.getImage(), movie.getImagePath());
+        movie.getImagePath().forEach(imagePath -> webOperations.downloadResizedImageTo(movieDto.getImage(), imagePath));
         formatPlotLocal(movie);
         addFullCastToMovie(movie, movieDto);
         movie.setFilmwebUrl(filmwebUrl);

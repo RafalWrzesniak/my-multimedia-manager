@@ -39,7 +39,7 @@ public class GameCreatorService implements ProductCreatorService<Game> {
         GameDto gameDtoFromUrl = gryOnlineService.createGameDtoFromUrl(gryOnlineUrl, gamePlatform).orElseThrow(GameNotCreatedException::new);
         Game game = DtoMapper.mapToGame(gameDtoFromUrl);
         Game savedGame = gameRepository.save(game);
-        webOperations.downloadImageToDirectory((gameDtoFromUrl.getImage()), savedGame.getImagePath());
+        game.getImagePath().forEach(imagePath -> webOperations.downloadImageToDirectory((gameDtoFromUrl.getImage()), imagePath));
         log.info("Game created from URL: {}", savedGame);
         return savedGame;
     }

@@ -51,7 +51,7 @@ public class GameWithUserDetailsDto {
                 .userGamePlatform(details.getGamePlatform())
                 .finishedOn(details.getFinishedOn())
                 .playedHours(details.getPlayedHours())
-                .imagePath("/" + game.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
+                .imagePath("/" + game.getImagePath().get(0).subpath(3, 6).toString().replaceAll("\\\\", "/"))
                 .build();
     }
 

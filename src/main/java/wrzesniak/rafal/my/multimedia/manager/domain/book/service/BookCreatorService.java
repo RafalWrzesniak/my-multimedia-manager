@@ -42,7 +42,7 @@ public class BookCreatorService implements ProductCreatorService<Book> {
         Book book = DtoMapper.mapToBook(bookDto);
         addOrCreateAuthorToBook(book, bookDto.getAuthor());
         Book savedBook = bookRepository.save(book);
-        webOperations.downloadImageToDirectory(toURL(bookDto.getImage()), savedBook.getImagePath());
+        savedBook.getImagePath().forEach(imagePath -> webOperations.downloadImageToDirectory(toURL(bookDto.getImage()), imagePath));
         log.info("Book created from URL: {}", book);
         return savedBook;
     }

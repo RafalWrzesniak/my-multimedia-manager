@@ -36,7 +36,7 @@ public class ActorCreatorService {
         }
         ActorDto actorDto = optionalActorDto.get();
         Actor actor = DtoMapper.mapToActor(actorDto);
-        webOperations.downloadResizedImageTo(actorDto.getImage(), actor.getImagePath());
+        actor.getImagePath().forEach(imagePath -> webOperations.downloadResizedImageTo(actorDto.getImage(), imagePath));
         Actor savedActor = actorRepository.save(actor);
         return Optional.of(savedActor);
     }

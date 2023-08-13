@@ -51,7 +51,7 @@ public class MovieWithUserDetailsDto {
                 .plotLocal(movie.getPlotLocal())
                 .createdOn(movie.getCreatedOn())
                 .watchedOn(details.getWatchedOn())
-                .imagePath("/" + movie.getImagePath().subpath(1, 4).toString().replaceAll("\\\\", "/"))
+                .imagePath("/" + movie.getImagePath().get(0).subpath(3, 6).toString().replaceAll("\\\\", "/"))
                 .build();
         if(withActors) {
             detailsDto = detailsDto

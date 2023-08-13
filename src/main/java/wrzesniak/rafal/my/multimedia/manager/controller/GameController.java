@@ -34,11 +34,11 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
 
     @PostMapping("/createGameUrl")
     public Game createProductFromUrl(@RequestParam String url,
-                                     @RequestParam GamePlatform gamePlatform,
+                                     @RequestParam(required = false) GamePlatform gamePlatform,
                                      @RequestParam(required = false) String listName) {
         Game game = gameFacade.createGameFromUrl(toURL(url), gamePlatform);
         gameFacade.addProductToList(game, GAME_LIST.getAllProductsListName());
-        gameFacade.addProductToList(game, listName);
+        Optional.ofNullable(listName).ifPresent(list -> gameFacade.addProductToList(game, list));
         return game;
     }
 
@@ -47,7 +47,7 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate,
                                    @RequestParam(required = false) Integer playedHours) {
         super.markProductAsFinished(gameId, finishDate);
-        Optional.of(playedHours).ifPresent(timeSpent -> gameFacade.setHoursPlayedForUser(gameId, timeSpent));
+        Optional.ofNullable(playedHours).ifPresent(timeSpent -> gameFacade.setHoursPlayedForUser(gameId, timeSpent));
     }
 
     @PostMapping("/{gameId}/platform")
