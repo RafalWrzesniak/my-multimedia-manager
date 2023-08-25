@@ -49,4 +49,8 @@ public class StringFunctions {
         return output.toString();
     }
 
+    public static String firstNotEmpty(String title1, String title2) {
+        return title1 != null && !title1.isEmpty() ? title1 : title2;
+    }
+
 }

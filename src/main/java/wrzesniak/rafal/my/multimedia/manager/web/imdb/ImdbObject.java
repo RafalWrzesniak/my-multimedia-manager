@@ -14,6 +14,9 @@ public interface ImdbObject {
     String getImdbId();
 
     default URL getImdbUrl() {
+        if(getImdbId() == null) {
+            return null;
+        }
         String titleOrPerson = getClass().getSimpleName().equals(Movie.class.getSimpleName()) ? "title" : "person";
         return toURL(IMDB_BASE_URL + slash(titleOrPerson) + slash(getImdbId()));
     }

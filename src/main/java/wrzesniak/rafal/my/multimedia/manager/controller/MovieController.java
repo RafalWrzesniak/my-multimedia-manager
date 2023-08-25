@@ -12,6 +12,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 
 import javax.validation.Valid;
 import java.net.URL;
+import java.util.Optional;
 
 @Slf4j
 @Validated
@@ -32,7 +33,7 @@ public class MovieController extends BaseProductController<MovieWithUserDetailsD
                                                  @RequestParam(required = false) URL filmwebUrl,
                                                  @RequestParam(required = false) String listName) {
         Movie movie = movieFacade.createMovieFromPolishTitle(polishTitle, filmwebUrl);
-        movieFacade.addProductToList(movie, listName);
+        Optional.ofNullable(listName).ifPresent(list -> movieFacade.addProductToList(movie, list));
         return movie;
     }
 
@@ -41,7 +42,7 @@ public class MovieController extends BaseProductController<MovieWithUserDetailsD
                                             @RequestParam(required = false) URL filmwebUrl,
                                             @RequestParam(required = false) String listName) {
         Movie movie = movieFacade.createMovieFromImdbId(imdbId, filmwebUrl);
-        movieFacade.addProductToList(movie, listName);
+        Optional.ofNullable(listName).ifPresent(list -> movieFacade.addProductToList(movie, list));
         return movie;
     }
 

@@ -13,6 +13,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookUserDe
 import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookWithUserDetailsDto;
 
 import java.util.List;
+import java.util.Optional;
 
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
@@ -36,7 +37,7 @@ public class BookController extends BaseProductController<BookWithUserDetailsDto
                                   @RequestParam(required = false) String listName) {
         Book book = bookFacade.createFromUrl(toURL(bookUrl));
         bookFacade.setFormatForUserBook(book, bookFormat);
-        bookFacade.addProductToList(book, listName);
+        Optional.ofNullable(listName).ifPresent(list -> bookFacade.addProductToList(book, list));
         return book;
     }
 
@@ -44,7 +45,7 @@ public class BookController extends BaseProductController<BookWithUserDetailsDto
     public Book createBookFromDto(@RequestBody BookDto bookDto,
                                   @RequestParam(required = false) String listName) {
         Book book = bookFacade.createBookFromDto(bookDto);
-        bookFacade.addProductToList(book, listName);
+        Optional.ofNullable(listName).ifPresent(list -> bookFacade.addProductToList(book, list));
         return book;
     }
 

@@ -1,20 +1,23 @@
 package wrzesniak.rafal.my.multimedia.manager.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
 
 import javax.validation.Valid;
 
+@Slf4j
 @Validated
-@CrossOrigin
+@CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials","Authorization"})
 @RestController
 public class LoginController {
 
     @PostMapping("/login")
-    public void login(@Valid LoginCredentials credentials) {
+    public void login(@RequestBody @Valid LoginCredentials credentials) {
     }
 
 }

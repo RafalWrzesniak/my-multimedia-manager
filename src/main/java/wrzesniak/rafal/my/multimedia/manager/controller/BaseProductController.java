@@ -28,7 +28,7 @@ public abstract class BaseProductController<PRODUCT_WITH_USER_DETAILS, PRODUCT, 
     public PRODUCT createProductFromUrl(@RequestParam String url,
                                         @RequestParam(required = false) @Size(min = 3, max = 30) String listName) {
         PRODUCT product = defaultProductService.createFromUrl(toURL(url));
-        defaultProductService.addProductToList(product, listName);
+        Optional.ofNullable(listName).ifPresent(name -> defaultProductService.addProductToList(product, name));
         return product;
     }
 

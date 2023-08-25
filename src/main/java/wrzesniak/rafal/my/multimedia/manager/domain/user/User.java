@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static javax.persistence.GenerationType.IDENTITY;
-import static wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials.*;
+import static wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials.USERNAME_VALIDATION_MESSAGE;
+import static wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials.USERNAME_VALIDATION_REGEX;
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.*;
 
 @With
@@ -36,7 +37,6 @@ public class User implements UserDetails {
     private String username;
 
     @JsonIgnore
-    @Pattern(regexp = PASSWORD_VALIDATION_REGEX, message = PASSWORD_VALIDATION_MESSAGE)
     private String password;
     private UserRole userRole;
     private boolean enabled;
