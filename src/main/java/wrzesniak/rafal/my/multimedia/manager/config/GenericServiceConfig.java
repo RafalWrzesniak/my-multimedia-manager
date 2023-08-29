@@ -3,7 +3,6 @@ package wrzesniak.rafal.my.multimedia.manager.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import wrzesniak.rafal.my.multimedia.manager.domain.GenericUserObjectDetailsFounder;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.repository.BookRepository;

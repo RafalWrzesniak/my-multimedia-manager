@@ -23,7 +23,7 @@ public class RegisterController {
 
     private final RegistrationService registrationService;
 
-    @PostMapping("/")
+    @PostMapping
     public UserDetails registerNewUser(@Valid LoginCredentials credentials) {
         log.info("Trying to register new user: {}", credentials.getUsername());
         return registrationService.registerNewUserAccount(credentials);
