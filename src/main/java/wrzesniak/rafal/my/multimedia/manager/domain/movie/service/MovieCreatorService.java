@@ -17,13 +17,15 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.repository.MovieRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
-import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
+import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebMovieCreator;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
 import javax.validation.Valid;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+
+import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Service
@@ -36,9 +38,9 @@ public class MovieCreatorService implements ProductCreatorService<Movie> {
 
     private final ImdbService imdbService;
     private final WebOperations webOperations;
-    private final FilmwebService filmwebService;
     private final MovieRepository movieRepository;
     private final ActorCreatorService actorCreatorService;
+    private final FilmwebMovieCreator filmwebMovieCreator;
 
     @Override
     @Transactional
@@ -49,12 +51,11 @@ public class MovieCreatorService implements ProductCreatorService<Movie> {
             log.info("Movie with url `{}` already exists in database: {}", filmwebMovieUrl, movieInDatabase);
             return movieInDatabase.get();
         }
-        String polishTitle = filmwebService.findTitleFromUrl(filmwebMovieUrl);
-        if(polishTitle == null) {
-            log.warn("Cannot find movie title basing on provided url: {}", filmwebMovieUrl);
-            throw new IllegalArgumentException("Cannot find polish title in this url");
-        }
-        return createMovieFromPolishTitle(polishTitle, filmwebMovieUrl);
+        Movie movie = filmwebMovieCreator.createMovieFromUrl(filmwebMovieUrl);
+        Movie savedMovie = movieRepository.save(movie);
+        log.info("Movie saved in database: {}", savedMovie);
+        savedMovie.getImagePath().forEach(imagePath -> webOperations.downloadImageToDirectory(toURL(savedMovie.getWebImageUrl()), imagePath));
+        return savedMovie;
     }
 
     @Transactional
@@ -76,7 +77,7 @@ public class MovieCreatorService implements ProductCreatorService<Movie> {
         }
         MovieDto movieDto = imdbService.getMovieById(imdbId);
         Movie movie = DtoMapper.mapToMovie(movieDto);
-        movie.getImagePath().forEach(imagePath -> webOperations.downloadResizedImageTo(movieDto.getImage(), imagePath));
+        movie.getImagePath().forEach(imagePath -> webOperations.downloadImageToDirectory(movieDto.getImage(), imagePath));
         formatPlotLocal(movie);
         addFullCastToMovie(movie, movieDto);
         movie.setFilmwebUrl(filmwebUrl);

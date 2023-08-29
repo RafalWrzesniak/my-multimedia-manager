@@ -6,7 +6,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.Imagable;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Role;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
-import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbObject;
 
 import javax.persistence.*;
@@ -34,9 +33,9 @@ public class Movie implements ImdbObject, Imagable {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ImdbId
-    @Column(unique = true)
-    @EqualsAndHashCode.Include
+//    @ImdbId
+//    @Column(unique = true)
+//    @EqualsAndHashCode.Include
     private String imdbId;
 
     private String title;
@@ -45,8 +44,10 @@ public class Movie implements ImdbObject, Imagable {
     private Integer runtimeMins;
     private BigDecimal imDbRating;
     private Integer imDbRatingVotes;
+    private String webImageUrl;
 
     @FilmwebMovieUrl
+    @EqualsAndHashCode.Include
     private URL filmwebUrl;
 
     @ManyToMany(cascade = CascadeType.DETACH)
@@ -74,7 +75,7 @@ public class Movie implements ImdbObject, Imagable {
 
     @Override
     public String getUniqueId() {
-        return imdbId;
+        return imdbId != null ? imdbId : "movie_".concat(id.toString().concat("_").concat(createdOn.toString()));
     }
 
     public void addRole(Actor actor, Role role) {

@@ -16,7 +16,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.service.MovieCreatorSe
 import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
-import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebService;
+import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebMovieCreator;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
 import java.math.BigDecimal;
@@ -41,14 +41,14 @@ class MovieCreatorServiceTest {
     private ImdbService imdbService;
     @Autowired
     private WebOperations webOperations;
-    @Autowired
-    private FilmwebService filmwebService;
     @MockBean
     private ActorCreatorService actorCreatorService;
     @MockBean
     private MovieRepository movieRepository;
     @MockBean
     private S3Service s3Service;
+    @MockBean
+    private FilmwebMovieCreator filmwebMovieCreator;
 
     @Autowired
     private MovieCreatorService movieCreatorService;
@@ -87,7 +87,7 @@ class MovieCreatorServiceTest {
         ArgumentCaptor<Movie> movieParam = ArgumentCaptor.forClass(Movie.class);
         when(movieRepository.save(movieParam.capture())).thenAnswer((invocation) -> movieParam.getValue());
         given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
-        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, filmwebService, movieRepository, actorCreatorService));
+        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, movieRepository, actorCreatorService, filmwebMovieCreator));
 
         // when
         creatorServiceSpy.createProductFromUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
