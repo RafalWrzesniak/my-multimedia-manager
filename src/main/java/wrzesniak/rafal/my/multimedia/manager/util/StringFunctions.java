@@ -33,7 +33,7 @@ public class StringFunctions {
 
     @SneakyThrows
     public static URL toURL(String url) {
-        return new URL(url);
+        return new URL(url.replaceAll(" ", "+"));
     }
     
     public static String toSnakeCase(String camelCaseString) {
