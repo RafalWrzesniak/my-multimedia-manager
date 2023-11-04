@@ -2,6 +2,8 @@ package wrzesniak.rafal.my.multimedia.manager.web.gryonline;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -26,12 +29,15 @@ public class GryOnlineService {
 
     private final ObjectMapper objectMapper;
     private final WebOperations webOperations;
+    private final RetryPolicy<Object> retryPolicy;
 
     @SneakyThrows
     public Optional<GameDto> createGameDtoFromUrl(URL gryOnlineUrl, GamePlatform platform) {
         log.info("Trying to parse game information from {}", gryOnlineUrl);
-        Document parsedUrl = webOperations.parseUrl(gryOnlineUrl);
-        Element dataElement = parsedUrl.getElementsByAttributeValue("type", "application/ld+json")
+        AtomicReference<Document> parsedUrl = new AtomicReference<>();
+        Failsafe.with(retryPolicy)
+                .run(() -> parsedUrl.set(webOperations.parseUrl(gryOnlineUrl)));
+        Element dataElement = parsedUrl.get().getElementsByAttributeValue("type", "application/ld+json")
                 .first();
         String data = dataElement != null ? dataElement.data() : "Failed to find game data";
         GameDto gameDto;
@@ -41,7 +47,7 @@ public class GryOnlineService {
             log.warn("Failed to map objet to GameDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
         }
-        LocalDate releaseDate = getDateReleaseDateForPlatform(parsedUrl, platform);
+        LocalDate releaseDate = getDateReleaseDateForPlatform(parsedUrl.get(), platform);
         gameDto.setReleaseDate(releaseDate);
         log.info("Created GameDto: {}", gameDto);
         return Optional.of(gameDto);

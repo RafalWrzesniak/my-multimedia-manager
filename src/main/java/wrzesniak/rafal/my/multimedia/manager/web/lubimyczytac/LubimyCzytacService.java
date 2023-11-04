@@ -2,6 +2,8 @@ package wrzesniak.rafal.my.multimedia.manager.web.lubimyczytac;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class LubimyCzytacService {
 
     private final LubimyCzytacConfiguration configuration;
+    private final RetryPolicy<Object> retryPolicy;
     private final SeriesConverter seriesConverter;
     private final WebOperations webOperations;
     private final ObjectMapper objectMapper;
@@ -29,7 +33,11 @@ public class LubimyCzytacService {
     @SneakyThrows
     public Optional<BookDto> createBookDtoFromUrl(URL lubimyCzytacBookUrl) {
         log.info("Trying to parse book information from {}", lubimyCzytacBookUrl);
-        Document parsedUrl = webOperations.parseUrl(lubimyCzytacBookUrl);
+        AtomicReference<Document> parsedUrlAtomic = new AtomicReference<>();
+        Failsafe.with(retryPolicy)
+                .run(() -> parsedUrlAtomic.set(webOperations.parseUrl(lubimyCzytacBookUrl)));
+
+        Document parsedUrl = parsedUrlAtomic.get();
         Map<String, String> parsing = configuration.getParsing();
         Element dataElement = parsedUrl.getElementsByAttributeValue(parsing.get("main-attribute"), parsing.get("main-attribute-value"))
                 .first();

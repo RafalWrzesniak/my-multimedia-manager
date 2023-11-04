@@ -1,21 +1,24 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
 import com.google.common.annotations.VisibleForTesting;
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.firstNotEmpty;
@@ -30,32 +33,30 @@ public class FilmwebMovieCreator {
     private final static String HREF = "href";
 
     private final WebOperations webOperations;
+    private final RetryPolicy<Object> retryPolicy;
 
     @SneakyThrows
-    public Movie createMovieFromUrl(URL filmwebUrl) {
-        Document document = webOperations.parseUrl(filmwebUrl);
-        String director = document.getElementsByAttributeValue(ITEMPROP, "director").first().attr("title");
-        String writer = document.getElementsByAttributeValue(ITEMPROP, "creator").first().attr("title");
+    public MovieDynamo createMovieFromUrl(URL filmwebUrl) {
+        AtomicReference<Document> parsedUrlAtomic = new AtomicReference<>();
+        Failsafe.with(retryPolicy)
+                .run(() -> parsedUrlAtomic.set(webOperations.parseUrl(filmwebUrl)));
+        Document document = parsedUrlAtomic.get();
 
-        return Movie.builder()
+        return MovieDynamo.builder()
                 .title(firstNotEmpty(parseTitle(document), parsePolishTitle(document)))
                 .filmwebUrl(filmwebUrl)
                 .polishTitle(parsePolishTitle(document))
                 .releaseDate(parseReleaseDate(document))
                 .runtimeMins(parseDuration(document))
-                .imDbRating(BigDecimal.valueOf(parseRating(document)))
-                .imDbRatingVotes(parseRatingCount(document))
+                .rating(BigDecimal.valueOf(parseRating(document)))
+                .ratingVotes(parseRatingCount(document))
                 .genreList(parseGenres(document))
                 .countryList(parseCountries(document))
                 .plotLocal(parseDescription(document))
                 .webImageUrl(parseImage(document))
-                .actorList(new HashSet<>())
-                .directorList(new HashSet<>())
-                .writerList(new HashSet<>())
-                .createdOn(LocalDate.now())
+                .createdOn(LocalDateTime.now())
                 .build();
     }
-
 
     @VisibleForTesting
     String parseTitle(Document document) {
@@ -104,7 +105,7 @@ public class FilmwebMovieCreator {
     }
 
     @VisibleForTesting
-    String parseImage(Document document) {
+    public String parseImage(Document document) {
         return document.getElementsByAttributeValue(ITEMPROP, "image").first().attr("content");
     }
 
