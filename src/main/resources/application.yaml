@@ -49,7 +49,7 @@ application:
       series: /cykl/
 
   jwt:
-    secret: secret
+    secret: x54bhbyf66bry6r5@!#!@sds
     expirationTime: 3600000
 
 server:
@@ -58,8 +58,8 @@ server:
     include-stacktrace: never
 
 aws:
-  access-key: secret
-  secret-key: secret
+  access-key: AKIA2DE4ZYLSU3S7QEHD
+  secret-key: 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
   s3-bucket-name: multimedia-images
 
 logging:
