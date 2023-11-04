@@ -33,7 +33,7 @@ on:
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: my-multimedia-manager-repository
-  ECS_SERVICE: my-multimedia-manager
+  ECS_SERVICE: my-multimedia-manager-service
   ECS_CLUSTER: my-multimedia-manager-ecs
   ECS_TASK_DEFINITION: .aws/task-definition.json
   CONTAINER_NAME: my-multimedia-manager
