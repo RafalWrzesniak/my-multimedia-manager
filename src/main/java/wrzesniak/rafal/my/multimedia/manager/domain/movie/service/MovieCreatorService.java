@@ -6,118 +6,39 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.aop.TrackExecutionTime;
-import wrzesniak.rafal.my.multimedia.manager.domain.ProductCreatorService;
-import wrzesniak.rafal.my.multimedia.manager.domain.mapper.ActorInMovieDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorCreatorService;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Role;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.repository.MovieRepository;
-import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
-import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
+import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebMovieCreator;
-import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
-import javax.validation.Valid;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
-
-import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @Service
 @Validated
 @RequiredArgsConstructor
-public class MovieCreatorService implements ProductCreatorService<Movie> {
+public class MovieCreatorService implements ProductCreatorService<MovieWithUserDetailsDto> {
 
-    private static final int ACTORS_TO_DOWNLOAD = 10;
-    private static final int CREW_TO_DOWNLOAD = 4;
-
-    private final ImdbService imdbService;
-    private final WebOperations webOperations;
-    private final MovieRepository movieRepository;
-    private final ActorCreatorService actorCreatorService;
     private final FilmwebMovieCreator filmwebMovieCreator;
+    private final DefaultDynamoRepository<MovieWithUserDetailsDto, MovieUserDetailsDynamo, MovieDynamo> movieDynamoRepository;
 
     @Override
     @Transactional
     @TrackExecutionTime
-    public Movie createProductFromUrl(URL filmwebMovieUrl) {
-        Optional<Movie> movieInDatabase = movieRepository.findByFilmwebUrl(filmwebMovieUrl);
+    public MovieWithUserDetailsDto createProductFromUrl(URL filmwebMovieUrl) {
+        Optional<MovieWithUserDetailsDto> movieInDatabase = movieDynamoRepository.getById(filmwebMovieUrl.toString());
         if(movieInDatabase.isPresent()) {
             log.info("Movie with url `{}` already exists in database: {}", filmwebMovieUrl, movieInDatabase);
+            movieDynamoRepository.createOrUpdateUserDetailsFor(filmwebMovieUrl.toString());
             return movieInDatabase.get();
         }
-        Movie movie = filmwebMovieCreator.createMovieFromUrl(filmwebMovieUrl);
-        Movie savedMovie = movieRepository.save(movie);
-        log.info("Movie saved in database: {}", savedMovie);
-        savedMovie.getImagePath().forEach(imagePath -> webOperations.downloadImageToDirectory(toURL(savedMovie.getWebImageUrl()), imagePath));
-        return savedMovie;
-    }
-
-    @Transactional
-    @TrackExecutionTime
-    public Movie createMovieFromPolishTitle(String polishTitle, URL filmwebUrl) {
-        Optional<MovieDto> foundByTitle = imdbService.findBestMovieForSearchByTitle(polishTitle);
-        return foundByTitle
-                .map(movieDto -> createMovieFromImdbId(movieDto.getId(), filmwebUrl))
-                .orElseThrow();
-    }
-
-    @Transactional
-    @TrackExecutionTime
-    public Movie createMovieFromImdbId(@Valid @ImdbId String imdbId, URL filmwebUrl) {
-        Optional<Movie> movieInDataBase = movieRepository.findByImdbId(imdbId);
-        if(movieInDataBase.isPresent()) {
-            log.info("Movie with imdb id `{}` already exists in database: {}", imdbId, movieInDataBase.get());
-            return movieInDataBase.get();
-        }
-        MovieDto movieDto = imdbService.getMovieById(imdbId);
-        Movie movie = DtoMapper.mapToMovie(movieDto);
-        movie.getImagePath().forEach(imagePath -> webOperations.downloadImageToDirectory(movieDto.getImage(), imagePath));
-        formatPlotLocal(movie);
-        addFullCastToMovie(movie, movieDto);
-        movie.setFilmwebUrl(filmwebUrl);
-        Movie savedMovie = movieRepository.save(movie);
+        MovieDynamo movie = filmwebMovieCreator.createMovieFromUrl(filmwebMovieUrl);
+        MovieWithUserDetailsDto savedMovie = movieDynamoRepository.saveProduct(movie);
         log.info("Movie saved in database: {}", savedMovie);
         return savedMovie;
-    }
-
-    private void formatPlotLocal(Movie movie) {
-        String plotLocal = movie.getPlotLocal();
-        if(plotLocal.matches(".+? \\[.+?\\]$")) {
-            String formattedPlotLocal = plotLocal.substring(0, plotLocal.lastIndexOf(" ["));
-            movie.setPlotLocal(formattedPlotLocal);
-        }
-    }
-
-    private void addFullCastToMovie(Movie movie, MovieDto movieDto) {
-        log.info("Adding cast for movie {}", movie);
-        addActorsToMovie(movie, movieDto.getActorList(), Role.Actor);
-        log.info("Adding directors for movie {}", movie);
-        addActorsToMovie(movie, movieDto.getDirectorList(), Role.Director);
-        log.info("Adding writers for movie {}", movie);
-        addActorsToMovie(movie, movieDto.getWriterList(), Role.Writer);
-    }
-
-    private void addActorsToMovie(Movie movie, List<ActorInMovieDto> actorsInMovieDtos, Role actorsRole) {
-        int actorsNumberToDownload = Role.Actor.equals(actorsRole) ? ACTORS_TO_DOWNLOAD : CREW_TO_DOWNLOAD;
-        log.info("Trying to download and add with Role `{}` actors: {}", actorsRole, actorsInMovieDtos);
-        List<Actor> actors = createActorsFromActorsInMovieDto(actorsInMovieDtos, actorsNumberToDownload);
-        movie.addActorsWithRole(actors, actorsRole);
-    }
-
-    private List<Actor> createActorsFromActorsInMovieDto(List<ActorInMovieDto> actorInMovieDtos, long actorsNumber) {
-        return actorInMovieDtos.stream()
-                .map(ActorInMovieDto::id)
-                .map(actorCreatorService::createActorFromImdbId)
-                .filter(Optional::isPresent)
-                .limit(actorsNumber)
-                .map(Optional::get)
-                .toList();
     }
 
 }
