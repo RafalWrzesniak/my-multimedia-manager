@@ -2,54 +2,37 @@ package wrzesniak.rafal.my.multimedia.manager.domain.book;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import wrzesniak.rafal.my.multimedia.manager.domain.DefaultProductService;
-import wrzesniak.rafal.my.multimedia.manager.domain.GenericUserObjectDetailsFounder;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.repository.BookRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.service.BookCreatorService;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookListWithUserDetails;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookUserDetails;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookWithUserDetailsDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
+import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
-
-import java.util.List;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.BOOK_LIST;
 
 @Slf4j
 @Service
-public class BookFacade extends DefaultProductService<BookWithUserDetailsDto, Book, BookUserDetails, BookListWithUserDetails> {
+public class BookFacade extends DefaultProductService<BookWithUserDetailsDto, BookUserDetailsDynamo, BookListWithUserDetails, BookDynamo> {
 
-    private final BookCreatorService bookCreatorService;
-    private final BookRepository bookRepository;
 
-    public BookFacade(UserService userService, BookRepository bookRepository, GenericUserObjectDetailsFounder<BookWithUserDetailsDto, Book, BookUserDetails, BookListWithUserDetails> genericUserObjectDetailsFounder, BookCreatorService bookCreatorService) {
-        super(userService, bookRepository, genericUserObjectDetailsFounder, BOOK_LIST, BookWithUserDetailsDto::getReadOn, bookCreatorService, BookUserDetails::withReadOn);
-        this.bookCreatorService = bookCreatorService;
-        this.bookRepository = bookRepository;
+    public BookFacade(DefaultDynamoRepository<BookWithUserDetailsDto, BookUserDetailsDynamo, BookDynamo> bookDynamoRepository,
+                      BookCreatorService bookCreatorService,
+                      ContentListDynamoService contentListDynamoService,
+                      UserService userService) {
+        super(BOOK_LIST, BookListWithUserDetails::of, userService,
+                contentListDynamoService, bookCreatorService, bookDynamoRepository);
     }
 
-    public Book createBookFromDto(BookDto bookDto) {
-        Book book = bookCreatorService.createBookFromDto(bookDto);
-        addProductToList(book, BOOK_LIST.getAllProductsListName());
-        return book;
-    }
-
-    public void setFormatForUserBook(long bookId, BookFormat bookFormat) {
-        bookRepository.findById(bookId).ifPresent(book -> setFormatForUserBook(book, bookFormat));
-    }
-
-    public void setFormatForUserBook(Book book, BookFormat bookFormat) {
-        BookUserDetails bookDetails = super.getProductUserDetails(book);
+    public void setFormatForUserBook(String bookId, BookFormat bookFormat) {
+        BookUserDetailsDynamo bookDetails = super.getProductUserDetails(bookId);
         bookDetails.setBookFormat(bookFormat);
-        super.saveUserProductDetails(bookDetails);
+        log.info("Marking book `{}` as reading on {}", bookId, bookFormat);
+        super.updateUserProductDetails(bookDetails);
     }
 
-    public List<BookWithUserDetailsDto> findByAuthorId(long authorId) {
-        return bookRepository.findByAuthorId(authorId).stream()
-                .map(super::mapToProductWithUserDetails)
-                .toList();
-    }
 }

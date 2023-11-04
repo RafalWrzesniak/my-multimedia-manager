@@ -1,8 +1,10 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
+import dev.failsafe.RetryPolicy;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.io.IOException;
@@ -16,7 +18,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 class FilmwebMovieCreatorTest {
 
     private final WebOperations webOperations = new WebOperations(null, null);
-    private final FilmwebMovieCreator filmwebMovieCreator = new FilmwebMovieCreator(webOperations);
+    private final FilmwebMovieCreator filmwebMovieCreator = new FilmwebMovieCreator(webOperations, Mockito.mock(RetryPolicy.class));
 
     private final static String MOVIE_URL = "https://www.filmweb.pl/film/Most+szpieg%C3%B3w-2015-728144";
 
