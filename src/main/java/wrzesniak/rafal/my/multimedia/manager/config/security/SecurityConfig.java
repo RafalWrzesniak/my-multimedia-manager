@@ -6,19 +6,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.JdbcUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.DynamoUserDetailService;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -28,32 +27,29 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final DataSource dataSource;
+    private final String secret;
     private final ObjectMapper objectMapper;
     private final RestAuthenticationSuccessHandler successHandler;
     private final RestAuthenticationFailureHandler failureHandler;
-    private final String secret;
-    private JdbcUserDetailsManager jdbcUserDetailsManager;
+    private final UserDetailsService dynamoUserDetailService;
 
-    public SecurityConfig(DataSource dataSource,
-                          ObjectMapper objectMapper,
+
+    public SecurityConfig(ObjectMapper objectMapper,
                           RestAuthenticationSuccessHandler successHandler,
                           RestAuthenticationFailureHandler failureHandler,
-                          @Value("${application.jwt.secret}") String secret) {
-        this.dataSource = dataSource;
+                          @Value("${application.jwt.secret}") String secret,
+                          DynamoUserDetailService dynamoUserDetailService) {
         this.objectMapper = objectMapper;
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
         this.secret = secret;
+        this.dynamoUserDetailService = dynamoUserDetailService;
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder> configurer = auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .authoritiesByUsernameQuery("SELECT username, user_role FROM multimedia.users WHERE username = ?")
-                .usersByUsernameQuery("SELECT Username,Password,Enabled FROM multimedia.users WHERE username = ?");
-        this.jdbcUserDetailsManager = configurer.getUserDetailsService();
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(dynamoUserDetailService);
+
     }
 
     @Override
@@ -63,17 +59,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/register/**").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
                 .and()
                 .addFilter(authenticationFilter())
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jdbcUserDetailsManager, secret))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED))
                 .and()
