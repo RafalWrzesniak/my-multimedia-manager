@@ -3,7 +3,6 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,13 +12,13 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorCreatorServ
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.repository.MovieRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.service.MovieCreatorService;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.service.S3Service;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebMovieCreator;
 import wrzesniak.rafal.my.multimedia.manager.web.imdb.ImdbService;
 
-import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Profile("test")
@@ -65,9 +63,7 @@ class MovieCreatorServiceTest {
         given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
 
         // when
-        Movie createdMovie = movieCreatorService.createMovieFromPolishTitle(MATRIX_TITLE, StringFunctions.toURL("https://www.filmweb.pl/film/Matrix-1999-628"));
-        createdMovie.setImDbRating(BigDecimal.valueOf(8.7));
-        createdMovie.setImDbRatingVotes(1000);
+        MovieWithUserDetailsDto createdMovie = movieCreatorService.createProductFromUrl(StringFunctions.toURL("https://www.filmweb.pl/film/Matrix-1999-628"));
 
         // then
         assertEquals("The Matrix", createdMovie.getTitle());
@@ -80,20 +76,6 @@ class MovieCreatorServiceTest {
         assertTrue(createdMovie.getCountryList().containsAll(List.of("USA", "Australia")));
     }
 
-    @SneakyThrows
-//    @Test
-    void shouldCallCreateMovieFromPolishTitleWhenCreatingFromUrl() {
-        // given
-        ArgumentCaptor<Movie> movieParam = ArgumentCaptor.forClass(Movie.class);
-        when(movieRepository.save(movieParam.capture())).thenAnswer((invocation) -> movieParam.getValue());
-        given(actorCreatorService.createActorFromImdbId(any())).willReturn(Optional.empty());
-        MovieCreatorService creatorServiceSpy = Mockito.spy(new MovieCreatorService(imdbService, webOperations, movieRepository, actorCreatorService, filmwebMovieCreator));
 
-        // when
-        creatorServiceSpy.createProductFromUrl(new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
-
-        // then
-        verify(creatorServiceSpy).createMovieFromPolishTitle("Matrix (1999)", new URL("https://www.filmweb.pl/film/Matrix-1999-628"));
-    }
 
 }
