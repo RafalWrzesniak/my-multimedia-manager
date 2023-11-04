@@ -2,48 +2,23 @@ package wrzesniak.rafal.my.multimedia.manager.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieFacade;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetails;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.validation.imdb.ImdbId;
-
-import javax.validation.Valid;
-import java.net.URL;
-import java.util.Optional;
 
 @Slf4j
 @Validated
 @CrossOrigin
 @RestController
 @RequestMapping("movie")
-public class MovieController extends BaseProductController<MovieWithUserDetailsDto, Movie, MovieUserDetails, MovieListWithUserDetails> {
-
-    private final MovieFacade movieFacade;
+public class MovieController extends BaseProductController<MovieWithUserDetailsDto, MovieUserDetailsDynamo, MovieListWithUserDetails, MovieDynamo> {
 
     public MovieController(MovieFacade movieFacade) {
         super(movieFacade);
-        this.movieFacade = movieFacade;
     }
-
-    @PostMapping("/create/title/{polishTitle}")
-    public Movie findAndCreateMovieByPolishTitle(@PathVariable String polishTitle,
-                                                 @RequestParam(required = false) URL filmwebUrl,
-                                                 @RequestParam(required = false) String listName) {
-        Movie movie = movieFacade.createMovieFromPolishTitle(polishTitle, filmwebUrl);
-        Optional.ofNullable(listName).ifPresent(list -> movieFacade.addProductToList(movie, list));
-        return movie;
-    }
-
-    @PostMapping("/create/imdb/{imdbId}")
-    public Movie findAndCreateMovieByImdbId(@PathVariable @Valid @ImdbId String imdbId,
-                                            @RequestParam(required = false) URL filmwebUrl,
-                                            @RequestParam(required = false) String listName) {
-        Movie movie = movieFacade.createMovieFromImdbId(imdbId, filmwebUrl);
-        Optional.ofNullable(listName).ifPresent(list -> movieFacade.addProductToList(movie, list));
-        return movie;
-    }
-
 }
