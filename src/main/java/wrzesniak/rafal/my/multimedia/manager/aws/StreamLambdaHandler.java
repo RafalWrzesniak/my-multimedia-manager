@@ -18,7 +18,6 @@ public class StreamLambdaHandler implements RequestStreamHandler {
 
     static {
         try {
-            System.out.println("Próbuję coś załadować");
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(MyMultimediaManagerApplication.class);
         } catch (ContainerInitializationException e) {
             e.printStackTrace();
