@@ -3,7 +3,6 @@ package wrzesniak.rafal.my.multimedia.manager.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
@@ -41,7 +40,6 @@ public class BookController extends BaseProductController<BookWithUserDetailsDto
 
 
     @Override
-    @ApiIgnore
     public BookWithUserDetailsDto createProductFromUrl(@RequestParam String url,
                                      @RequestParam(required = false) String listId) {
         throw new IllegalStateException("This endpoint is not accessible for this controller. Please try /book/createBookUrl");

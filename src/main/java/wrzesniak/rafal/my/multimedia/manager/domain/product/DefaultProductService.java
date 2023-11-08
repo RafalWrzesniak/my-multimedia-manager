@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -54,7 +53,7 @@ public class DefaultProductService<
     }
 
     public void markProductAsFinished(String productId, LocalDate finishDate) {
-        LocalDate realFinishDate = firstNonNull(finishDate, LocalDate.now());
+        LocalDate realFinishDate = Optional.ofNullable(finishDate).orElse(LocalDate.now());
         PRODUCT_USER_DETAILS productUserDetails = getProductUserDetails(productId);
         PRODUCT_USER_DETAILS updatedDetails = productUserDetails.withFinishedOn(realFinishDate);
         log.info("Marking {} as finished on {} for {}", productId, realFinishDate, userService.getCurrentUsername());

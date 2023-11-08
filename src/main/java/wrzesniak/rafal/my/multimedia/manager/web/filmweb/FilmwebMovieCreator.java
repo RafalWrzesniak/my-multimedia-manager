@@ -1,6 +1,5 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
-import com.google.common.annotations.VisibleForTesting;
 import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
@@ -58,53 +57,43 @@ public class FilmwebMovieCreator {
                 .build();
     }
 
-    @VisibleForTesting
     String parseTitle(Document document) {
         Element element = document.getElementsByAttributeValue("class", "filmCoverSection__originalTitle").first();
         return Objects.isNull(element) ? "" : element.text();
     }
 
-    @VisibleForTesting
     String parsePolishTitle(Document document) {
         return document.getElementsByAttributeValue(ITEMPROP, "name").first().text();
     }
     
-    @VisibleForTesting
     LocalDate parseReleaseDate(Document document) {
         return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
     
-    @VisibleForTesting
     int parseDuration(Document document) {
         return Integer.parseInt(document.getElementsByAttributeValue(ITEMPROP, "timeRequired").first().attr("data-duration"));
     }
     
-    @VisibleForTesting
     double parseRating(Document document) {
         return Double.parseDouble(document.getElementsByAttributeValue(CLASS, "filmRating__rateValue").first().text().replaceAll(",", "."));
     }
 
-    @VisibleForTesting
     int parseRatingCount(Document document) {
         return Integer.parseInt(document.getElementsByAttributeValue(CLASS, "filmRating__count").first().text().replaceAll(" ", "").replaceAll("[a-z]", ""));
     }
 
-    @VisibleForTesting
     String parseDescription(Document document) {
         return document.getElementsByAttributeValue(ITEMPROP, "description").first().text();
     }
 
-    @VisibleForTesting
     Set<String> parseGenres(Document document) {
         return document.getElementsByAttributeValueContaining(HREF, "/ranking/film/genre").stream().map(Element::text).collect(Collectors.toSet());
     }
 
-    @VisibleForTesting
     Set<String> parseCountries(Document document) {
         return document.getElementsByAttributeValueContaining(HREF, "/ranking/film/country").stream().map(Element::text).collect(Collectors.toSet());
     }
 
-    @VisibleForTesting
     public String parseImage(Document document) {
         return document.getElementsByAttributeValue(ITEMPROP, "image").first().attr("content");
     }

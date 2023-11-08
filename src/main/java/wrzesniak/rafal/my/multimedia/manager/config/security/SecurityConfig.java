@@ -1,7 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +19,7 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.DynamoUserDetailService;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -94,7 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(ImmutableList.of("http://localhost:3000", "https://master.d5i6lke35o8tb.amplifyapp.com/"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://master.d5i6lke35o8tb.amplifyapp.com/"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("X-Requested-With","Origin","Content-Type","Accept","Authorization"));
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.GameFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
@@ -57,14 +56,12 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
     }
 
     @Override
-    @ApiIgnore
     public GameWithUserDetailsDto createProductFromUrl(@RequestParam String url,
                                      @RequestParam(required = false) String listId) {
         throw new IllegalStateException("This endpoint is not accessible for this controller. Please try /game/createGame");
     }
 
     @Override
-    @ApiIgnore
     public void markProductAsFinished(@RequestParam String id,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate) {
         throw new IllegalStateException("This endpoint is not accessible for this controller. Please try /game/{id}/finishGame");
