@@ -19,12 +19,6 @@ Resources:
       Environment:
         Variables:
           JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
-#      Events:
-#        MyMultimediaManagerApi:
-#          Type: Api
-#          Properties:
-#            Path: /{proxy+}
-#            Method: ANY
 
   MyMultimediaManagerApi:
     Type: 'AWS::Serverless::Api'
@@ -41,7 +35,22 @@ Resources:
           version: "1.0"
         paths:
           /:
-            x-amazon-apigateway-any-method:
+            get:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyMultimediaManagerLambda.Arn}/invocations
+            post:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyMultimediaManagerLambda.Arn}/invocations
+            put:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyMultimediaManagerLambda.Arn}/invocations
+            delete:
               x-amazon-apigateway-integration:
                 type: aws_proxy
                 uri:
