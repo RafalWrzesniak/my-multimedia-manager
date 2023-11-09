@@ -23,7 +23,7 @@ Resources:
         MyMultimediaManagerApi:
           Type: Api
           Properties:
-            Path: /
+            Path: /{proxy+}
             Method: ANY
 
   MyMultimediaManagerApi:
