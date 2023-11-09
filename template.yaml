@@ -41,12 +41,12 @@ Resources:
                 requestTemplates:
                   application/json: "{\"statusCode\": 200}"
                 responses:
-                  "default":
-                    statusCode: "200"
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                  "200":
+                    description: "Default response for OPTIONS"
+                    headers:
+                      Access-Control-Allow-Origin: "'*'"
+                      Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
               x-amazon-apigateway-any-method:
                 x-amazon-apigateway-integration:
                   type: aws_proxy
