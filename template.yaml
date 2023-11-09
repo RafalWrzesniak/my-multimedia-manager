@@ -19,12 +19,12 @@ Resources:
       Environment:
         Variables:
           JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
-      Events:
-        MyMultimediaManagerApi:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: ANY
+#      Events:
+#        MyMultimediaManagerApi:
+#          Type: Api
+#          Properties:
+#            Path: /{proxy+}
+#            Method: ANY
 
   MyMultimediaManagerApi:
     Type: 'AWS::Serverless::Api'
@@ -37,7 +37,7 @@ Resources:
       DefinitionBody:
         swagger: "2.0"
         info:
-          title: "MyApi"
+          title: "MyMultimediaManagerApi"
           version: "1.0"
         paths:
           /:
