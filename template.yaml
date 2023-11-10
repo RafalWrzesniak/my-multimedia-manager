@@ -25,14 +25,12 @@ Resources:
           Properties:
             Path: /
             Method: ANY
-            RestApiId:
-              Fn::ImportValue: !Sub "${MyMultimediaManagerApi}-RestApiId"
 
 Outputs:
   MyMultimediaManagerApiId:
     Description: "API Gateway ID"
     Value:
-      Fn::ImportValue: !Sub "${MyMultimediaManagerApi}-RestApiId"
+      Ref: MyMultimediaManagerApi
   MyMultimediaManagerApiUrl:
     Description: "API Gateway URL"
     Value:
