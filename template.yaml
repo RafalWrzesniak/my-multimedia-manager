@@ -10,6 +10,7 @@ Resources:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowOrigin: "'*'"
+      StageName: Prod
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
