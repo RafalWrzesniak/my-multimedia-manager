@@ -1,54 +1,37 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform: 'AWS::Serverless-2016-10-31'
+Transform: AWS::Serverless-2016-10-31
 
 Resources:
   MyMultimediaManagerLambda:
-    Type: 'AWS::Serverless::Function'
+    Type: AWS::Serverless::Function
     Properties:
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
       Runtime: java17
       CodeUri: .
-      Timeout: 30
-      SnapStart:
-        ApplyOn: PublishedVersions
+      MemorySize: 128
+      Timeout: 300
       Architectures:
         - x86_64
-      MemorySize: 2048
-      Policies:
-        - AWSLambdaBasicExecutionRole
       Environment:
         Variables:
           JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
-
   MyMultimediaManagerApi:
-    Type: 'AWS::Serverless::Api'
+    Type: AWS::Serverless::Api
     Properties:
-      StageName: prod
-      Cors:
-        AllowMethods: "'GET,POST,PUT'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-      DefinitionBody:
-        swagger: "2.0"
-        info:
-          title: "MyMultimediaManagerApi"
-          version: "1.0"
-        paths:
-          /:
-            options:
-              x-amazon-apigateway-integration:
-                type: mock
-                requestTemplates:
-                  application/json: "{\"statusCode\": 200}"
-                responses:
-                  "200":
-                    description: "Default response for OPTIONS"
-                    headers:
-                      Access-Control-Allow-Origin: "'*'"
-                      Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-                      Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
-              x-amazon-apigateway-any-method:
-                x-amazon-apigateway-integration:
-                  type: aws_proxy
-                  uri:
-                    Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyMultimediaManagerLambda.Arn}/invocations
+      StageName: Prod
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+  ApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref MyMultimediaManagerLambda
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyMultimediaManagerApi}/*/*"
