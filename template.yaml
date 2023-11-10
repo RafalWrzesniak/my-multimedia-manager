@@ -19,13 +19,22 @@ Resources:
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
       Runtime: java17
       CodeUri: .
-      Timeout: 30
+      Timeout: 30 # adjust as needed
       Events:
-        MyMultimediaManagerApiEvent:
+        MyMultimediaManagerApiGetEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId:
+              Ref: MyMultimediaManagerApi
+        MyMultimediaManagerApiAnyEvent:
           Type: Api
           Properties:
             Path: /
             Method: ANY
+            RestApiId:
+              Ref: MyMultimediaManagerApi
 
 Outputs:
   MyMultimediaManagerApiId:
