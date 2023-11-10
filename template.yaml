@@ -2,31 +2,38 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  MyMultimediaManagerLambda:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
-      Runtime: java17
-      CodeUri: .
-      MemorySize: 128
-      Timeout: 300
   MyMultimediaManagerApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
-      CorsConfiguration:
-        AllowOrigins:
-          - '*'
-        AllowMethods:
-          - GET
-          - POST
-          - PUT
-          - DELETE
-          - OPTIONS
-  ApiGatewayPermission:
-    Type: AWS::Lambda::Permission
+      Name: MyMultimediaManagerApi
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
+  MyMultimediaManagerFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref MyMultimediaManagerLambda
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyMultimediaManagerApi}/*/*"
+      FunctionName: MyMultimediaManagerLambda
+      Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
+      Runtime: java17
+      CodeUri: .
+      Timeout: 30 # adjust as needed
+      Events:
+        MyMultimediaManagerApiEvent:
+          Type: Api
+          Properties:
+            RestApiId:
+              Fn::ImportValue: !Sub "${MyMultimediaManagerApi}-RestApiId"
+            Path: /
+            Method: ANY
+
+Outputs:
+  MyMultimediaManagerApiId:
+    Description: "API Gateway ID"
+    Value:
+      Fn::ImportValue: !Sub "${MyMultimediaManagerApi}-RestApiId"
+  MyMultimediaManagerApiUrl:
+    Description: "API Gateway URL"
+    Value:
+      Fn::Sub: "https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
