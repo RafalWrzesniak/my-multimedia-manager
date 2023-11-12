@@ -2,39 +2,20 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  MyMultimediaManagerApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: MyMultimediaManagerApi
-      Cors:
-        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
-      StageName: Prod
-
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: MyMultimediaManagerLambda
+      FunctionName: MyMultimediaManagerFunction
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
       Runtime: java17
       CodeUri: .
-      Timeout: 30 # adjust as needed
+      Timeout: 30
       Events:
-        MyMultimediaManagerApiGetEvent:
-          Type: Api
-          Properties:
-            Path: /
-            Method: GET
-            RestApiId:
-              Ref: MyMultimediaManagerApi
-        MyMultimediaManagerApiAnyEvent:
+        MyMultimediaManagerApiEvent:
           Type: Api
           Properties:
             Path: /
             Method: ANY
-            RestApiId:
-              Ref: MyMultimediaManagerApi
 
 Outputs:
   MyMultimediaManagerApiId:

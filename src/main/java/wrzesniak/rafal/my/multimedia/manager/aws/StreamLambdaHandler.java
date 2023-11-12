@@ -13,27 +13,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-@Slf4j
-public class StreamLambdaHandler implements RequestStreamHandler {
+    @Slf4j
+    public class StreamLambdaHandler implements RequestStreamHandler {
 
-    private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+        private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
-    static {
-        try {
-            handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(MyMultimediaManagerApplication.class);
-        } catch (ContainerInitializationException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Could not initialize Spring Boot application", e);
+        static {
+            try {
+                handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(MyMultimediaManagerApplication.class);
+            } catch (ContainerInitializationException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Could not initialize Spring Boot application", e);
+            }
         }
-    }
 
-    @Override
-    public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
-        log.info("Got request");
-        log.info("Input: {}", inputStream);
-        log.info("Output: {}", outputStream);
-        log.info("Context: {}", context);
-        handler.proxyStream(inputStream, outputStream, context);
-    }
+        @Override
+        public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
+            handler.proxyStream(inputStream, outputStream, context);
+        }
 
-}
+    }
