@@ -11,6 +11,13 @@ Resources:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowOrigin: "'*'"
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+      AccessLogSetting:
+        DestinationArn: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/api-gateway/${MyMultimediaManagerApi}-access-logs"
+        Format: '{"requestId":"$context.requestId","ip": "$context.identity.sourceIp","caller": "$context.identity.caller","user":"$context.identity.user","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}'
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
@@ -19,7 +26,7 @@ Resources:
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
       Runtime: java17
       CodeUri: .
-      Timeout: 30 # dostosuj według potrzeb
+      Timeout: 30
       Events:
         MyMultimediaManagerApiEvent:
           Type: Api
