@@ -2,19 +2,15 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  MyLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: /aws/api-gateway/MyMultimediaManagerApi-access-logs
-
   MyMultimediaManagerApi:
     Type: AWS::Serverless::Api
     Properties:
       Name: MyMultimediaManagerApi
       StageName: Prod
-      AccessLogSetting:
-        DestinationArn: !GetAtt MyLogGroup.Arn
-        Format: '{"requestId":"$context.requestId","ip": "$context.identity.sourceIp","caller": "$context.identity.caller","user":"$context.identity.user","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}'
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function

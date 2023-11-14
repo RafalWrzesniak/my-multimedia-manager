@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
@@ -82,18 +81,4 @@ class FilmwebServiceTest {
 //        assertEquals(PIRATES_URL, movie.getFilmwebUrl().toString());
     }
 
-
-    @Test
-    void shouldAddFilmwebUrlToActor() {
-        // given
-        ActorDto actor = ActorDto.builder()
-                .name("Quentin Tarantino")
-                .build();
-
-        // when
-        filmwebService.addFilmwebUrlTo(actor);
-
-        // then
-//        assertEquals("https://www.filmweb.pl/person/Quentin+Tarantino-111", actor.getFilmwebUrl().toString());
-    }
 }

@@ -2,51 +2,21 @@ package wrzesniak.rafal.my.multimedia.manager.domain.mapper;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.ISBN;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.ActorDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import static lombok.AccessLevel.PRIVATE;
-import static wrzesniak.rafal.my.multimedia.manager.domain.user.UserRole.USER;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Slf4j
 @NoArgsConstructor(access = PRIVATE)
 public class DtoMapper {
-
-    public static Actor mapToActor(ActorDto actorDto) {
-        return Actor.builder()
-                .imdbId(actorDto.getId())
-                .name(actorDto.getName())
-                .birthDate(actorDto.getBirthDate())
-                .deathDate(actorDto.getDeathDate())
-                .filmwebUrl(actorDto.getFilmwebUrl())
-                .playedInMovies(new ArrayList<>())
-                .directedMovies(new ArrayList<>())
-                .wroteMovies(new ArrayList<>())
-                .createdOn(LocalDate.now())
-                .build();
-    }
-
-    public static User mapToUser(LoginCredentials credentials) {
-        return User.builder()
-                .username(credentials.getUsername())
-                .password(credentials.getPassword())
-                .userRole(USER)
-                .enabled(true)
-                .build();
-    }
 
     public static BookDynamo mapToBook(BookDto bookDto) {
         return BookDynamo.builder()

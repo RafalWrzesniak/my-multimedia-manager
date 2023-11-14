@@ -6,7 +6,6 @@ import lombok.Value;
 import lombok.With;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
-import wrzesniak.rafal.my.multimedia.manager.domain.content.MovieContentList;
 
 import java.util.List;
 
@@ -26,18 +25,6 @@ public class MovieListWithUserDetails {
     boolean isAllMoviesList;
     boolean isRecentlyWatchedList;
     List<MovieWithUserDetailsDto> movieWithUserDetailsDtos;
-
-    public static MovieListWithUserDetails of(MovieContentList movieContentList) {
-        return MovieListWithUserDetails.builder()
-                .id(movieContentList.getId().toString())
-                .name(movieContentList.getName())
-                .isToWatchList(movieContentList.isToWatchList())
-                .isRecentlyWatchedList(movieContentList.isRecentlyWatchedList())
-                .moviesNumber(movieContentList.getContentList().size())
-                .isAllMoviesList(movieContentList.isAllContentList())
-                .listType(MOVIE_LIST)
-                .build();
-    }
 
     public static MovieListWithUserDetails of(ContentListDynamo contentListDynamo, List<MovieWithUserDetailsDto> movieDtos) {
         return MovieListWithUserDetails.builder()

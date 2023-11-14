@@ -3,7 +3,6 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.aop.TrackExecutionTime;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
@@ -26,7 +25,6 @@ public class MovieCreatorService implements ProductCreatorService<MovieWithUserD
     private final DefaultDynamoRepository<MovieWithUserDetailsDto, MovieUserDetailsDynamo, MovieDynamo> movieDynamoRepository;
 
     @Override
-    @Transactional
     @TrackExecutionTime
     public MovieWithUserDetailsDto createProductFromUrl(URL filmwebMovieUrl) {
         Optional<MovieWithUserDetailsDto> movieInDatabase = movieDynamoRepository.getById(filmwebMovieUrl.toString());

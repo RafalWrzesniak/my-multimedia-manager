@@ -137,7 +137,7 @@ public class DefaultProductService<
             field.setAccessible(true);
             Comparable value1 = (Comparable) field.get(obj1);
             Comparable value2 = (Comparable) field.get(obj2);
-            return pageRequest.direction().isAscending() ? value1.compareTo(value2) : value2.compareTo(value1);
+            return pageRequest.direction().equals("ASC") ? value1.compareTo(value2) : value2.compareTo(value1);
         } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
             return 0;
         }

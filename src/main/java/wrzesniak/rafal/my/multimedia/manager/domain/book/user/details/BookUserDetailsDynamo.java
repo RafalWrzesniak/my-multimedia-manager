@@ -8,8 +8,6 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductUserDetailsAbstract;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -24,7 +22,6 @@ public class BookUserDetailsDynamo extends ProductUserDetailsAbstract<BookUserDe
     private String username;
     private String bookId;
     private LocalDate readOn;
-    @Enumerated(EnumType.STRING)
     private BookFormat bookFormat;
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;

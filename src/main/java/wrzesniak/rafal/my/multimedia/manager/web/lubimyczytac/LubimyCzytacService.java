@@ -10,8 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
-import wrzesniak.rafal.my.multimedia.manager.util.SeriesConverter;
+import wrzesniak.rafal.my.multimedia.manager.util.SeriesDynamoConverter;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;
@@ -26,7 +27,7 @@ public class LubimyCzytacService {
 
     private final LubimyCzytacConfiguration configuration;
     private final RetryPolicy<Object> retryPolicy;
-    private final SeriesConverter seriesConverter;
+    private final SeriesDynamoConverter seriesConverter;
     private final WebOperations webOperations;
     private final ObjectMapper objectMapper;
 
@@ -55,7 +56,7 @@ public class LubimyCzytacService {
         String publisher = parsePublisher(parsedUrl);
         bookDto.setPublisher(publisher);
         String series = parseSeries(parsedUrl);
-        bookDto.setSeries(seriesConverter.convertToEntityAttribute(series));
+        bookDto.setSeries(seriesConverter.transformTo(AttributeValue.fromS(series)));
         log.info("Created BookDto: {}", bookDto);
         return Optional.of(bookDto);
     }

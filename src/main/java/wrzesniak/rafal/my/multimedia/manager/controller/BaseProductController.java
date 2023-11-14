@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.data.domain.Sort.Direction;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @RequiredArgsConstructor
@@ -52,7 +51,7 @@ public abstract class BaseProductController<
                                                                   @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
                                                                   @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
                                                                   @RequestParam(defaultValue = "id") @Size(min = 2, max = 20) String sortKey,
-                                                                  @RequestParam(defaultValue = "ASC") Direction direction) {
+                                                                  @RequestParam(defaultValue = "ASC") String direction) {
         SimplePageRequest pageRequest = new SimplePageRequest(page, pageSize, sortKey, direction);
         return defaultProductService.findByPropertyName(listId, propertyName, value.replaceAll("[^a-zA-Z0-9 ]", ""), pageRequest);
     }
@@ -78,7 +77,7 @@ public abstract class BaseProductController<
                                                       @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
                                                       @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
                                                       @RequestParam(defaultValue = "id") String sortKey,
-                                                      @RequestParam(defaultValue = "ASC") Direction direction) {
+                                                      @RequestParam(defaultValue = "ASC") String direction) {
         SimplePageRequest pageRequest = new SimplePageRequest(page, pageSize, sortKey, direction);
         return defaultProductService.getListById(listId, pageRequest);
     }

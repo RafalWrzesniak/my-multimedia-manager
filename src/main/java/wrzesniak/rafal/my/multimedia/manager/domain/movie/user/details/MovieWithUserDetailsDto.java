@@ -3,8 +3,6 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.actor.Actor;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.Movie;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 
 import java.math.BigDecimal;
@@ -27,9 +25,6 @@ public class MovieWithUserDetailsDto {
     BigDecimal imDbRating;
     Integer imDbRatingVotes;
     URL filmwebUrl;
-    Set<Actor> actorList;
-    Set<Actor> directorList;
-    Set<Actor> writerList;
     Set<String> genreList;
     Set<String> countryList;
     String plotLocal;
@@ -58,30 +53,4 @@ public class MovieWithUserDetailsDto {
                 .build();
     }
 
-    public static MovieWithUserDetailsDto of(Movie movie, MovieUserDetails details, boolean withActors) {
-        MovieWithUserDetailsDto detailsDto = MovieWithUserDetailsDto.builder()
-                .id(movie.getId().toString())
-                .imdbId(movie.getImdbId())
-                .title(movie.getTitle())
-                .polishTitle(movie.getPolishTitle())
-                .releaseDate(movie.getReleaseDate())
-                .runtimeMins(movie.getRuntimeMins())
-                .imDbRating(movie.getImDbRating())
-                .imDbRatingVotes(movie.getImDbRatingVotes())
-                .filmwebUrl(movie.getFilmwebUrl())
-                .genreList(movie.getGenreList())
-                .countryList(movie.getCountryList())
-                .plotLocal(movie.getPlotLocal())
-                .createdOn(movie.getCreatedOn().atStartOfDay())
-                .watchedOn(details.getWatchedOn())
-                .webImageUrl("/" + movie.getImagePath().get(0).subpath(3, 6).toString().replaceAll("\\\\", "/"))
-                .build();
-        if(withActors) {
-            detailsDto = detailsDto
-                    .withActorList(movie.getActorList())
-                    .withDirectorList(movie.getDirectorList())
-                    .withWriterList(movie.getWriterList());
-        }
-        return detailsDto;
-    }
 }

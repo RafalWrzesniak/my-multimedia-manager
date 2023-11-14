@@ -2,7 +2,6 @@ package wrzesniak.rafal.my.multimedia.manager.domain.book.user.details;
 
 import lombok.Builder;
 import lombok.Value;
-import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Book;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Series;
@@ -54,23 +53,4 @@ public class BookWithUserDetailsDto {
                 .build();
     }
 
-    public static BookWithUserDetailsDto of(Book book, BookUserDetails details) {
-        return BookWithUserDetailsDto.builder()
-                .id(book.getId().toString())
-                .title(book.getTitle())
-                .category(book.getCategory())
-                .description(book.getDescription())
-                .publisher(book.getPublisher())
-                .numberOfPages(book.getNumberOfPages())
-                .isbn(book.getIsbn().getValue())
-                .author(book.getAuthor().toString())
-                .lubimyCzytacUrl(book.getLubimyCzytacUrl())
-                .bookFormat(details.getBookFormat())
-                .datePublished(book.getDatePublished())
-                .createdOn(book.getCreatedOn().atStartOfDay())
-                .readOn(details.getReadOn())
-                .series(book.getSeries())
-                .webImageUrl("/" + book.getImagePath().get(0).subpath(3, 6).toString().replaceAll("\\\\", "/"))
-                .build();
-    }
 }

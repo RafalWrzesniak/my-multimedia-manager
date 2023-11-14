@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
-import wrzesniak.rafal.my.multimedia.manager.domain.content.BookContentList;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 
@@ -24,16 +23,6 @@ public class BookListWithUserDetails {
     boolean isAllBooksList;
     ContentListType listType;
     List<BookWithUserDetailsDto> bookWithUserDetailsDtos;
-
-    public static BookListWithUserDetails of(BookContentList bookContentList) {
-        return BookListWithUserDetails.builder()
-                .id(bookContentList.getId().toString())
-                .name(bookContentList.getName())
-                .isAllBooksList(bookContentList.isAllContentList())
-                .booksNumber(bookContentList.getContentList().size())
-                .listType(BOOK_LIST)
-                .build();
-    }
 
     public static BookListWithUserDetails of(ContentListDynamo contentListDynamo, List<BookWithUserDetailsDto> bookWithUserDetailsDtos) {
         return BookListWithUserDetails.builder()
