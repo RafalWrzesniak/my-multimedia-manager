@@ -15,7 +15,7 @@ Resources:
       Name: MyMultimediaManagerApi
       StageName: Prod
       AccessLogSetting:
-        DestinationArn: arn:aws:iam::693966062309:role/MyMultimediaManagerApi-access-logs-role
+        DestinationArn: arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/api-gateway/MyMultimediaManagerApi-access-logs
         Format: '{"requestId":"$context.requestId","ip": "$context.identity.sourceIp","caller": "$context.identity.caller","user":"$context.identity.user","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}'
 
   MyMultimediaManagerFunction:
