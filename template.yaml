@@ -8,9 +8,12 @@ Resources:
       Name: MyMultimediaManagerApi
       StageName: Prod
       Cors:
-        AllowHeaders: "'*'"
-        AllowMethods: "'*'"
-        AllowOrigin: "'*'"
+        AllowHeaders:
+          - '*'
+        AllowMethods:
+          - '*'
+        AllowOrigin:
+          - '*'
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
