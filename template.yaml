@@ -8,8 +8,8 @@ Resources:
       Name: MyMultimediaManagerApi
       StageName: Prod
       Cors:
-        AllowHeaders: "'*'"
-        AllowMethods: "'*'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
+        AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
         AllowOrigin: "'*'"
 
   MyMultimediaManagerFunction:
