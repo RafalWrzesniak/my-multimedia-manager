@@ -14,7 +14,7 @@ Resources:
     Properties:
       StageName: prod
 
-  BlogPostsFunction:
+  BlogPostsFunctionFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest

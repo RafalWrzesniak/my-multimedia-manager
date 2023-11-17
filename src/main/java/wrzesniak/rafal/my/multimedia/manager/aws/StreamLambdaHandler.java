@@ -1,6 +1,7 @@
 package wrzesniak.rafal.my.multimedia.manager.aws;
 
 import com.amazonaws.serverless.exceptions.ContainerInitializationException;
+import com.amazonaws.serverless.proxy.internal.testutils.Timer;
 import com.amazonaws.serverless.proxy.model.AwsProxyRequest;
 import com.amazonaws.serverless.proxy.model.AwsProxyResponse;
 import com.amazonaws.serverless.proxy.spring.SpringBootLambdaContainerHandler;
@@ -16,34 +17,25 @@ import java.io.OutputStream;
 @Slf4j
 public class StreamLambdaHandler implements RequestStreamHandler {
 
-    private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    private static final SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
 
     static {
         try {
-            log.info("Before spring initialization");
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(MyMultimediaManagerApplication.class);
-            log.info("After spring initialization");
         } catch (ContainerInitializationException e) {
             e.printStackTrace();
             throw new RuntimeException("Could not initialize Spring Boot application", e);
         }
     }
 
+    public StreamLambdaHandler() {
+        // we enable the timer for debugging. This SHOULD NOT be enabled in production.
+        Timer.enable();
+    }
+
     @Override
     public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
-        log.info("Before handling request");
-//        log.info(new ObjectMapper().writeValueAsString(inputStream));
         handler.proxyStream(inputStream, outputStream, context);
-        log.info("After handling request");
-//        log.info(new ObjectMapper().writeValueAsString(outputStream));
-//
-//        AwsProxyResponse response = new AwsProxyResponse();
-//        response.getMultiValueHeaders().put("Access-Control-Allow-Origin", Collections.singletonList("*"));
-//        response.getMultiValueHeaders().put("Access-Control-Allow-Headers", Arrays.asList("Content-Type", "X-Amz-Date", "Authorization"));
-//        response.getMultiValueHeaders().put("Access-Control-Allow-Methods", Collections.singletonList("OPTIONS,POST,GET,PUT,DELETE"));
-//
-//        String jsonResponse = new ObjectMapper().writeValueAsString(response);
-//        outputStream.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
     }
 }
 
