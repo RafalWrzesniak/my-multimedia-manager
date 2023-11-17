@@ -1,50 +1,37 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
+Description: My Multimedia Manager application
+
+Globals:
+  Function:
+    Runtime: java17
+    MemorySize: 2048
+    Timeout: 29
 
 Resources:
   MyMultimediaManagerApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: MyMultimediaManagerApi
-      StageName: Prod
-      Auth:
-        ApiKeyRequired: false
-      Cors:
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
-        AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
-        AllowOrigin: "'*'"
+      StageName: prod
 
-  MyMultimediaManagerFunction:
+  BlogPostsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: MyMultimediaManagerFunction
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
-      Runtime: java17
       CodeUri: .
-      Timeout: 30
-      Architectures:
-        - x86_64
-      MemorySize: 2048
-      Policies:
-        - AWSLambdaBasicExecutionRole
-      Environment:
-        Variables:
-          JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+      AutoPublishAlias: live
+      SnapStart:
+        ApplyOn: PublishedVersions
       Events:
-        MyMultimediaManagerApiEvent:
+        ApiEvents:
           Type: Api
           Properties:
-            Path: /
+            Path: /{proxy+}
             Method: ANY
-            RestApiId:
-              Ref: MyMultimediaManagerApi
+            RestApiId: !Ref MyMultimediaManagerApi
 
 Outputs:
-  MyMultimediaManagerApiId:
-    Description: "API Gateway ID"
+  BlogPostsEndpoint:
+    Description: API Gateway Blog Posts Endpoint
     Value:
-      Ref: MyMultimediaManagerApi
-  MyMultimediaManagerApiUrl:
-    Description: "API Gateway URL"
-    Value:
-      Fn::Sub: "https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+      Fn::Sub: https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
