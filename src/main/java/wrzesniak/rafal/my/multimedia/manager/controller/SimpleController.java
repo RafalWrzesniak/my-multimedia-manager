@@ -16,5 +16,4 @@ public class SimpleController {
         return ResponseEntity.ok(requestName.toUpperCase());
     }
 
-
 }
