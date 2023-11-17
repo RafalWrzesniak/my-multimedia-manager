@@ -91,7 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
+//        configuration.setAllowCredentials(true);
 //        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://1mu67inv7k.execute-api.eu-central-1.amazonaws.com/Prod", "https://master.d5i6lke35o8tb.amplifyapp.com"));
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
