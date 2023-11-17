@@ -17,10 +17,6 @@ Resources:
         AllowHeaders: "'Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
         AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
         AllowOrigin: "'*'"
-      AccessLogSetting:
-        DestinationArn: !GetAtt MyAccessLogsRole.Arn
-        Format: '{"requestId":"$context.requestId","ip": "$context.identity.sourceIp", "caller": "$context.identity.caller", "user": "$context.identity.user", "requestTime": "$context.requestTime", "httpMethod": "$context.httpMethod", "resourcePath": "$context.resourcePath", "status": "$context.status", "protocol": "$context.protocol", "responseLength": "$context.responseLength"}'
-
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
@@ -37,28 +33,6 @@ Resources:
             Path: /{proxy+}
             Method: ANY
             RestApiId: !Ref MyMultimediaManagerApi
-
-  MyAccessLogsRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: apigateway.amazonaws.com
-            Action: "sts:AssumeRole"
-      Policies:
-        - PolicyName: "MyAccessLogsPolicy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: "*"
 
 Outputs:
   BlogPostsEndpoint:
