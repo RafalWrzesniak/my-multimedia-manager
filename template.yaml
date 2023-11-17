@@ -35,7 +35,7 @@ Resources:
             RestApiId: !Ref MyMultimediaManagerApi
 
 Outputs:
-  BlogPostsEndpoint:
-    Description: API Gateway Blog Posts Endpoint
+  MyMultimediaManager:
+    Description: API Gateway MyMultimediaManager Endpoint
     Value:
       Fn::Sub: https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
