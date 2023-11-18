@@ -18,7 +18,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public void login(@RequestBody @Valid LoginCredentials credentials) {
-        log.info("Logging with credentials: {}", credentials);
     }
 
 }
