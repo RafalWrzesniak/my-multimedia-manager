@@ -12,6 +12,8 @@ import wrzesniak.rafal.my.multimedia.manager.util.SimplePageRequest;
 
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -96,7 +98,7 @@ public class DefaultProductService<
 
     public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems) {
         return simpleItems.parallelStream()
-                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId()), simpleItem))
+                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId()), simpleItem.withTitle(URLDecoder.decode(simpleItem.getTitle(), StandardCharsets.UTF_8))))
                 .toList();
     }
 
