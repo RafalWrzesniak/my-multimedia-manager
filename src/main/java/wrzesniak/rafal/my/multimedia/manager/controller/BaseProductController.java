@@ -66,11 +66,6 @@ public abstract class BaseProductController<
         return defaultProductService.getDetailsForItems(items);
     }
 
-    @PostMapping("/detailed")
-    public SimpleItemDtoWithUserDetails getDetailsForSimpleItem(@RequestBody SimpleItem items) {
-        return defaultProductService.getDetailsForItems(List.of(items)).get(0);
-    }
-
     @PostMapping("/finish")
     public void markProductAsFinished(@RequestParam String id,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate) {

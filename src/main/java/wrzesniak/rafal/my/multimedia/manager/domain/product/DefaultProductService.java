@@ -98,7 +98,8 @@ public class DefaultProductService<
 
     public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems) {
         return simpleItems.parallelStream()
-                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId()), simpleItem.withTitle(URLDecoder.decode(simpleItem.getTitle(), StandardCharsets.UTF_8))))
+                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId()),
+                        simpleItem.withTitle(URLDecoder.decode(simpleItem.getTitle(), StandardCharsets.UTF_8))))
                 .toList();
     }
 
