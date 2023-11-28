@@ -54,8 +54,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
-        http.authorizeRequests()
+        http
+            .csrf().disable()
+            .cors()
+            .and()
+            .formLogin().disable()
+            .httpBasic()
+            .and()
+            .authorizeRequests()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/webjars/**").permitAll()
@@ -65,15 +71,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/simple/**").permitAll()
                 .anyRequest().authenticated()
 //                .anyRequest().permitAll()
-                .and()
-                .sessionManagement().sessionCreationPolicy(STATELESS)
-                .and()
-                .addFilter(authenticationFilter())
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
-                .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED))
-                .and()
-                .headers().frameOptions().disable();
+            .and()
+            .sessionManagement().sessionCreationPolicy(STATELESS)
+            .and()
+            .addFilter(authenticationFilter())
+            .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
+            .exceptionHandling()
+            .authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED))
+            .and()
+            .headers().frameOptions().disable();
     }
 
     public JsonObjectAuthenticationFilter authenticationFilter() throws Exception {
