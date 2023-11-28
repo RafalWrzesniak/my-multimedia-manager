@@ -53,6 +53,9 @@ application:
     expirationTime: 3600000
 
 server:
+  servlet:
+    session:
+      tracking-modes: COOKIE
   error:
     include-message: always
     include-stacktrace: never
