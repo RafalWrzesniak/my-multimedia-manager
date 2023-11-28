@@ -2,6 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wrzesniak.rafal.my.multimedia.manager.config.security.LoginCredentials;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
@@ -17,7 +18,7 @@ import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListTy
 @RequiredArgsConstructor
 public class RegistrationService {
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final DynamoDbClientGeneric<UserDynamo> userDynamoClient;
     private final ContentListDynamoService contentListDynamoService;
 
@@ -26,8 +27,7 @@ public class RegistrationService {
         if(userDynamoClient.getItemById(credentials.getUsername()).isPresent()) {
             throw new UserAlreadyExistException();
         }
-//        UserDynamo user = new UserDynamo(credentials.getUsername(), passwordEncoder.encode(credentials.getPassword()));
-        UserDynamo user = new UserDynamo(credentials.getUsername(), credentials.getPassword());
+        UserDynamo user = new UserDynamo(credentials.getUsername(), passwordEncoder.encode(credentials.getPassword()));
         addDefaultListsFor(user);
         userDynamoClient.saveItem(user);
         log.info("New user register successfully: {}", user);
