@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -32,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final ObjectMapper objectMapper;
     private final RestAuthenticationSuccessHandler successHandler;
     private final RestAuthenticationFailureHandler failureHandler;
-    private final UserDetailsService dynamoUserDetailService;
+    private final DynamoUserDetailService dynamoUserDetailService;
 
 
     public SecurityConfig(ObjectMapper objectMapper,
@@ -58,10 +57,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
         http
             .authorizeRequests()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/register/**").permitAll()
                 .antMatchers("/simple/**").permitAll()
@@ -94,9 +89,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowCredentials(true);
-//        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://1mu67inv7k.execute-api.eu-central-1.amazonaws.com/Prod", "https://master.d5i6lke35o8tb.amplifyapp.com"));
-        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
+//        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com"));
 //        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("X-Requested-With","Origin","Content-Type","Accept","Authorization","x-xsrf-token"));

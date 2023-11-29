@@ -96,9 +96,9 @@ public class DefaultProductService<
         return mergeListWithDetailedProductsFunction.apply(list, products);
     }
 
-    public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems) {
+    public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems, String username) {
         return simpleItems.parallelStream()
-                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId()),
+                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId(), username),
                         simpleItem.withTitle(URLDecoder.decode(simpleItem.getTitle(), StandardCharsets.UTF_8))))
                 .toList();
     }

@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @Validated
-@CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials","Authorization"})
+@CrossOrigin
 @RestController
 public class LoginController {
 

@@ -70,9 +70,13 @@ public class DefaultDynamoRepository<
             @Cacheable(value = GAME_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('gry-online')"),
             @Cacheable(value = MOVIE_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('filmweb')")})
     public PRODUCT_USER_DETAILS getProductUserDetails(String productId) {
+        return getProductUserDetails(productId, owner());
+    }
+
+    public PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
         log.info("Getting product user details for product {}", productId);
-        return productUserDetailsDynamoClient.getItemById(owner(), productId)
-                .orElse(createNewUserDetailsFunction.apply(owner(), productId));
+        return productUserDetailsDynamoClient.getItemById(username, productId)
+                .orElse(createNewUserDetailsFunction.apply(username, productId));
     }
 
     @Caching(put = {

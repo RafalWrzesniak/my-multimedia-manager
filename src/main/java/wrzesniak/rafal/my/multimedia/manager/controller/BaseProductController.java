@@ -62,8 +62,8 @@ public abstract class BaseProductController<
     }
 
     @PostMapping("/details")
-    public List<SimpleItemDtoWithUserDetails> getDetailsForSimpleItems(@RequestBody List<SimpleItem> items) {
-        return defaultProductService.getDetailsForItems(items);
+    public List<SimpleItemDtoWithUserDetails> getDetailsForSimpleItems(@RequestParam String username, @RequestBody List<SimpleItem> items) {
+        return defaultProductService.getDetailsForItems(items, username);
     }
 
     @PostMapping("/finish")
