@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -53,9 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
         http.cors();
         http
+            .csrf()
+            .ignoringAntMatchers("/login")
+            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .and()
             .authorizeRequests()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/register/**").permitAll()
@@ -90,9 +94,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-//        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
 //        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com"));
-        configuration.setAllowedOrigins(List.of("*"));
+//        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTION"));
         configuration.setAllowedHeaders(Arrays.asList("X-Requested-With","Origin","Content-Type","Accept","Authorization","x-xsrf-token"));
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
