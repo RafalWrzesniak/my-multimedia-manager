@@ -17,7 +17,6 @@ Resources:
         AllowHeaders: "'Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,x-xsrf-token'"
         AllowMethods: "'OPTIONS,POST,GET,PUT,DELETE'"
         AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
-        ExposeHeaders: "Authorization,x-xsrf-token,Access-Control-Allow-Headers,Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers"
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
