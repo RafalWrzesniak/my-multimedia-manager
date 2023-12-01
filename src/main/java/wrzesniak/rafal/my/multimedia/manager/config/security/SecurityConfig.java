@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
         http.cors();
         http
             .csrf(AbstractHttpConfigurer::disable)
@@ -64,9 +65,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
 //                .anyRequest().permitAll()
             .and()
-            .httpBasic(withDefaults())
             .sessionManagement().sessionCreationPolicy(STATELESS)
             .and()
+            .httpBasic(withDefaults())
             .addFilter(authenticationFilter())
             .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
             .exceptionHandling();
