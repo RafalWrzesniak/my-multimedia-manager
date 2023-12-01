@@ -8,10 +8,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,7 +20,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.DynamoUserDetailService
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -56,14 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors();
         http
-            .csrf()
-            .ignoringAntMatchers("/login")
-            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .and()
+            .csrf(AbstractHttpConfigurer::disable)
             .authorizeRequests()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/register/**").permitAll()
                 .antMatchers("/simple/**").permitAll()
+                .antMatchers("/error").permitAll()
                 .anyRequest().authenticated()
 //                .anyRequest().permitAll()
             .and()
@@ -71,10 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .addFilter(authenticationFilter())
             .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
-            .exceptionHandling()
-            .authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED));
-//            .and()
-//            .headers().frameOptions().disable();
+            .exceptionHandling();
+//            .authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED));
     }
 
     public JsonObjectAuthenticationFilter authenticationFilter() throws Exception {
