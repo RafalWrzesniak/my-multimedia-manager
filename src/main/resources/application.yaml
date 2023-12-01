@@ -59,7 +59,7 @@ server:
       tracking-modes: COOKIE
   error:
     include-message: always
-    include-stacktrace: never
+#    include-stacktrace: never
 
 aws:
   access-key: AKIA2DE4ZYLSU3S7QEHD
