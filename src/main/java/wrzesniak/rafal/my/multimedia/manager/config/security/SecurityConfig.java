@@ -20,6 +20,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.DynamoUserDetailService
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -63,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
 //                .anyRequest().permitAll()
             .and()
+            .httpBasic(withDefaults())
             .sessionManagement().sessionCreationPolicy(STATELESS)
             .and()
             .addFilter(authenticationFilter())
