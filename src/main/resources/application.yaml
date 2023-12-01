@@ -54,6 +54,8 @@ application:
 
 server:
   forward-headers-strategy: NATIVE
+  tomcat:
+    redirect-context-root: false
   servlet:
     session:
       tracking-modes: COOKIE
