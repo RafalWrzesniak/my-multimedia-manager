@@ -56,25 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
-//        http.cors();
-//        http
-//            .csrf(AbstractHttpConfigurer::disable)
-//            .authorizeRequests()
-//                .antMatchers("/login/**").permitAll()
-//                .antMatchers("/register/**").permitAll()
-//                .antMatchers("/simple/**").permitAll()
-//                .antMatchers("/error").permitAll()
-//                .anyRequest().authenticated()
-////                .anyRequest().permitAll()
-//            .and()
-//            .sessionManagement().sessionCreationPolicy(STATELESS)
-//            .and()
-//            .httpBasic(withDefaults())
-//            .addFilter(authenticationFilter())
-//            .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
-//            .exceptionHandling();
-
         http.authorizeRequests()
                     .antMatchers("/login/**").permitAll()
                     .antMatchers("/register/**").permitAll()
@@ -93,8 +74,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(authenticationFilter())
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
                 .sessionManagement().sessionCreationPolicy(STATELESS)
-                .and()
-                .exceptionHandling().and().cors().and().csrf().disable();
+                .and().exceptionHandling()
+                .and().cors().and().csrf().disable();
     }
 
     public JsonObjectAuthenticationFilter authenticationFilter() throws Exception {
