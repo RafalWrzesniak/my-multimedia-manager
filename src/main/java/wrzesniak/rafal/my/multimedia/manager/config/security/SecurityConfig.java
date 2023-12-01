@@ -94,12 +94,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
-//        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com"));
-//        configuration.setAllowedOrigins(List.of("*"));
+//        configuration.setAllowCredentials(true);
+//        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTION"));
-        configuration.setAllowedHeaders(Arrays.asList("X-Requested-With","Origin","Content-Type","Accept","Authorization","x-xsrf-token"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "x-xsrf-token", "Access-Control-Allow-Headers", "Origin", "Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -112,7 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         FilterRegistrationBean<ForwardedHeaderFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR);
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        registration.setUrlPatterns(List.of("/simple/**"));
+        registration.setUrlPatterns(List.of("*"));
         return registration;
     }
 
