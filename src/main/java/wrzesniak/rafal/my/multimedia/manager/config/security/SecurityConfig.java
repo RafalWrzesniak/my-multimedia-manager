@@ -57,25 +57,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                    .antMatchers("/login/**").permitAll()
-                    .antMatchers("/register/**").permitAll()
-                    .antMatchers("/simple/**").permitAll()
-                    .antMatchers("/error").permitAll()
-                    .antMatchers("/login**").permitAll()
-                    .antMatchers("/prod/simple/**").permitAll()
-                    .antMatchers("/**").authenticated().and().authorizeRequests()
-                .anyRequest().hasAnyRole("ADMIN", "USER").and().headers().and()
-                .exceptionHandling()
-                .and()
-                .formLogin()
-                .successHandler(successHandler)
-                .and()
-                .httpBasic(withDefaults())
-                .addFilter(authenticationFilter())
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
-                .sessionManagement().sessionCreationPolicy(STATELESS)
-                .and().exceptionHandling()
-                .and().cors().and().csrf().disable();
+                .antMatchers("/login/**").permitAll()
+                .antMatchers("/register/**").permitAll()
+                .antMatchers("/simple/**").permitAll()
+                .antMatchers("/error").permitAll()
+                .antMatchers("/login**").permitAll()
+                .antMatchers("/prod/simple/**").permitAll()
+                .anyRequest().authenticated()
+            .and().headers()
+            .and().exceptionHandling()
+            .and().httpBasic(withDefaults())
+            .addFilter(authenticationFilter())
+            .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
+            .sessionManagement().sessionCreationPolicy(STATELESS)
+            .and().exceptionHandling()
+            .and().cors().and().csrf().disable();
     }
 
     public JsonObjectAuthenticationFilter authenticationFilter() throws Exception {
@@ -121,7 +117,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setIncludeQueryString(true);
         filter.setIncludePayload(true);
         filter.setMaxPayloadLength(10000);
-        filter.setIncludeHeaders(false);
+        filter.setIncludeHeaders(true);
         return filter;
     }
 }
