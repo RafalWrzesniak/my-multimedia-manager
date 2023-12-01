@@ -23,6 +23,9 @@ import javax.servlet.DispatcherType;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -83,11 +86,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().hasAnyRole("ADMIN", "USER").and().headers().and()
                 .exceptionHandling()
                 .and()
-//                .httpBasic(withDefaults())
-//                .addFilter(authenticationFilter())
-//                .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
-//                .sessionManagement().sessionCreationPolicy(STATELESS)
-//                .and()
+                .formLogin()
+                .successHandler(successHandler)
+                .and()
+                .httpBasic(withDefaults())
+                .addFilter(authenticationFilter())
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
+                .sessionManagement().sessionCreationPolicy(STATELESS)
+                .and()
                 .exceptionHandling().and().cors().and().csrf().disable();
     }
 
