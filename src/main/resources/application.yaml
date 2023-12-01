@@ -53,6 +53,7 @@ application:
     expirationTime: 3600000
 
 server:
+  forward-headers-strategy: NATIVE
   servlet:
     session:
       tracking-modes: COOKIE
