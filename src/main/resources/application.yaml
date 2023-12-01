@@ -53,9 +53,7 @@ application:
     expirationTime: 3600000
 
 server:
-  forward-headers-strategy: NATIVE
-  tomcat:
-    redirect-context-root: false
+  use-forward-headers: true
   servlet:
     session:
       tracking-modes: COOKIE
