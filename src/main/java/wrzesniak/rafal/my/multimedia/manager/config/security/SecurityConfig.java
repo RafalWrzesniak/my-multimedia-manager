@@ -56,22 +56,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/login/**").permitAll()
-                .antMatchers("/register/**").permitAll()
-                .antMatchers("/simple/**").permitAll()
-                .antMatchers("/error").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/prod/login/**").permitAll()
-                .antMatchers("/prod/simple/**").permitAll()
-                .anyRequest().permitAll()
-            .and().headers()
+        http.authorizeRequests(request -> request
+                            .antMatchers("/login").permitAll()
+                            .antMatchers("/prod/login").permitAll()
+                            .antMatchers("/register").permitAll()
+                            .antMatchers("/simple").permitAll()
+                            .antMatchers("/prod/simple").permitAll()
+                            .antMatchers("/error").permitAll()
+                            .anyRequest().authenticated()
+            )
+            .headers()
             .and().exceptionHandling()
             .and().httpBasic(withDefaults())
             .addFilter(authenticationFilter())
             .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
             .sessionManagement().sessionCreationPolicy(STATELESS)
-            .and().exceptionHandling()
             .and().cors().and().csrf().disable();
     }
 
