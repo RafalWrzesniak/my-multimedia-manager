@@ -53,7 +53,10 @@ application:
     expirationTime: 3600000
 
 server:
-  use-forward-headers: true
+  forward-headers-strategy: native
+  tomcat:
+    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
   servlet:
     session:
       tracking-modes: COOKIE
