@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,9 +23,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.DynamoUserDetailService
 import javax.servlet.DispatcherType;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -56,22 +54,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests(request -> request
-                            .antMatchers("/login").permitAll()
-                            .antMatchers("/prod/login").permitAll()
-                            .antMatchers("/register").permitAll()
-                            .antMatchers("/simple").permitAll()
-                            .antMatchers("/prod/simple").permitAll()
-                            .antMatchers("/error").permitAll()
-                            .anyRequest().authenticated()
-            )
-            .headers()
-            .and().exceptionHandling()
-            .and().httpBasic(withDefaults())
-            .addFilter(authenticationFilter())
-            .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
-            .sessionManagement().sessionCreationPolicy(STATELESS)
-            .and().cors().and().csrf().disable();
+//        http.authorizeRequests(request -> request
+//                            .antMatchers("/login").permitAll()
+//                            .antMatchers("/prod/login").permitAll()
+//                            .antMatchers("/register").permitAll()
+//                            .antMatchers("/simple").permitAll()
+//                            .antMatchers("/prod/simple").permitAll()
+//                            .antMatchers("/error").permitAll()
+//                            .anyRequest().authenticated()
+//            )
+//            .headers()
+//            .and().exceptionHandling()
+//            .and().httpBasic(withDefaults())
+//            .addFilter(authenticationFilter())
+//            .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
+//            .sessionManagement().sessionCreationPolicy(STATELESS)
+//            .and().cors().and().csrf().disable();
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/prod/login").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(authenticationFilter())
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), dynamoUserDetailService, secret))
+                .httpBasic()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);//We don't need sessions to be created.
+
     }
 
     public JsonObjectAuthenticationFilter authenticationFilter() throws Exception {
