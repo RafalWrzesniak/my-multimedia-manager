@@ -13,11 +13,11 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      Auth:
-        DefaultAuthorizer: MyCognitoAuthorizer
-        Authorizers:
-          MyCognitoAuthorizer:
-            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+#      Auth:
+#        DefaultAuthorizer: MyCognitoAuthorizer
+#        Authorizers:
+#          MyCognitoAuthorizer:
+#            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
       Cors:
         AllowHeaders: "'*'"
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
@@ -39,46 +39,42 @@ Resources:
             Method: ANY
             RestApiId: !Ref MyMultimediaManagerApi
 
-  MyCognitoUserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: "MyMultimediaManagerUserPool"
-      AutoVerifiedAttributes:
-        - email
-      VerificationMessageTemplate:
-        DefaultEmailOption: CONFIRM_WITH_LINK
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 8
-          RequireNumbers: true
-          RequireSymbols: true
-          RequireUppercase: true
-          RequireLowercase: true
-      UsernameAttributes:
-        - email
-        - username
-      AliasAttributes:
-        - email
-        - username
-
-  MyCognitoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      ClientName: "MyMultimediaManagerUserPoolClient"
-      UserPoolId: !Ref MyCognitoUserPool
-
-  MyCognitoUserPoolDomain:
-    Type: AWS::Cognito::UserPoolDomain
-    Properties:
-      UserPoolId: !Ref MyCognitoUserPool
-      Domain: "my-multimedia-manager"
+#  MyCognitoUserPool:
+#    Type: AWS::Cognito::UserPool
+#    Properties:
+#      UserPoolName: "MyMultimediaManagerUserPool"
+#      AutoVerifiedAttributes:
+#        - email
+#      VerificationMessageTemplate:
+#        DefaultEmailOption: CONFIRM_WITH_LINK
+#      Policies:
+#        PasswordPolicy:
+#          MinimumLength: 8
+#          RequireNumbers: true
+#          RequireSymbols: true
+#          RequireUppercase: true
+#          RequireLowercase: true
+#      UsernameAttributes:
+#        - email
+#        - username
+#      AliasAttributes:
+#        - email
+#        - username
+#
+#  MyCognitoUserPoolClient:
+#    Type: AWS::Cognito::UserPoolClient
+#    Properties:
+#      ClientName: "MyMultimediaManagerUserPoolClient"
+#      UserPoolId: !Ref MyCognitoUserPool
+#
+#  MyCognitoUserPoolDomain:
+#    Type: AWS::Cognito::UserPoolDomain
+#    Properties:
+#      UserPoolId: !Ref MyCognitoUserPool
+#      Domain: "my-multimedia-manager"
 
 Outputs:
   MyMultimediaManager:
     Description: API Gateway MyMultimediaManager Endpoint
     Value:
       Fn::Sub: https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
-
-  CognitoUserPoolClientId:
-    Value: !Ref MyCognitoUserPoolClient
-    Description: "Client ID for the Cognito User Pool Client"
