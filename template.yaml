@@ -43,8 +43,6 @@ Resources:
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: "MyMultimediaManagerUserPool"
-      UsernameAttributes:
-        - email
       AutoVerifiedAttributes:
         - email
       VerificationMessageTemplate:
