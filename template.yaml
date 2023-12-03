@@ -61,6 +61,12 @@ Resources:
       ClientName: "MyMultimediaManagerUserPoolClient"
       UserPoolId: !Ref MyCognitoUserPool
 
+  MyCognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref MyCognitoUserPool
+      Domain: "my-multimedia-manager"
+
 Outputs:
   MyMultimediaManager:
     Description: API Gateway MyMultimediaManager Endpoint
