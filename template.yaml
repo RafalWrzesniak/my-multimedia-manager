@@ -13,11 +13,11 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      Auth:
-        DefaultAuthorizer: MyCognitoAuthorizer
-        Authorizers:
-          MyCognitoAuthorizer:
-            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+#      Auth:
+#        DefaultAuthorizer: MyCognitoAuthorizer
+#        Authorizers:
+#          MyCognitoAuthorizer:
+#            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
       Cors:
         AllowHeaders: "'*'"
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
@@ -39,27 +39,27 @@ Resources:
             Method: ANY
             RestApiId: !Ref MyMultimediaManagerApi
 
-  MyCognitoUserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: "MyMultimediaManagerUserPool"
-      AutoVerifiedAttributes:
-        - email
-      VerificationMessageTemplate:
-        DefaultEmailOption: CONFIRM_WITH_LINK
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 8
-          RequireNumbers: true
-          RequireSymbols: true
-          RequireUppercase: true
-          RequireLowercase: true
-
-  MyCognitoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      ClientName: "MyMultimediaManagerUserPoolClient"
-      UserPoolId: !Ref MyCognitoUserPool
+#  MyCognitoUserPool:
+#    Type: AWS::Cognito::UserPool
+#    Properties:
+#      UserPoolName: "MyMultimediaManagerUserPool"
+#      AutoVerifiedAttributes:
+#        - email
+#      VerificationMessageTemplate:
+#        DefaultEmailOption: CONFIRM_WITH_LINK
+#      Policies:
+#        PasswordPolicy:
+#          MinimumLength: 8
+#          RequireNumbers: true
+#          RequireSymbols: true
+#          RequireUppercase: true
+#          RequireLowercase: true
+#
+#  MyCognitoUserPoolClient:
+#    Type: AWS::Cognito::UserPoolClient
+#    Properties:
+#      ClientName: "MyMultimediaManagerUserPoolClient"
+#      UserPoolId: !Ref MyCognitoUserPool
 
 Outputs:
   MyMultimediaManager:
@@ -67,6 +67,6 @@ Outputs:
     Value:
       Fn::Sub: https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
 
-  CognitoUserPoolClientId:
-    Value: !Ref MyCognitoUserPoolClient
-    Description: "Client ID for the Cognito User Pool Client"
+#  CognitoUserPoolClientId:
+#    Value: !Ref MyCognitoUserPoolClient
+#    Description: "Client ID for the Cognito User Pool Client"
