@@ -45,7 +45,6 @@ Resources:
       UserPoolName: "MyMultimediaManagerUserPool"
       UsernameAttributes:
         - email
-        - preferred_username
       AutoVerifiedAttributes:
         - email
       VerificationMessageTemplate:
@@ -57,6 +56,18 @@ Resources:
           RequireSymbols: true
           RequireUppercase: true
           RequireLowercase: true
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: username
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: '4'
+            MaxLength: '20'
 
   MyCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -69,3 +80,7 @@ Outputs:
     Description: API Gateway MyMultimediaManager Endpoint
     Value:
       Fn::Sub: https://${MyMultimediaManagerApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+
+  CognitoUserPoolClientId:
+    Value: !Ref MyCognitoUserPoolClient
+    Description: "Client ID for the Cognito User Pool Client"
