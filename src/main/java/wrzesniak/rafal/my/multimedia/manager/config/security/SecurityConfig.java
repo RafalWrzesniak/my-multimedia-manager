@@ -91,7 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("1mu67inv7k.execute-api.eu-central-1.amazonaws.com", "https://master.d5i6lke35o8tb.amplifyapp.com", "http://localhost:3000"));
 //        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTION"));
         configuration.setAllowedHeaders(List.of("X-Requested-With","Origin","Content-Type","Accept","Authorization","x-xsrf-token"));
