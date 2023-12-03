@@ -58,21 +58,9 @@ Resources:
           RequireLowercase: true
       AliasAttributes:
         - email
-        - nickname
+        - preferred_username
       UsernameAttributes:
         - email
-      Schema:
-        - Name: email
-          AttributeDataType: String
-          Mutable: true
-          Required: true
-        - Name: nickname
-          AttributeDataType: String
-          Mutable: true
-          Required: true
-          StringAttributeConstraints:
-            MinLength: '4'
-            MaxLength: '32'
 
   MyCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
