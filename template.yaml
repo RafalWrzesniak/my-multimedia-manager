@@ -56,10 +56,9 @@ Resources:
           RequireLowercase: true
       UsernameAttributes:
         - email
-        - username
       AliasAttributes:
         - email
-        - username
+        - preferred_username
 
   MyCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
