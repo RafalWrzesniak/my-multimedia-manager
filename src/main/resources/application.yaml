@@ -2,17 +2,6 @@ spring:
   name: my-multimedia-manager
   main:
     allow-bean-definition-overriding: true
-  jpa:
-    properties:
-        hibernate:
-          default_schema: MULTIMEDIA
-        javax:
-          persistence:
-            schema-generation:
-              create-source: metadata
-              scripts:
-                action: none
-                create-target: V0__schema.sql
 
 application:
   imdb:
@@ -53,10 +42,6 @@ application:
     expirationTime: 3600000
 
 server:
-  forward-headers-strategy: native
-  tomcat:
-    remote-ip-header: x-forwarded-for
-    protocol-header: x-forwarded-proto
   servlet:
     session:
       tracking-modes: COOKIE
