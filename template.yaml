@@ -47,8 +47,8 @@ Resources:
         - email
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_LINK
-        EmailMessage: "Witaj {username},\n\nDziękujemy za rejestrację. Prosimy potwierdzić swój adres e-mail, klikając poniższy link:\n\n{####}\n\nDziękujemy."
-        EmailSubject: "[my-multimedia-manager] Potwierdź swój adres e-mail"
+      EmailVerificationMessage: "Witaj {username},\n\nDziękujemy za rejestrację. Prosimy potwierdzić swój adres e-mail, klikając poniższy link:\n\n{####}\n\nDziękujemy."
+      EmailVerificationSubject: "[my-multimedia-manager] Potwierdź swój adres e-mail"
       Policies:
         PasswordPolicy:
           MinimumLength: 8
@@ -58,10 +58,19 @@ Resources:
           RequireLowercase: true
       AliasAttributes:
         - email
-        - preferred_username
+        - nickname
       Schema:
-        - AttributeDataType: String
-          Name: preferred_username
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: nickname
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: '4'
+            MaxLength: '32'
 
   MyCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
