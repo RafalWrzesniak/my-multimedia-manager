@@ -47,7 +47,7 @@ Resources:
         - email
       VerificationMessageTemplate:
         DefaultEmailOption: CONFIRM_WITH_LINK
-      EmailVerificationMessage: "Witaj {username},\n\nDziękujemy za rejestrację. Prosimy potwierdzić swój adres e-mail, klikając poniższy link:\n\n{####}\n\nDziękujemy."
+      EmailVerificationMessage: "Witaj {username},\n\nDziękujemy za rejestrację. Prosimy potwierdzić swój adres e-mail, klikając poniższy link:\n\n{##Verify Email##}\n\nDziękujemy."
       EmailVerificationSubject: "[my-multimedia-manager] Potwierdź swój adres e-mail"
       Policies:
         PasswordPolicy:
