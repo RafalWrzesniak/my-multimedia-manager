@@ -59,7 +59,7 @@ Resources:
       AliasAttributes:
         - email
       UsernameAttributes:
-        - preferred_username
+        - email
 
   MyCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
