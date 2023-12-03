@@ -13,10 +13,15 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      Auth:
+        DefaultAuthorizer: MyCognitoAuthorizer
+        Authorizers:
+          MyCognitoAuthorizer:
+            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
       Cors:
         AllowHeaders: "'*'"
-        AllowMethods: "'*'"
-        AllowOrigin: "'*'"
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
+        AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
 
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
@@ -33,6 +38,31 @@ Resources:
             Path: /{proxy+}
             Method: ANY
             RestApiId: !Ref MyMultimediaManagerApi
+
+  MyCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: "MyMultimediaManagerUserPool"
+      UsernameAttributes:
+        - email
+        - preferred_username
+      AutoVerifiedAttributes:
+        - email
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_LINK
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+          RequireLowercase: true
+
+  MyCognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: "MyMultimediaManagerUserPoolClient"
+      UserPoolId: !Ref MyCognitoUserPool
 
 Outputs:
   MyMultimediaManager:
