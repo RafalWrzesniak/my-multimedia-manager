@@ -23,6 +23,35 @@ Resources:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
         AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
 
+  MyMultimediaManagerLamdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: MyMultimediaManagerLamdaRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: DynamoDBPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: '*'
+        - PolicyName: SecretsManagerPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:*
+                Resource: '*'
+
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -71,35 +100,6 @@ Resources:
     Properties:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
-
-  MyMultimediaManagerLamdaRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      RoleName: MyMultimediaManagerLamdaRole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: DynamoDBPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - dynamodb:*
-                Resource: '*'
-        - PolicyName: SecretsManagerPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - secretsmanager:*
-                Resource: '*'
 
 Outputs:
   MyMultimediaManager:
