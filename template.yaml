@@ -55,9 +55,9 @@ Resources:
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
     Properties:
+      Role: !GetAtt MyMultimediaManagerLamdaRole.Arn
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
       CodeUri: .
-      Role: !GetAtt MyMultimediaManagerLamdaRole.Arn
       AutoPublishAlias: live
       SnapStart:
         ApplyOn: PublishedVersions
