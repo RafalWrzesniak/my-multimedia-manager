@@ -52,8 +52,8 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate,
                                    @RequestParam(required = false) Integer playedHours,
                                    @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        super.markProductAsFinished(gameId, finishDate, jwtToken);
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        super.markProductAsFinished(gameId, finishDate, username);
         Optional.ofNullable(playedHours).ifPresent(timeSpent -> gameFacade.setHoursPlayedForUser(gameId, timeSpent, username));
     }
 

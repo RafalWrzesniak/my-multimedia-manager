@@ -27,7 +27,7 @@ Resources:
   MyMultimediaManagerLamdaRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: MyMultimediaManagerLamdaRole
+      RoleName: MyMultimediaManagerLambdaRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:

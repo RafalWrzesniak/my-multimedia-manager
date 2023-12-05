@@ -19,10 +19,6 @@ public class DynamoDbClientGeneric<TYPE> {
          table = enhancedClient.table(tableName, TableSchema.fromBean(typeClass));
     }
 
-    public List<TYPE> getAllObjects() {
-        return table.scan().items().stream().toList();
-    }
-
     public Optional<TYPE> getItemById(String partitionKey) {
         return Optional.ofNullable(table.getItem(Key.builder()
                 .partitionValue(partitionKey)
@@ -53,11 +49,6 @@ public class DynamoDbClientGeneric<TYPE> {
     public void updateItem(TYPE item) {
         log.info("Updating item: {}", item);
         table.updateItem(item);
-    }
-
-    public void removeItem(String itemId) {
-        log.info("Removing item with id: {}", itemId);
-        getItemById(itemId).ifPresent(table::deleteItem);
     }
 
     public void removeItem(String partitionKey, String sortKey) {
