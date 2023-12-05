@@ -24,7 +24,7 @@ public class JwtTokenDecoder {
         String[] chunks = jwtToken.split("\\.");
         String payload = new String(decoder.decode(chunks[1]));
         try {
-            String username = objectMapper.readValue(payload, JwtPayload.class).username();
+            String username = objectMapper.readValue(payload, JwtPayload.class).getUsername();
             AdminSecret adminSecret = objectMapper.readValue(awsSecretsManager.getSecret(ADMIN_DATA_SECRET), AdminSecret.class);
             if(username.equals(adminSecret.adminCognitoUsername())) {
                 username = adminSecret.adminOriginalUsername();
@@ -36,7 +36,11 @@ public class JwtTokenDecoder {
         }
     }
 
-    private static record JwtPayload(String username) {}
+    private static record JwtPayload(String sub) {
+        public String getUsername() {
+            return sub;
+        }
+    }
 
     private static record AdminSecret(String adminCognitoUsername,
                                       String adminOriginalUsername) {}
