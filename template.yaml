@@ -18,6 +18,7 @@ Resources:
         Authorizers:
           MyCognitoAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+        AddDefaultAuthorizerToCorsPreflight: False
       Cors:
         AllowHeaders: "'*'"
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
