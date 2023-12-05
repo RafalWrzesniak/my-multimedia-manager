@@ -19,7 +19,7 @@ Resources:
           MyCognitoAuthorizer:
             UserPoolArn: !GetAtt MyCognitoUserPool.Arn
       Cors:
-        AllowHeaders: "'X-Requested-With,Origin,Content-Type,Accept,Authorization,x-xsrf-token'"
+        AllowHeaders: "'*'"
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
         AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
 
