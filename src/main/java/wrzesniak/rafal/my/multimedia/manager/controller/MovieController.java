@@ -10,6 +10,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
+import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 
 @Slf4j
 @Validated
@@ -18,7 +19,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWith
 @RequestMapping("movie")
 public class MovieController extends BaseProductController<MovieWithUserDetailsDto, MovieUserDetailsDynamo, MovieListWithUserDetails, MovieDynamo> {
 
-    public MovieController(MovieFacade movieFacade) {
-        super(movieFacade);
+    public MovieController(MovieFacade movieFacade, JwtTokenDecoder jwtTokenDecoder) {
+        super(movieFacade, jwtTokenDecoder);
     }
 }

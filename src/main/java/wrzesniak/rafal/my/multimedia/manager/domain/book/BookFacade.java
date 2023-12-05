@@ -11,7 +11,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookWithUs
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.BOOK_LIST;
 
@@ -22,14 +21,12 @@ public class BookFacade extends DefaultProductService<BookWithUserDetailsDto, Bo
 
     public BookFacade(DefaultDynamoRepository<BookWithUserDetailsDto, BookUserDetailsDynamo, BookDynamo> bookDynamoRepository,
                       BookCreatorService bookCreatorService,
-                      ContentListDynamoService contentListDynamoService,
-                      UserService userService) {
-        super(BOOK_LIST, BookListWithUserDetails::of, userService,
-                contentListDynamoService, bookCreatorService, bookDynamoRepository);
+                      ContentListDynamoService contentListDynamoService) {
+        super(BOOK_LIST, BookListWithUserDetails::of, contentListDynamoService, bookCreatorService, bookDynamoRepository);
     }
 
-    public void setFormatForUserBook(String bookId, BookFormat bookFormat) {
-        BookUserDetailsDynamo bookDetails = super.getProductUserDetails(bookId);
+    public void setFormatForUserBook(String bookId, BookFormat bookFormat, String username) {
+        BookUserDetailsDynamo bookDetails = super.getProductUserDetails(bookId, username);
         bookDetails.setBookFormat(bookFormat);
         log.info("Marking book `{}` as reading on {}", bookId, bookFormat);
         super.updateUserProductDetails(bookDetails);

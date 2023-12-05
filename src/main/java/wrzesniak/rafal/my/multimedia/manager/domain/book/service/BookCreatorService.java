@@ -24,23 +24,23 @@ public class BookCreatorService implements ProductCreatorService<BookWithUserDet
     private final DefaultDynamoRepository<BookWithUserDetailsDto, BookUserDetailsDynamo, BookDynamo> bookDynamoRepository;
     private final LubimyCzytacService lubimyCzytacService;
 
-    public BookWithUserDetailsDto createBookFromDto(BookDto bookDto) {
-        Optional<BookWithUserDetailsDto> bookInDataBase = bookDynamoRepository.getById(bookDto.getUrl());
+    public BookWithUserDetailsDto createBookFromDto(BookDto bookDto, String username) {
+        Optional<BookWithUserDetailsDto> bookInDataBase = bookDynamoRepository.getById(bookDto.getUrl(), username);
         if(bookInDataBase.isPresent()) {
             log.info("Book already exist with dto: {}", bookDto);
-            bookDynamoRepository.createOrUpdateUserDetailsFor(bookDto.getUrl());
+            bookDynamoRepository.createOrUpdateUserDetailsFor(bookDto.getUrl(), username);
             return bookInDataBase.get();
         }
         BookDynamo bookDynamo = DtoMapper.mapToBook(bookDto);
-        BookWithUserDetailsDto savedBook = bookDynamoRepository.saveProduct(bookDynamo);
+        BookWithUserDetailsDto savedBook = bookDynamoRepository.saveProduct(bookDynamo, username);
         log.info("Book created from URL: {}", savedBook);
         return savedBook;
     }
 
     @Override
-    public BookWithUserDetailsDto createProductFromUrl(URL lubimyCzytacBookUrl) {
+    public BookWithUserDetailsDto createProductFromUrl(URL lubimyCzytacBookUrl, String username) {
         return lubimyCzytacService.createBookDtoFromUrl(lubimyCzytacBookUrl)
-                .map(this::createBookFromDto)
+                .map((BookDto bookDto) -> createBookFromDto(bookDto, username))
                 .orElseThrow(BookNotCreatedException::new);
     }
 

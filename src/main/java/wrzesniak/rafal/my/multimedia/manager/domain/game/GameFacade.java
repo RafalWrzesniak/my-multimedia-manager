@@ -11,7 +11,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameListWi
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDtoDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import java.net.URL;
 import java.util.Optional;
@@ -26,29 +25,28 @@ public class GameFacade extends DefaultProductService<GameWithUserDetailsDto, Ga
 
     private GameFacade(DefaultDynamoRepository<GameWithUserDetailsDto, GameUserDetailsDtoDynamo, GameDynamo> gameDynamoRepository,
                        GameCreatorService gameCreatorService,
-                       ContentListDynamoService contentListDynamoService,
-                       UserService userService) {
+                       ContentListDynamoService contentListDynamoService) {
 
-        super(GAME_LIST, GameListWithUserDetails::of, userService, contentListDynamoService, gameCreatorService, gameDynamoRepository);
+        super(GAME_LIST, GameListWithUserDetails::of, contentListDynamoService, gameCreatorService, gameDynamoRepository);
         this.gameCreatorService = gameCreatorService;
     }
 
-    public GameWithUserDetailsDto createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform) {
-        GameWithUserDetailsDto game = gameCreatorService.createGameFromUrl(gryOnlineUrl, gamePlatform);
-        Optional.ofNullable(gamePlatform).ifPresent(platform -> setPlatformForUserGame(game.getGryOnlineUrl().toString(), platform));
+    public GameWithUserDetailsDto createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform, String username) {
+        GameWithUserDetailsDto game = gameCreatorService.createGameFromUrl(gryOnlineUrl, gamePlatform, username);
+        Optional.ofNullable(gamePlatform).ifPresent(platform -> setPlatformForUserGame(game.getGryOnlineUrl().toString(), platform, username));
         return game;
     }
 
 
-    public void setPlatformForUserGame(String gameId, GamePlatform gamePlatform) {
-        GameUserDetailsDtoDynamo gameDetails = super.getProductUserDetails(gameId);
+    public void setPlatformForUserGame(String gameId, GamePlatform gamePlatform, String username) {
+        GameUserDetailsDtoDynamo gameDetails = super.getProductUserDetails(gameId, username);
         gameDetails.setGamePlatform(gamePlatform);
         log.info("Marking game `{}` as playing on {}", gameId, gameDetails.getGamePlatform());
         super.updateUserProductDetails(gameDetails);
     }
 
-    public void setHoursPlayedForUser(String gameId, int playedHours) {
-        GameUserDetailsDtoDynamo gameDetails = super.getProductUserDetails(gameId);
+    public void setHoursPlayedForUser(String gameId, int playedHours, String username) {
+        GameUserDetailsDtoDynamo gameDetails = super.getProductUserDetails(gameId, username);
         gameDetails.setPlayedHours(playedHours);
         log.info("Marking game `{}` as spent on {} hours", gameId, gameDetails.getPlayedHours());
         super.updateUserProductDetails(gameDetails);

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DynamoDbClientGeneric;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import java.util.List;
 
@@ -14,12 +13,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContentListDynamoService {
 
-    private final UserService userService;
     private final DynamoDbClientGeneric<ContentListDynamo> listClient;
 
 
-    public void addProductToList(SimpleItem product, String listId) {
-        ContentListDynamo list = getListById(listId);
+    public void addProductToList(SimpleItem product, String listId, String username) {
+        ContentListDynamo list = getListById(listId, username);
         if(list.addItem(product)) {
             log.info("Product {} added to list {}", product.getTitle(), list.getListName());
             listClient.updateItem(list);
@@ -28,13 +26,13 @@ public class ContentListDynamoService {
         }
     }
 
-    public void addProductToAllProductsList(SimpleItem product, ContentListType contentListType) {
-        String listIdWithAllProducts = getListWithAllProducts(contentListType).getListId();
-        addProductToList(product, listIdWithAllProducts);
+    public void addProductToAllProductsList(SimpleItem product, ContentListType contentListType, String username) {
+        String listIdWithAllProducts = getListWithAllProducts(contentListType, username).getListId();
+        addProductToList(product, listIdWithAllProducts, username);
     }
 
-    public void removeProductFromList(String productId, String listId) {
-        ContentListDynamo list = getListById(listId);
+    public void removeProductFromList(String productId, String listId, String username) {
+        ContentListDynamo list = getListById(listId, username);
         list.removeItem(productId);
         log.info("Product {} removed from list {}", productId, list.getListName());
         listClient.updateItem(list);
@@ -48,36 +46,36 @@ public class ContentListDynamoService {
         return contentListDynamo;
     }
 
-    public ContentListDynamo createContentList(String listName, ContentListType contentListType) {
-        return createContentList(listName, userService.getCurrentUsername(), contentListType, false);
+    public ContentListDynamo createContentList(String listName, ContentListType contentListType, String username) {
+        return createContentList(listName, username, contentListType, false);
     }
 
-    public ContentListDynamo getListById(String listId) {
-        return listClient.getItemById(userService.getCurrentUsername(), listId).orElseThrow();
+    public ContentListDynamo getListById(String listId, String username) {
+        return listClient.getItemById(username, listId).orElseThrow();
     }
 
-    public void removeContentList(String listId) {
-        log.info("Removing list: {}", getListById(listId));
-        listClient.removeItem(userService.getCurrentUsername(), listId);
+    public void removeContentList(String listId, String username) {
+        log.info("Removing list: {}", getListById(listId, username));
+        listClient.removeItem(username, listId);
     }
 
-    public List<ContentListDynamo> findListIdsContainingProduct(String productId, ContentListType contentListType) {
-        return listClient.findObjectsByPartitionKey(userService.getCurrentUsername()).stream()
+    public List<ContentListDynamo> findListIdsContainingProduct(String productId, ContentListType contentListType, String username) {
+        return listClient.findObjectsByPartitionKey(username).stream()
                 .filter(list -> contentListType.equals(list.getContentListType()))
                 .filter(list -> list.contains(productId))
                 .toList();
     }
 
-    public ContentListDynamo getListWithAllProducts(ContentListType contentListType) {
-        return listClient.findObjectsByPartitionKey(userService.getCurrentUsername()).stream()
+    public ContentListDynamo getListWithAllProducts(ContentListType contentListType, String username) {
+        return listClient.findObjectsByPartitionKey(username).stream()
                 .filter(list -> contentListType.equals(list.getContentListType()))
                 .filter(ContentListDynamo::isAllContentList)
                 .findFirst()
                 .orElseThrow();
     }
 
-    public List<ContentListDynamo> getAllContentLists() {
-        return listClient.findObjectsByPartitionKey(userService.getCurrentUsername());
+    public List<ContentListDynamo> getAllContentLists(String username) {
+        return listClient.findObjectsByPartitionKey(username);
     }
 
 }

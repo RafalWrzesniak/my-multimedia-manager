@@ -26,20 +26,20 @@ public class GameCreatorService implements ProductCreatorService<GameWithUserDet
     private final GryOnlineService gryOnlineService;
 
     @Override
-    public GameWithUserDetailsDto createProductFromUrl(URL gryOnlineUrl) {
-        return createGameFromUrl(gryOnlineUrl, null);
+    public GameWithUserDetailsDto createProductFromUrl(URL gryOnlineUrl, String username) {
+        return createGameFromUrl(gryOnlineUrl, null, username);
     }
 
-    public GameWithUserDetailsDto createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform) {
-        Optional<GameWithUserDetailsDto> gameInDatabase = gameDynamoRepository.getById(gryOnlineUrl.toString());
+    public GameWithUserDetailsDto createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform, String username) {
+        Optional<GameWithUserDetailsDto> gameInDatabase = gameDynamoRepository.getById(gryOnlineUrl.toString(), username);
         if(gameInDatabase.isPresent()) {
             log.info("Game already exist for url: {}", gryOnlineUrl);
-            gameDynamoRepository.createOrUpdateUserDetailsFor(gryOnlineUrl.toString());
+            gameDynamoRepository.createOrUpdateUserDetailsFor(gryOnlineUrl.toString(), username);
             return gameInDatabase.get();
         }
         GameDto gameDtoFromUrl = gryOnlineService.createGameDtoFromUrl(gryOnlineUrl, gamePlatform).orElseThrow(GameNotCreatedException::new);
         GameDynamo game = DtoMapper.mapToGame(gameDtoFromUrl);
-        GameWithUserDetailsDto savedGame = gameDynamoRepository.saveProduct(game);
+        GameWithUserDetailsDto savedGame = gameDynamoRepository.saveProduct(game, username);
         log.info("Game created from URL: {}", savedGame);
         return savedGame;
     }

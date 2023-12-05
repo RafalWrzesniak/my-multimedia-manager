@@ -37,10 +37,6 @@ application:
       description: book-description
       series: /cykl/
 
-  jwt:
-    secret: x54bhbyf66bry6r5@!#!@sds
-    expirationTime: 3600000
-
 server:
   servlet:
     session:
@@ -48,11 +44,6 @@ server:
   error:
     include-message: always
     include-stacktrace: never
-
-aws:
-  access-key: AKIA2DE4ZYLSU3S7QEHD
-  secret-key: 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
-  s3-bucket-name: multimedia-images
 
 logging:
   level:

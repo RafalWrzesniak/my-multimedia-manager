@@ -10,6 +10,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductServic
 import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductUserDetailsAbstract;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
+import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 import wrzesniak.rafal.my.multimedia.manager.util.SimplePageRequest;
 
 import javax.validation.constraints.PositiveOrZero;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder.TOKEN_HEADER;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @RequiredArgsConstructor
@@ -30,18 +32,23 @@ public abstract class BaseProductController<
     private static final String PAGE_SIZE = "20";
 
     private final DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT_USER_DETAILS, LIST_DETAILED_PRODUCTS, PRODUCT> defaultProductService;
+    private final JwtTokenDecoder jwtTokenDecoder;
 
     @PostMapping("/create")
     public PRODUCT_WITH_USER_DETAILS createProductFromUrl(@RequestParam String url,
-                                        @RequestParam(required = false) @Size(min = 3, max = 30) String listId) {
-        PRODUCT_WITH_USER_DETAILS product = defaultProductService.createFromUrl(toURL(url));
-        Optional.ofNullable(listId).ifPresent(name -> defaultProductService.addProductToList(url, name));
+                                                          @RequestParam(required = false) @Size(min = 3, max = 30) String listId,
+                                                          @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        PRODUCT_WITH_USER_DETAILS product = defaultProductService.createFromUrl(toURL(url), username);
+        Optional.ofNullable(listId).ifPresent(listName -> defaultProductService.addProductToList(url, listName, username));
         return product;
     }
 
     @GetMapping("")
-    public Optional<PRODUCT_WITH_USER_DETAILS> findProductById(@RequestParam String id) {
-        return defaultProductService.getById(id);
+    public Optional<PRODUCT_WITH_USER_DETAILS> findProductById(@RequestParam String id,
+                                                               @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return defaultProductService.getById(id, username);
     }
 
     @GetMapping("/property")
@@ -51,25 +58,33 @@ public abstract class BaseProductController<
                                                                   @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
                                                                   @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
                                                                   @RequestParam(defaultValue = "id") @Size(min = 2, max = 20) String sortKey,
-                                                                  @RequestParam(defaultValue = "ASC") String direction) {
+                                                                  @RequestParam(defaultValue = "ASC") String direction,
+                                                                  @RequestHeader(TOKEN_HEADER) String jwtToken) {
         SimplePageRequest pageRequest = new SimplePageRequest(page, pageSize, sortKey, direction);
-        return defaultProductService.findByPropertyName(listId, propertyName, value.replaceAll("[^a-zA-Z0-9 ]", ""), pageRequest);
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return defaultProductService.findByPropertyName(listId, propertyName, value.replaceAll("[^a-zA-Z0-9 ]", ""), pageRequest, username);
     }
 
     @GetMapping("/lastFinished")
-    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "20") Integer numberOfPositions) {
-        return defaultProductService.findLastFinished(numberOfPositions);
+    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "20") Integer numberOfPositions,
+                                                                        @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return defaultProductService.findLastFinished(numberOfPositions, username);
     }
 
     @PostMapping("/details")
-    public List<SimpleItemDtoWithUserDetails> getDetailsForSimpleItems(@RequestBody List<SimpleItem> items) {
-        return defaultProductService.getDetailsForItems(items);
+    public List<SimpleItemDtoWithUserDetails> getDetailsForSimpleItems(@RequestBody List<SimpleItem> items,
+                                                                       @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return defaultProductService.getDetailsForItems(items, username);
     }
 
     @PostMapping("/finish")
     public void markProductAsFinished(@RequestParam String id,
-                                      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate) {
-        defaultProductService.markProductAsFinished(id, finishDate);
+                                      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate,
+                                      @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        defaultProductService.markProductAsFinished(id, finishDate, username);
     }
 
     @GetMapping("/list")
@@ -77,36 +92,48 @@ public abstract class BaseProductController<
                                                       @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
                                                       @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
                                                       @RequestParam(defaultValue = "id") String sortKey,
-                                                      @RequestParam(defaultValue = "ASC") String direction) {
+                                                      @RequestParam(defaultValue = "ASC") String direction,
+                                                      @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         SimplePageRequest pageRequest = new SimplePageRequest(page, pageSize, sortKey, direction);
-        return defaultProductService.getListById(listId, pageRequest);
+        return defaultProductService.getListById(listId, pageRequest, username);
     }
 
     @PostMapping("/list")
-    public ContentListDynamo addContentListToUser(@RequestParam String listName) {
-        return defaultProductService.createContentList(listName);
+    public ContentListDynamo addContentListToUser(@RequestParam String listName,
+                                                  @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return defaultProductService.createContentList(listName, username);
     }
 
     @DeleteMapping("/list")
-    public void removeContentList(@RequestParam String listId) {
-        defaultProductService.removeContentList(listId);
+    public void removeContentList(@RequestParam String listId,
+                                  @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        defaultProductService.removeContentList(listId, username);
     }
 
     @GetMapping("/list/with")
-    public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(@RequestParam String productId) {
-        return defaultProductService.findListsContainingProduct(productId);
+    public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(@RequestParam String productId,
+                                                                   @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return defaultProductService.findListsContainingProduct(productId, username);
     }
 
     @PostMapping("/list/add")
     public void addProductToContentList(@RequestParam String listId,
-                                         @RequestParam String productId) {
-        defaultProductService.addProductToList(productId, listId);
+                                         @RequestParam String productId,
+                                        @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        defaultProductService.addProductToList(productId, listId, username);
     }
 
     @DeleteMapping("/list/remove")
     public void removeProductFromList(@RequestParam String listId,
-                                      @RequestParam String productId) {
-        defaultProductService.removeProductFromContentList(productId, listId);
+                                      @RequestParam String productId,
+                                      @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        defaultProductService.removeProductFromContentList(productId, listId, username);
     }
 
 }

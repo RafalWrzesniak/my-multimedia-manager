@@ -9,7 +9,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.product.Finishable;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.IdSupport;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.Updatable;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,26 +26,25 @@ public class DefaultDynamoRepository<
 
     private final DynamoDbClientGeneric<PRODUCT> productDynamoClient;
     private final DynamoDbClientGeneric<PRODUCT_USER_DETAILS> productUserDetailsDynamoClient;
-    private final UserService userService;
     private final BiFunction<String, String, PRODUCT_USER_DETAILS> createNewUserDetailsFunction;
     private final BiFunction<PRODUCT, PRODUCT_USER_DETAILS, PRODUCT_WITH_USER_DETAILS> mergeProductWithUserDetails;
 
-    public PRODUCT_WITH_USER_DETAILS saveProduct(PRODUCT product) {
+    public PRODUCT_WITH_USER_DETAILS saveProduct(PRODUCT product, String username) {
         productDynamoClient.saveItem(product);
-        createOrUpdateUserDetailsFor(product.getId());
-        return getById(product.getId()).orElseThrow(() -> new IllegalStateException("Cannot find product that should have been saved: " + product));
+        createOrUpdateUserDetailsFor(product.getId(), username);
+        return getById(product.getId(), username).orElseThrow(() -> new IllegalStateException("Cannot find product that should have been saved: " + product));
     }
 
-    public void createOrUpdateUserDetailsFor(String productId) {
-        PRODUCT_USER_DETAILS userDetails = productUserDetailsDynamoClient.getItemById(owner(), productId)
+    public void createOrUpdateUserDetailsFor(String productId, String username) {
+        PRODUCT_USER_DETAILS userDetails = productUserDetailsDynamoClient.getItemById(username, productId)
                 .map(userDetails1 -> userDetails1.withUpdatedOn(LocalDateTime.now()))
-                .orElse(createNewUserDetailsFunction.apply(owner(), productId));
+                .orElse(createNewUserDetailsFunction.apply(username, productId));
         productUserDetailsDynamoClient.saveItem(userDetails);
     }
 
-    public Optional<PRODUCT_WITH_USER_DETAILS> getById(String productId) {
+    public Optional<PRODUCT_WITH_USER_DETAILS> getById(String productId, String username) {
         Optional<PRODUCT> product = productDynamoClient.getItemById(productId);
-        PRODUCT_USER_DETAILS userDetails = getProductUserDetails(productId);
+        PRODUCT_USER_DETAILS userDetails = getProductUserDetails(productId, username);
         return product.map(prod -> mergeProductWithUserDetails.apply(prod, userDetails));
     }
 
@@ -55,12 +53,12 @@ public class DefaultDynamoRepository<
     }
 
     @Cacheable(value = RECENTLY_DONE_CACHE)
-    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyDone(int limit) {
-        return productUserDetailsDynamoClient.findObjectsByPartitionKey(owner()).stream()
+    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyDone(int limit, String username) {
+        return productUserDetailsDynamoClient.findObjectsByPartitionKey(username).stream()
                 .filter(userDetails -> userDetails.getFinishedOn() != null)
                 .sorted((m1, m2) -> m2.getFinishedOn().compareTo(m1.getFinishedOn()))
                 .limit(limit)
-                .map(userDetails -> getById(userDetails.getId()))
+                .map(userDetails -> getById(userDetails.getId(), username))
                 .map(Optional::get)
                 .toList();
     }
@@ -69,10 +67,6 @@ public class DefaultDynamoRepository<
             @Cacheable(value = BOOK_USER_DETAILS_CACHE, key = "#productId", condition="#productId.contains('lubimyczytac')"),
             @Cacheable(value = GAME_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('gry-online')"),
             @Cacheable(value = MOVIE_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('filmweb')")})
-    public PRODUCT_USER_DETAILS getProductUserDetails(String productId) {
-        return getProductUserDetails(productId, owner());
-    }
-
     public PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
         log.info("Getting product user details for product {}", productId);
         return productUserDetailsDynamoClient.getItemById(username, productId)
@@ -96,10 +90,6 @@ public class DefaultDynamoRepository<
     public Optional<PRODUCT> getRawProductById(String productId) {
         log.info("Getting product details for product {}", productId);
         return productDynamoClient.getItemById(productId);
-    }
-
-    private String owner() {
-        return userService.getCurrentUsername();
     }
 
 }

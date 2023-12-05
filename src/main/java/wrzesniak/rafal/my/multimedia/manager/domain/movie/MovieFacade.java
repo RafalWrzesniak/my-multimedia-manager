@@ -10,7 +10,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieList
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MOVIE_LIST;
 
@@ -20,10 +19,9 @@ public class MovieFacade extends DefaultProductService<MovieWithUserDetailsDto, 
 
     public MovieFacade(DefaultDynamoRepository<MovieWithUserDetailsDto, MovieUserDetailsDynamo, MovieDynamo> movieDynamoRepository,
                        MovieCreatorService movieCreatorService,
-                       ContentListDynamoService contentListDynamoService,
-                       UserService userService) {
+                       ContentListDynamoService contentListDynamoService) {
 
-        super(MOVIE_LIST, MovieListWithUserDetails::of, userService, contentListDynamoService, movieCreatorService, movieDynamoRepository);
+        super(MOVIE_LIST, MovieListWithUserDetails::of, contentListDynamoService, movieCreatorService, movieDynamoRepository);
     }
 
 }

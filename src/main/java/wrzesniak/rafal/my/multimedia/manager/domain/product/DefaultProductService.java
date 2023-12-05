@@ -7,7 +7,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoSer
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.util.SimplePageRequest;
 
 import java.lang.reflect.Field;
@@ -31,45 +30,44 @@ public class DefaultProductService<
     private final ContentListType contentListType;
     private final BiFunction<ContentListDynamo, List<PRODUCT_WITH_USER_DETAILS>, LIST_DETAILED_PRODUCTS> mergeListWithDetailedProductsFunction;
 
-    private final UserService userService;
     private final ContentListDynamoService contentListDynamoService;
     private final ProductCreatorService<PRODUCT_WITH_USER_DETAILS> productCreatorService;
     private final DefaultDynamoRepository<PRODUCT_WITH_USER_DETAILS, PRODUCT_USER_DETAILS, PRODUCT> dynamoDbProductRepository;
 
-    public PRODUCT_WITH_USER_DETAILS createFromUrl(URL url) {
-        PRODUCT_WITH_USER_DETAILS product = productCreatorService.createProductFromUrl(url);
+    public PRODUCT_WITH_USER_DETAILS createFromUrl(URL url, String username) {
+        PRODUCT_WITH_USER_DETAILS product = productCreatorService.createProductFromUrl(url, username);
         Product savedProduct = dynamoDbProductRepository.getRawProductById(url.toString()).orElseThrow();
-        contentListDynamoService.addProductToAllProductsList(SimpleItem.of(savedProduct), contentListType);
+        contentListDynamoService.addProductToAllProductsList(SimpleItem.of(savedProduct), contentListType, username);
         return product;
     }
 
-    public void addProductToList(String productId, String listId) {
+    public void addProductToList(String productId, String listId, String username) {
         Product product = dynamoDbProductRepository.getRawProductById(productId).orElseThrow();
-        contentListDynamoService.addProductToList(SimpleItem.of(product), listId);
+        contentListDynamoService.addProductToList(SimpleItem.of(product), listId, username);
     }
 
-    public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(String productId) {
-        return contentListDynamoService.findListIdsContainingProduct(productId, contentListType).stream()
+    public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(String productId, String username) {
+        return contentListDynamoService.findListIdsContainingProduct(productId, contentListType, username).stream()
                 .map(dynamoList -> mergeListWithDetailedProductsFunction.apply(dynamoList, List.of()))
                 .toList();
     }
 
-    public void markProductAsFinished(String productId, LocalDate finishDate) {
+    public void markProductAsFinished(String productId, LocalDate finishDate, String username) {
         LocalDate realFinishDate = Optional.ofNullable(finishDate).orElse(LocalDate.now());
-        PRODUCT_USER_DETAILS productUserDetails = getProductUserDetails(productId);
+        PRODUCT_USER_DETAILS productUserDetails = getProductUserDetails(productId, username);
         PRODUCT_USER_DETAILS updatedDetails = productUserDetails.withFinishedOn(realFinishDate);
-        log.info("Marking {} as finished on {} for {}", productId, realFinishDate, userService.getCurrentUsername());
+        log.info("Marking {} as finished on {} for {}", productId, realFinishDate, username);
         updateUserProductDetails(updatedDetails);
     }
 
-    public Optional<PRODUCT_WITH_USER_DETAILS> getById(String id) {
+    public Optional<PRODUCT_WITH_USER_DETAILS> getById(String id, String username) {
         Optional<PRODUCT> product = dynamoDbProductRepository.getRawProductById(id);
-        PRODUCT_USER_DETAILS productUserDetails = dynamoDbProductRepository.getProductUserDetails(id);
+        PRODUCT_USER_DETAILS productUserDetails = dynamoDbProductRepository.getProductUserDetails(id, username);
         return product.map(prod -> dynamoDbProductRepository.mergeProductWithDetails(prod, productUserDetails));
     }
 
-    public List<PRODUCT_WITH_USER_DETAILS> findByPropertyName(String listId, String propertyName, String propertyValue, SimplePageRequest pageRequest) {
-        List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId);
+    public List<PRODUCT_WITH_USER_DETAILS> findByPropertyName(String listId, String propertyName, String propertyValue, SimplePageRequest pageRequest, String username) {
+        List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
         return allProducts.stream()
                 .filter(product -> productPropertyContains(product, propertyName, propertyValue))
                 .skip((long) pageRequest.pageSize() * pageRequest.page())
@@ -77,17 +75,17 @@ public class DefaultProductService<
                 .toList();
     }
 
-    public List<PRODUCT_WITH_USER_DETAILS> findLastFinished(int numberOfPositions) {
-        return dynamoDbProductRepository.findRecentlyDone(numberOfPositions);
+    public List<PRODUCT_WITH_USER_DETAILS> findLastFinished(int numberOfPositions, String username) {
+        return dynamoDbProductRepository.findRecentlyDone(numberOfPositions, username);
     }
 
-    public ContentListDynamo getListById(String listId) {
-        return contentListDynamoService.getListById(listId);
+    public ContentListDynamo getListById(String listId, String username) {
+        return contentListDynamoService.getListById(listId, username);
     }
 
-    public LIST_DETAILED_PRODUCTS getListById(String listId, SimplePageRequest pageRequest) {
-        ContentListDynamo list = contentListDynamoService.getListById(listId);
-        List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId);
+    public LIST_DETAILED_PRODUCTS getListById(String listId, SimplePageRequest pageRequest, String username) {
+        ContentListDynamo list = contentListDynamoService.getListById(listId, username);
+        List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
         List<PRODUCT_WITH_USER_DETAILS> products = allProducts.stream()
                 .sorted((obj1, obj2) -> compareProducts(pageRequest, obj1, obj2))
                 .skip((long) pageRequest.pageSize() * pageRequest.page())
@@ -96,28 +94,28 @@ public class DefaultProductService<
         return mergeListWithDetailedProductsFunction.apply(list, products);
     }
 
-    public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems) {
+    public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems, String username) {
         return simpleItems.parallelStream()
-                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId()),
+                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId(), username),
                         simpleItem.withTitle(URLDecoder.decode(simpleItem.getTitle(), StandardCharsets.UTF_8))))
                 .toList();
     }
 
-    public ContentListDynamo createContentList(String listName) {
-        ContentListDynamo createdList = contentListDynamoService.createContentList(listName, contentListType);
-        return getListById(createdList.getListId());
+    public ContentListDynamo createContentList(String listName, String username) {
+        ContentListDynamo createdList = contentListDynamoService.createContentList(listName, contentListType, username);
+        return getListById(createdList.getListId(), username);
     }
 
-    public void removeContentList(String listId) {
-        contentListDynamoService.removeContentList(listId);
+    public void removeContentList(String listId, String username) {
+        contentListDynamoService.removeContentList(listId, username);
     }
 
-    public void removeProductFromContentList(String productId, String listId) {
-        contentListDynamoService.removeProductFromList(productId, listId);
+    public void removeProductFromContentList(String productId, String listId, String username) {
+        contentListDynamoService.removeProductFromList(productId, listId, username);
     }
 
-    protected PRODUCT_USER_DETAILS getProductUserDetails(String productId) {
-        return dynamoDbProductRepository.getProductUserDetails(productId);
+    protected PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
+        return dynamoDbProductRepository.getProductUserDetails(productId, username);
     }
 
     protected void updateUserProductDetails(PRODUCT_USER_DETAILS userDetails) {
@@ -146,10 +144,10 @@ public class DefaultProductService<
         }
     }
 
-    private List<PRODUCT_WITH_USER_DETAILS> getAllProductsForList(String listId) {
-        return contentListDynamoService.getListById(listId).getItems().parallelStream()
+    private List<PRODUCT_WITH_USER_DETAILS> getAllProductsForList(String listId, String username) {
+        return contentListDynamoService.getListById(listId, username).getItems().parallelStream()
                 .map(SimpleItem::getId)
-                .map(this::getById)
+                .map((String id) -> getById(id, username))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
