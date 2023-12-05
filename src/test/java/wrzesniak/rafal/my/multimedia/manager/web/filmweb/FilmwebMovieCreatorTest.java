@@ -17,7 +17,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 class FilmwebMovieCreatorTest {
 
-    private final WebOperations webOperations = new WebOperations(null);
+    private final WebOperations webOperations = new WebOperations();
     private final FilmwebMovieCreator filmwebMovieCreator = new FilmwebMovieCreator(webOperations, Mockito.mock(RetryPolicy.class));
 
     private final static String MOVIE_URL = "https://www.filmweb.pl/film/Most+szpieg%C3%B3w-2015-728144";

@@ -1,1 +1,0 @@
-alter table game_user_details add played_hours integer;
