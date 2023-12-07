@@ -1,1 +1,0 @@
-web: java -jar -Dserver.port=$PORT $JAVA_OPTS -Dspring.profiles.active=dev target/my-multimedia-manager-0.0.2.jar
