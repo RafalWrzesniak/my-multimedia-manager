@@ -1,7 +1,8 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import java.net.URL;
 
 public class FilmwebMovieUrlValidator implements ConstraintValidator<FilmwebMovieUrl, URL> {

@@ -1,9 +1,8 @@
 package wrzesniak.rafal.my.multimedia.manager.config.security;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.validation.constraints.Pattern;
 
 @Data
 @AllArgsConstructor
