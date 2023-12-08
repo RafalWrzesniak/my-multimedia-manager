@@ -85,7 +85,7 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       UserPoolName: "MyMultimediaManagerUserPool"
-      DeletionProtection: 'true'
+      DeletionProtection: 'ACTIVE'
       AutoVerifiedAttributes:
         - email
       VerificationMessageTemplate:
