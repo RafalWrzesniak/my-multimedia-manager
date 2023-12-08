@@ -82,6 +82,7 @@ Resources:
 
   MyCognitoUserPool:
     Type: AWS::Cognito::UserPool
+    DeletionPolicy: Retain
     Properties:
       UserPoolName: "MyMultimediaManagerUserPool"
       AutoVerifiedAttributes:
@@ -102,12 +103,14 @@ Resources:
 
   MyCognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
+    DeletionPolicy: Retain
     Properties:
       ClientName: "MyMultimediaManagerUserPoolClient"
       UserPoolId: !Ref MyCognitoUserPool
 
   MyCognitoUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
+    DeletionPolicy: Retain
     Properties:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
