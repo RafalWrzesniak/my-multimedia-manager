@@ -7,6 +7,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.ListDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class UserController {
 
     private final ContentListDynamoService contentListDynamoService;
     private final JwtTokenDecoder jwtTokenDecoder;
+    private final UserService userService;
 
     @GetMapping("/lists")
     public List<ListDto> getGeneralListsInfo(@RequestHeader(TOKEN_HEADER) String jwtToken) {
@@ -31,22 +33,13 @@ public class UserController {
         log.info("Starts fetching basic list info for {}", username);
         List<ContentListDynamo> allContentLists = contentListDynamoService.getAllContentLists(username);
         if(allContentLists.isEmpty()) {
-            allContentLists = createAllContentListForNewUser(username);
+            userService.saveNewUser(username);
+            allContentLists = userService.createAllContentListForNewUser(username);
         }
         return allContentLists.stream()
                 .map(ListDto::new)
                 .sorted(Comparator.comparing(ListDto::getName))
                 .toList();
-    }
-
-    private List<ContentListDynamo> createAllContentListForNewUser(String username) {
-        List<ContentListDynamo> allContentLists;
-        allContentLists = Arrays.stream(ContentListType.values())
-                .map(contentListType -> contentListDynamoService.createContentList(contentListType.getAllProductsListName(),
-                        username, contentListType, true))
-                .toList();
-        log.info("New users list created successfully: {}", username);
-        return allContentLists;
     }
 
 }

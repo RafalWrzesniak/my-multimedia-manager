@@ -19,10 +19,17 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUs
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieWithUserDetailsDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.UserDynamo;
 
 @Configuration
 @RequiredArgsConstructor
 public class DynamoDbConfiguration {
+
+
+    @Bean
+    public DynamoDbClientGeneric<UserDynamo> userDynamoDb() {
+        return new DynamoDbClientGeneric<>(enhancedClient(), UserDynamo.class, "Users");
+    }
 
     @Bean
     public DynamoDbClientGeneric<ContentListDynamo> contentListsDynamoDb() {
