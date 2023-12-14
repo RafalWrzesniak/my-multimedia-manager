@@ -4,7 +4,7 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package
 
-FROM openjdk:17
+FROM openjdk:21
 WORKDIR /app
 COPY --from=build /app/target/my-multimedia-manager-*.jar my-multimedia-manager.jar
 EXPOSE 8080

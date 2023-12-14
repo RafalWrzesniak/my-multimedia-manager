@@ -36,12 +36,12 @@ public class JwtTokenDecoder {
         }
     }
 
-    private static record JwtPayload(String sub) {
+    private record JwtPayload(String sub) {
         public String getUsername() {
             return sub;
         }
     }
 
-    private static record AdminSecret(String adminCognitoUsername,
-                                      String adminOriginalUsername) {}
+    private record AdminSecret(String adminCognitoUsername,
+                               String adminOriginalUsername) {}
 }

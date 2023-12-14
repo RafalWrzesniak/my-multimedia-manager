@@ -4,7 +4,7 @@ Description: My Multimedia Manager application
 
 Globals:
   Function:
-    Runtime: java17
+    Runtime: java21
     MemorySize: 256
     Timeout: 29
 
@@ -24,7 +24,7 @@ Resources:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
         AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
 
-  MyMultimediaManagerLamdaRole:
+  MyMultimediaManagerLambdaRole:
     Type: 'AWS::IAM::Role'
     Properties:
       RoleName: MyMultimediaManagerLambdaRole
@@ -66,7 +66,7 @@ Resources:
   MyMultimediaManagerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Role: !GetAtt MyMultimediaManagerLamdaRole.Arn
+      Role: !GetAtt MyMultimediaManagerLambdaRole.Arn
       Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
       CodeUri: .
       AutoPublishAlias: live
