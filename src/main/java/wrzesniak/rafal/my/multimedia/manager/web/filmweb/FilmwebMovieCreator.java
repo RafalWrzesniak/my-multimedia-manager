@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -77,6 +78,7 @@ public class FilmwebMovieCreator {
             return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         } catch(DateTimeParseException e) {
             String foundStringDate = document.getElementsByAttributeValue(ITEMPROP, "datePublished").text();
+            Locale.setDefault(Locale.of("pl", "PL"));
             return LocalDate.parse(foundStringDate.substring(0, StringFunctions.findLastDigitIndex(foundStringDate)+1), DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
         }
     }
