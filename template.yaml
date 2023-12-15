@@ -50,7 +50,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - secretsmanager:*
+                  - secretsmanager:GetSecretValue
                 Resource: '*'
         - PolicyName: CloudWatchLogsPolicy
           PolicyDocument:
