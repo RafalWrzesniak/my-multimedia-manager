@@ -19,4 +19,14 @@ public class StringFunctions {
         return title1 != null && !title1.isEmpty() ? title1 : title2;
     }
 
+    public static int findLastDigitIndex(String input) {
+        int lastIndex = input.length();
+        for (int i = 0; i < input.length(); i++) {
+            char currentChar = input.charAt(i);
+            if (Character.isDigit(currentChar)) {
+                lastIndex = i;
+            }
+        }
+        return lastIndex;
+    }
 }

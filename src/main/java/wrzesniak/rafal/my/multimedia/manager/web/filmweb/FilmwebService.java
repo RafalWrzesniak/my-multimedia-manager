@@ -26,7 +26,6 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 @RequiredArgsConstructor
 public class FilmwebService {
 
-    private static final String HREF = "href";
     private static final String TITLE = "title";
 
     private final WebOperations webOperations;
@@ -49,48 +48,4 @@ public class FilmwebService {
         return foundTitle.get().substring(0, foundTitle.get().indexOf(" - Filmweb"));
     }
 
-    public void addFilmwebUrlTo(FilmwebSearchable filmwebSearchable) {
-        Failsafe.with(retryPolicy).run(() -> {
-            URL filmwebUrl = findUrlFor(filmwebSearchable);
-            filmwebSearchable.setFilmwebUrl(filmwebUrl);
-        });
-    }
-
-    private URL findUrlFor(FilmwebSearchable filmwebSearchable) throws IOException {
-        String searchString = filmwebSearchable.getFilmwebSearchString();
-        URL query = createFilmwebQueryFrom(searchString);
-        String matchCriteria = findPrefixFor(filmwebSearchable);
-        URL urlFromQueryUrlByMatch = findUrlFromQueryUrlByMatch(query, matchCriteria);
-        log.info("URL found for {} is {}", filmwebSearchable.getFilmwebSearchString(), urlFromQueryUrlByMatch);
-        return urlFromQueryUrlByMatch;
-    }
-
-    private URL createFilmwebQueryFrom(String query) {
-        URL url = filmwebConfiguration.getUrl();
-        String search = filmwebConfiguration.getSearch();
-        return toURL(url + slash(search) + URLEncoder.encode(query, UTF_8));
-    }
-
-    private String findPrefixFor(FilmwebSearchable filmwebSearchable) {
-        String match = filmwebSearchable.getClass().getSimpleName().toLowerCase();
-        int dtoIndex = match.indexOf("dto");
-        if(dtoIndex > 0) {
-            match = match.substring(0, dtoIndex);
-        }
-        return filmwebConfiguration.getLink().getPrefix().get(match);
-    }
-
-    private URL findUrlFromQueryUrlByMatch(URL query, String prefix) throws IOException {
-        log.info("Searching for prefix {} in query {}", prefix, query);
-        Document parsedUrl = webOperations.parseUrl(query);
-        Element foundElementWithUrl = parsedUrl.getElementsByAttributeValueStarting(HREF, prefix).first();
-        return foundElementWithUrl != null ? createFilmwebUrlFromPart(foundElementWithUrl.attr(HREF)) : null;
-    }
-
-    @SneakyThrows
-    public LocalDate findDateFor(URL filmwebUrl, String attribute) {
-        Document document = webOperations.parseUrl(filmwebUrl);
-        Element element = document.getElementsByAttribute(attribute).first();
-        return element != null ? LocalDate.parse(element.attr(attribute), DateTimeFormatter.ofPattern("yyyy-[M][MM]-[d][dd]")) : null;
-    }
 }

@@ -1,5 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,9 @@ import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
+import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.math.BigDecimal;
@@ -15,6 +18,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -54,6 +59,7 @@ public class FilmwebMovieCreator {
                 .plotLocal(parseDescription(document))
                 .webImageUrl(parseImage(document))
                 .createdOn(LocalDateTime.now())
+                .seriesInfo(parseSeriesInfo(document))
                 .build();
     }
 
@@ -67,7 +73,12 @@ public class FilmwebMovieCreator {
     }
     
     LocalDate parseReleaseDate(Document document) {
-        return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        try {
+            return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        } catch(DateTimeParseException e) {
+            String foundStringDate = document.getElementsByAttributeValue(ITEMPROP, "datePublished").text();
+            return LocalDate.parse(foundStringDate.substring(0, StringFunctions.findLastDigitIndex(foundStringDate)+1), DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+        }
     }
     
     int parseDuration(Document document) {
@@ -87,15 +98,39 @@ public class FilmwebMovieCreator {
     }
 
     Set<String> parseGenres(Document document) {
-        return document.getElementsByAttributeValueContaining(HREF, "/ranking/film/genre").stream().map(Element::text).collect(Collectors.toSet());
+        Set<String> filmGenres = parseSetOfTextHrefAttributes(document, "/ranking/film/genre");
+        return filmGenres.isEmpty() ? parseSetOfTextHrefAttributes(document, "/ranking/serial/genre") : filmGenres;
     }
 
     Set<String> parseCountries(Document document) {
-        return document.getElementsByAttributeValueContaining(HREF, "/ranking/film/country").stream().map(Element::text).collect(Collectors.toSet());
+        Set<String> filmGenres = parseSetOfTextHrefAttributes(document, "/ranking/film/country");
+        return filmGenres.isEmpty() ? parseSetOfTextHrefAttributes(document, "/ranking/serial/country") : filmGenres;
+    }
+
+    private Set<String> parseSetOfTextHrefAttributes(Document document, String href) {
+        return document.getElementsByAttributeValueContaining(HREF, href).stream().map(Element::text).collect(Collectors.toSet());
     }
 
     public String parseImage(Document document) {
         return document.getElementsByAttributeValue(ITEMPROP, "image").first().attr("content");
+    }
+
+    @SneakyThrows
+    public SeriesInfo parseSeriesInfo(Document document) {
+        Element sourceElement = document.getElementsByAttributeValue("class", "source").first();
+        if(sourceElement == null) {
+            return null;
+        }
+        String parsed = sourceElement.firstChild().toString();
+        String formattedInfo = "{" + parsed
+                .substring(parsed.indexOf("\"seasonsCount"))
+                .replaceAll(";window\\.IRI\\.setSource\\(", "")
+                .replaceAll(",", ":")
+                .replaceAll("}\\)", ", ")
+                .replaceAll("\\);", "}")
+                .replaceAll(":\\{count", "");
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(formattedInfo, SeriesInfo.class);
     }
 
 }

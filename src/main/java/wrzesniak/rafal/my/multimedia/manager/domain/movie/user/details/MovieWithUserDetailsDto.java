@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -32,6 +33,7 @@ public class MovieWithUserDetailsDto {
     LocalDateTime updatedOn;
     LocalDate watchedOn;
     String webImageUrl;
+    SeriesInfo seriesInfo;
 
     public static MovieWithUserDetailsDto of(MovieDynamo movieDynamo, MovieUserDetailsDynamo movieUserDetailsDynamo) {
         return MovieWithUserDetailsDto.builder()
@@ -50,6 +52,7 @@ public class MovieWithUserDetailsDto {
                 .updatedOn(movieUserDetailsDynamo.getUpdatedOn())
                 .watchedOn(movieUserDetailsDynamo.getWatchedOn())
                 .webImageUrl(movieDynamo.getWebImageUrl())
+                .seriesInfo(movieDynamo.getSeriesInfo())
                 .build();
     }
 

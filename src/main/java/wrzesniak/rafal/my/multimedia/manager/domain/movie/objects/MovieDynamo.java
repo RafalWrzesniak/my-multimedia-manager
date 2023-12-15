@@ -2,8 +2,11 @@ package wrzesniak.rafal.my.multimedia.manager.domain.movie.objects;
 
 import lombok.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
+import wrzesniak.rafal.my.multimedia.manager.util.PlayModeSetConverter;
+import wrzesniak.rafal.my.multimedia.manager.util.SeriesInfoDynamoConverter;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -33,6 +36,7 @@ public class MovieDynamo implements Product {
     private Integer ratingVotes;
     private String webImageUrl;
     private String plotLocal;
+    private SeriesInfo seriesInfo;
 
     private Set<String> genreList = new HashSet<>();
     private Set<String> countryList = new HashSet<>();
@@ -49,5 +53,10 @@ public class MovieDynamo implements Product {
     @Override
     public String getId() {
         return getFilmwebUrl().toString();
+    }
+
+    @DynamoDbConvertedBy(SeriesInfoDynamoConverter.class)
+    public SeriesInfo getSeriesInfo() {
+        return seriesInfo;
     }
 }

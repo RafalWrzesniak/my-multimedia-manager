@@ -1,13 +1,17 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.RetryPolicy;
+import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +22,13 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 class FilmwebMovieCreatorTest {
 
     private final WebOperations webOperations = new WebOperations();
-    private final FilmwebMovieCreator filmwebMovieCreator = new FilmwebMovieCreator(webOperations, Mockito.mock(RetryPolicy.class));
+    private final RetryPolicy<Object> retryPolicy = RetryPolicy.builder()
+                                                        .handle(IOException.class)
+                                                        .withDelay(Duration.ofSeconds(1))
+                                                        .withMaxRetries(3)
+                                                        .build();
+
+    private final FilmwebMovieCreator filmwebMovieCreator = new FilmwebMovieCreator(webOperations, retryPolicy);
 
     private final static String MOVIE_URL = "https://www.filmweb.pl/film/Most+szpieg%C3%B3w-2015-728144";
 
@@ -89,4 +99,18 @@ class FilmwebMovieCreatorTest {
         String imageUrl = filmwebMovieCreator.parseImage(document);
         assertEquals("https://fwcdn.pl/fpo/81/44/728144/7722526.3.jpg", imageUrl);
     }
+
+
+
+
+    @SneakyThrows
+    @Test
+    void shouldCreateSeries() {
+        // given
+        Document document = webOperations.parseUrl(toURL("https://www.filmweb.pl/serial/Gra+o+tron-2011-476848"));
+        SeriesInfo seriesInfo = filmwebMovieCreator.parseSeriesInfo(document);
+
+        assertEquals(new SeriesInfo(8, 79), seriesInfo);
+    }
+
 }

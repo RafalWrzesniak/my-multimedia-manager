@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDto;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,21 +62,6 @@ class FilmwebServiceTest {
 
         // then
         assertEquals(PIRATES_TITLE + " (2003)", titleResult);
-    }
-
-    @Test
-    void shouldAddFilmwebUrlToMovie() {
-        // given
-        MovieDto movie = MovieDto.builder()
-                .title(PIRATES_TITLE)
-                .releaseDate(LocalDate.of(2003, 1, 1))
-                .build();
-
-        // when
-        filmwebService.addFilmwebUrlTo(movie);
-
-        // then
-//        assertEquals(PIRATES_URL, movie.getFilmwebUrl().toString());
     }
 
 }
