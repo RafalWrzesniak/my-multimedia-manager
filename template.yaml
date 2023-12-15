@@ -9,76 +9,76 @@ Globals:
     Timeout: 900
 
 Resources:
-  MyMultimediaManagerApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: prod
-      Auth:
-        DefaultAuthorizer: MyCognitoAuthorizer
-        Authorizers:
-          MyCognitoAuthorizer:
-            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
-        AddDefaultAuthorizerToCorsPreflight: False
-      Cors:
-        AllowHeaders: "'*'"
-        AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
-        AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
-
-  MyMultimediaManagerLambdaRoleTemplate:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      RoleName: MyMultimediaManagerLambdaRole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: DynamoDBPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - dynamodb:*
-                Resource: '*'
-        - PolicyName: SecretsManagerPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - secretsmanager:GetSecretValue
-                Resource: '*'
-        - PolicyName: CloudWatchLogsPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: '*'
-
-  MyMultimediaManagerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Role: !GetAtt MyMultimediaManagerLambdaRoleTemplate.Arn
-      Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
-      CodeUri: .
-      AutoPublishAlias: live
-      SnapStart:
-        ApplyOn: PublishedVersions
-      Events:
-        ApiEvents:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: ANY
-            RestApiId: !Ref MyMultimediaManagerApi
+#  MyMultimediaManagerApi:
+#    Type: AWS::Serverless::Api
+#    Properties:
+#      StageName: prod
+#      Auth:
+#        DefaultAuthorizer: MyCognitoAuthorizer
+#        Authorizers:
+#          MyCognitoAuthorizer:
+#            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
+#        AddDefaultAuthorizerToCorsPreflight: False
+#      Cors:
+#        AllowHeaders: "'*'"
+#        AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
+#        AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com'"
+#
+#  MyMultimediaManagerLambdaRoleTemplate:
+#    Type: 'AWS::IAM::Role'
+#    Properties:
+#      RoleName: MyMultimediaManagerLambdaRole
+#      AssumeRolePolicyDocument:
+#        Version: '2012-10-17'
+#        Statement:
+#          - Effect: Allow
+#            Principal:
+#              Service: lambda.amazonaws.com
+#            Action: sts:AssumeRole
+#      Policies:
+#        - PolicyName: DynamoDBPolicy
+#          PolicyDocument:
+#            Version: '2012-10-17'
+#            Statement:
+#              - Effect: Allow
+#                Action:
+#                  - dynamodb:*
+#                Resource: '*'
+#        - PolicyName: SecretsManagerPolicy
+#          PolicyDocument:
+#            Version: '2012-10-17'
+#            Statement:
+#              - Effect: Allow
+#                Action:
+#                  - secretsmanager:GetSecretValue
+#                Resource: '*'
+#        - PolicyName: CloudWatchLogsPolicy
+#          PolicyDocument:
+#            Version: '2012-10-17'
+#            Statement:
+#              - Effect: Allow
+#                Action:
+#                  - logs:CreateLogGroup
+#                  - logs:CreateLogStream
+#                  - logs:PutLogEvents
+#                Resource: '*'
+#
+#  MyMultimediaManagerFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Role: !GetAtt MyMultimediaManagerLambdaRoleTemplate.Arn
+#      Handler: wrzesniak.rafal.my.multimedia.manager.aws.StreamLambdaHandler::handleRequest
+#      CodeUri: .
+#      AutoPublishAlias: live
+#      SnapStart:
+#        ApplyOn: PublishedVersions
+#      Events:
+#        ApiEvents:
+#          Type: Api
+#          Properties:
+#            Path: /{proxy+}
+#            Method: ANY
+#            RestApiId: !Ref MyMultimediaManagerApi
 
   MyCognitoUserPool:
     Type: AWS::Cognito::UserPool
