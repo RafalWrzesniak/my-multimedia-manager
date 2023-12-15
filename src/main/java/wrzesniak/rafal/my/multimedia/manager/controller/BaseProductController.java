@@ -36,11 +36,11 @@ public abstract class BaseProductController<
 
     @PostMapping("/create")
     public PRODUCT_WITH_USER_DETAILS createProductFromUrl(@RequestParam String url,
-                                                          @RequestParam(required = false) @Size(min = 3, max = 30) String listId,
+                                                          @RequestParam(required = false) @Size(min = 3, max = 50) String listId,
                                                           @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         PRODUCT_WITH_USER_DETAILS product = defaultProductService.createFromUrl(toURL(url), username);
-        Optional.ofNullable(listId).ifPresent(listName -> defaultProductService.addProductToList(url, listName, username));
+        Optional.ofNullable(listId).ifPresent(listName -> defaultProductService.addProductToList(toURL(url).toString(), listName, username));
         return product;
     }
 
