@@ -75,8 +75,8 @@ public class DefaultProductService<
                 .toList();
     }
 
-    public List<PRODUCT_WITH_USER_DETAILS> findLastFinished(int numberOfPositions, String username) {
-        return dynamoDbProductRepository.findRecentlyDone(numberOfPositions, username);
+    public List<PRODUCT_WITH_USER_DETAILS> findLastFinished(int numberOfPositions, String username, String controllerType) {
+        return dynamoDbProductRepository.findRecentlyDone(numberOfPositions, username, controllerType);
     }
 
     public ContentListDynamo getListById(String listId, String username) {

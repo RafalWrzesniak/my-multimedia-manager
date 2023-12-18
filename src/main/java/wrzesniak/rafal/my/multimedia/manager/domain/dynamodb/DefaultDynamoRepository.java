@@ -52,13 +52,15 @@ public class DefaultDynamoRepository<
         return mergeProductWithUserDetails.apply(product, userDetails);
     }
 
-    @Cacheable(value = RECENTLY_DONE_CACHE)
-    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyDone(int limit, String username) {
+    @Cacheable(value = RECENTLY_DONE_CACHE, key = "#controllerType")
+    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyDone(int limit, String username, String controllerType) {
+        log.info("Finding {} recently done for {}", controllerType, username);
         return productUserDetailsDynamoClient.findObjectsByPartitionKey(username).stream()
                 .filter(userDetails -> userDetails.getFinishedOn() != null)
                 .sorted((m1, m2) -> m2.getFinishedOn().compareTo(m1.getFinishedOn()))
                 .limit(limit)
                 .map(userDetails -> getById(userDetails.getId(), username))
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
     }
@@ -68,7 +70,6 @@ public class DefaultDynamoRepository<
             @Cacheable(value = GAME_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('gry-online')"),
             @Cacheable(value = MOVIE_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('filmweb')")})
     public PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
-        log.info("Getting product user details for product {}", productId);
         return productUserDetailsDynamoClient.getItemById(username, productId)
                 .orElse(createNewUserDetailsFunction.apply(username, productId));
     }
@@ -88,7 +89,6 @@ public class DefaultDynamoRepository<
             @Cacheable(value = GAME_DETAILS_CACHE, key="#productId", condition="#productId.contains('gry-online')"),
             @Cacheable(value = MOVIE_DETAILS_CACHE, key="#productId", condition="#productId.contains('filmweb')")})
     public Optional<PRODUCT> getRawProductById(String productId) {
-        log.info("Getting product details for product {}", productId);
         return productDynamoClient.getItemById(productId);
     }
 

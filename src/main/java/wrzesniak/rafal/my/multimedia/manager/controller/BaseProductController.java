@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
@@ -29,7 +31,7 @@ public abstract class BaseProductController<
         LIST_DETAILED_PRODUCTS,
         PRODUCT extends Product> {
 
-    private static final String PAGE_SIZE = "20";
+    private static final String PAGE_SIZE = "36";
 
     private final DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT_USER_DETAILS, LIST_DETAILED_PRODUCTS, PRODUCT> defaultProductService;
     private final JwtTokenDecoder jwtTokenDecoder;
@@ -66,10 +68,12 @@ public abstract class BaseProductController<
     }
 
     @GetMapping("/lastFinished")
-    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "20") Integer numberOfPositions,
+    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "36") Integer numberOfPositions,
                                                                         @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        return defaultProductService.findLastFinished(numberOfPositions, username);
+        String servletPath = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getServletPath().substring(1);
+        String controllerType = servletPath.substring(0, servletPath.indexOf("/"));
+        return defaultProductService.findLastFinished(numberOfPositions, username, controllerType);
     }
 
     @PostMapping("/details")
