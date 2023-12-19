@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
@@ -69,11 +67,10 @@ public abstract class BaseProductController<
 
     @GetMapping("/lastFinished")
     public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "36") Integer numberOfPositions,
+                                                                        @RequestParam String productType,
                                                                         @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        String servletPath = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getServletPath().substring(1);
-        String controllerType = servletPath.substring(0, servletPath.indexOf("/"));
-        return defaultProductService.findLastFinished(numberOfPositions, username, controllerType);
+        return defaultProductService.findLastFinished(numberOfPositions, username, productType);
     }
 
     @PostMapping("/details")
