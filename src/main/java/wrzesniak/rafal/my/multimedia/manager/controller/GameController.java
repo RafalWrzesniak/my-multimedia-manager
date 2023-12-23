@@ -41,10 +41,7 @@ public class GameController extends BaseProductController<GameWithUserDetailsDto
                                                        @RequestParam(required = false) String listId,
                                                        @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        GameWithUserDetailsDto game = gameFacade.createGameFromUrl(toURL(url), gamePlatform, username);
-        gameFacade.addProductToList(game.getId(), GAME_LIST.getAllProductsListName(), username);
-        Optional.ofNullable(listId).ifPresent(list -> gameFacade.addProductToList(game.getId(), list, username));
-        return game;
+        return gameFacade.createGameFromUrl(toURL(url), gamePlatform, username, listId);
     }
 
     @PostMapping("/finishGame")

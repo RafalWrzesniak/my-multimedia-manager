@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DynamoDbClientGeneric;
+import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchIdException;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class ContentListDynamoService {
     }
 
     public ContentListDynamo getListById(String listId, String username) {
-        return listClient.getItemById(username, listId).orElseThrow();
+        return listClient.getItemById(username, listId).orElseThrow(NoListWithSuchIdException::new);
     }
 
     public void removeContentList(String listId, String username) {
