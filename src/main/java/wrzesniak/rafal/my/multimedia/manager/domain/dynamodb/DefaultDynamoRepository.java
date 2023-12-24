@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.Finishable;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.IdSupport;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.Updatable;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +18,7 @@ import static wrzesniak.rafal.my.multimedia.manager.config.CacheConfiguration.*;
 @RequiredArgsConstructor
 public class DefaultDynamoRepository<
         PRODUCT_WITH_USER_DETAILS,
-        PRODUCT_USER_DETAILS extends Finishable<PRODUCT_USER_DETAILS> & IdSupport & Updatable<PRODUCT_USER_DETAILS>,
+        PRODUCT_USER_DETAILS extends ProductUserDetailsAbstract<PRODUCT_USER_DETAILS>,
         PRODUCT extends Product> {
 
     private final DynamoDbClientGeneric<PRODUCT> productDynamoClient;
@@ -66,19 +63,19 @@ public class DefaultDynamoRepository<
     }
 
     @Caching(cacheable = {
-            @Cacheable(value = BOOK_USER_DETAILS_CACHE, key = "#productId", condition="#productId.contains('lubimyczytac')"),
-            @Cacheable(value = GAME_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('gry-online')"),
-            @Cacheable(value = MOVIE_USER_DETAILS_CACHE, key="#productId", condition="#productId.contains('filmweb')")})
+            @Cacheable(value = BOOK_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productId, #username)", condition="#productId.contains('lubimyczytac')"),
+            @Cacheable(value = GAME_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productId, #username)", condition="#productId.contains('gry-online')"),
+            @Cacheable(value = MOVIE_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productId, #username)", condition="#productId.contains('filmweb')")})
     public PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
         return productUserDetailsDynamoClient.getItemById(username, productId)
                 .orElse(createNewUserDetailsFunction.apply(username, productId));
     }
 
     @Caching(put = {
-            @CachePut(value = BOOK_USER_DETAILS_CACHE, key = "#productUserDetails.getId()", condition = "#productUserDetails.getId().contains('lubimyczytac')"),
-            @CachePut(value = GAME_USER_DETAILS_CACHE, key = "#productUserDetails.getId()", condition = "#productUserDetails.getId().contains('gry-online')"),
-            @CachePut(value = MOVIE_USER_DETAILS_CACHE, key = "#productUserDetails.getId()", condition = "#productUserDetails.getId().contains('filmweb')")})
-    public PRODUCT_USER_DETAILS updateUserDetails(PRODUCT_USER_DETAILS productUserDetails) {
+            @CachePut(value = BOOK_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productUserDetails.getId(), #username)", condition = "#productUserDetails.getId().contains('lubimyczytac')"),
+            @CachePut(value = GAME_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productUserDetails.getId(), #username)", condition = "#productUserDetails.getId().contains('gry-online')"),
+            @CachePut(value = MOVIE_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productUserDetails.getId(), #username)", condition = "#productUserDetails.getId().contains('filmweb')")})
+    public PRODUCT_USER_DETAILS updateUserDetails(PRODUCT_USER_DETAILS productUserDetails, String username) {
         log.info("Updating product user details {}", productUserDetails);
         productUserDetailsDynamoClient.updateItem(productUserDetails.withUpdatedOn(LocalDateTime.now()));
         return productUserDetails;
@@ -86,8 +83,8 @@ public class DefaultDynamoRepository<
 
     @Caching(cacheable = {
             @Cacheable(value = BOOK_DETAILS_CACHE, key = "#productId", condition="#productId.contains('lubimyczytac')"),
-            @Cacheable(value = GAME_DETAILS_CACHE, key="#productId", condition="#productId.contains('gry-online')"),
-            @Cacheable(value = MOVIE_DETAILS_CACHE, key="#productId", condition="#productId.contains('filmweb')")})
+            @Cacheable(value = GAME_DETAILS_CACHE, key = "#productId", condition="#productId.contains('gry-online')"),
+            @Cacheable(value = MOVIE_DETAILS_CACHE, key = "#productId", condition="#productId.contains('filmweb')")})
     public Optional<PRODUCT> getRawProductById(String productId) {
         return productDynamoClient.getItemById(productId);
     }

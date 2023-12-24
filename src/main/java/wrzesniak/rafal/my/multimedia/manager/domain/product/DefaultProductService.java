@@ -57,7 +57,7 @@ public class DefaultProductService<
         PRODUCT_USER_DETAILS productUserDetails = getProductUserDetails(productId, username);
         PRODUCT_USER_DETAILS updatedDetails = productUserDetails.withFinishedOn(realFinishDate);
         log.info("Marking {} as finished on {} for {}", productId, realFinishDate, username);
-        updateUserProductDetails(updatedDetails);
+        updateUserProductDetails(updatedDetails, username);
     }
 
     public Optional<PRODUCT_WITH_USER_DETAILS> getById(String id, String username) {
@@ -118,8 +118,8 @@ public class DefaultProductService<
         return dynamoDbProductRepository.getProductUserDetails(productId, username);
     }
 
-    protected void updateUserProductDetails(PRODUCT_USER_DETAILS userDetails) {
-        dynamoDbProductRepository.updateUserDetails(userDetails);
+    protected void updateUserProductDetails(PRODUCT_USER_DETAILS userDetails, String username) {
+        dynamoDbProductRepository.updateUserDetails(userDetails, username);
     }
 
     private boolean productPropertyContains(PRODUCT_WITH_USER_DETAILS product, String propertyName, String propertyValue) {

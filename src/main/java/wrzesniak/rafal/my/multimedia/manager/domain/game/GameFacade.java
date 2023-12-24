@@ -44,14 +44,14 @@ public class GameFacade extends DefaultProductService<GameWithUserDetailsDto, Ga
         GameUserDetailsDtoDynamo gameDetails = super.getProductUserDetails(gameId, username);
         gameDetails.setGamePlatform(gamePlatform);
         log.info("Marking game `{}` as playing on {}", gameId, gameDetails.getGamePlatform());
-        super.updateUserProductDetails(gameDetails);
+        super.updateUserProductDetails(gameDetails, username);
     }
 
     public void setHoursPlayedForUser(String gameId, int playedHours, String username) {
         GameUserDetailsDtoDynamo gameDetails = super.getProductUserDetails(gameId, username);
         gameDetails.setPlayedHours(playedHours);
         log.info("Marking game `{}` as spent on {} hours", gameId, gameDetails.getPlayedHours());
-        super.updateUserProductDetails(gameDetails);
+        super.updateUserProductDetails(gameDetails, username);
     }
 
 }

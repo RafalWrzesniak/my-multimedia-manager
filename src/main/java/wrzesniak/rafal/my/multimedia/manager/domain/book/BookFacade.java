@@ -29,7 +29,7 @@ public class BookFacade extends DefaultProductService<BookWithUserDetailsDto, Bo
         BookUserDetailsDynamo bookDetails = super.getProductUserDetails(bookId, username);
         bookDetails.setBookFormat(bookFormat);
         log.info("Marking book `{}` as reading on {}", bookId, bookFormat);
-        super.updateUserProductDetails(bookDetails);
+        super.updateUserProductDetails(bookDetails, username);
     }
 
 }
