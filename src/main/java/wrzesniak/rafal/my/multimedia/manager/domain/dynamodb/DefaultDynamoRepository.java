@@ -52,7 +52,7 @@ public class DefaultDynamoRepository<
         return mergeProductWithUserDetails.apply(product, userDetails);
     }
 
-    @Cacheable(value = RECENTLY_DONE_CACHE, key = "#controllerType")
+    @Cacheable(value = RECENTLY_DONE_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#controllerType, #username)")
     public List<PRODUCT_WITH_USER_DETAILS> findRecentlyDone(int limit, String username, String controllerType) {
         log.info("Finding {} recently done for {}", controllerType, username);
         return productUserDetailsDynamoClient.findObjectsByPartitionKey(username).stream()
