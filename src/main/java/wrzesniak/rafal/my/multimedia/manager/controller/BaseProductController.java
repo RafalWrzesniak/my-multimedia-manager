@@ -137,4 +137,11 @@ public abstract class BaseProductController<
         defaultProductService.removeProductFromContentList(productId, listId, username);
     }
 
+    @PostMapping("/list/rename")
+    public void renameProductList(@RequestParam String listId,
+                                  @RequestParam String newListName,
+                                  @RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        defaultProductService.renameList(listId, newListName, username);
+    }
 }

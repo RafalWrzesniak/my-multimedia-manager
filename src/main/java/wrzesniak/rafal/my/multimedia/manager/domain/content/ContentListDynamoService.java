@@ -79,4 +79,8 @@ public class ContentListDynamoService {
         return listClient.findObjectsByPartitionKey(username);
     }
 
+    public void renameList(String listId, String newListName, String username) {
+        ContentListDynamo list = getListById(listId, username);
+        listClient.saveItem(list.withListName(newListName));
+    }
 }

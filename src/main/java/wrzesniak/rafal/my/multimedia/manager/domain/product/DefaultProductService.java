@@ -153,4 +153,8 @@ public class DefaultProductService<
                 .toList();
     }
 
+    public void renameList(String listId, String newListName, String username) {
+        log.info("Renaming list to name {}. List id: {}", newListName, listId);
+        contentListDynamoService.renameList(listId, newListName, username);
+    }
 }
