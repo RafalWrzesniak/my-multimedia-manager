@@ -116,7 +116,7 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
 
-  BookUserDetailsTable:
+  UsersTable:
     Type: 'AWS::DynamoDB::Table'
     DeletionPolicy: Retain
     Properties:
