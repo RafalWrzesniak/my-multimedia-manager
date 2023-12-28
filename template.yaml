@@ -121,6 +121,7 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       TableName: 'mmm_prod_Users'
+      DeletionProtectionEnabled: true
       AttributeDefinitions:
         - AttributeName: 'username'
           AttributeType: 'S'
