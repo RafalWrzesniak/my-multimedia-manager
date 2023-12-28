@@ -130,8 +130,6 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: true
 
 Outputs:
   MyMultimediaManager:
