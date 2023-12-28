@@ -116,20 +116,22 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
 
-  UsersTable:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: 'mmm_prod_Users'
-      AttributeDefinitions:
-        - AttributeName: 'username'
-          AttributeType: 'S'
-      KeySchema:
-        - AttributeName: 'username'
-          KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+#  UsersTableProd:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: 'Users'
+#      AttributeDefinitions:
+#        - AttributeName: 'username'
+#          AttributeType: 'S'
+#      KeySchema:
+#        - AttributeName: 'username'
+#          KeyType: 'HASH'
+#      ProvisionedThroughput:
+#        ReadCapacityUnits: 1
+#        WriteCapacityUnits: 1
+#      PointInTimeRecoverySpecification:
+#        PointInTimeRecoveryEnabled: true
 
 Outputs:
   MyMultimediaManager:
