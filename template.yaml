@@ -117,7 +117,7 @@ Resources:
       Domain: "my-multimedia-manager"
 
   UsersTable:
-    Type: 'AWS::DynamoDB::Table'
+    Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
     Properties:
       TableName: 'Users'
