@@ -118,6 +118,7 @@ Resources:
 
   BookUserDetailsTable:
     Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
     Properties:
       TableName: 'Users'
       AttributeDefinitions:
