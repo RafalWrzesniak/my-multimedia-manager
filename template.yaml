@@ -116,7 +116,7 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
 
-  UsersTable:
+  UsersTableProd:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
     Properties:
@@ -130,6 +130,10 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
 
 Outputs:
   MyMultimediaManager:
