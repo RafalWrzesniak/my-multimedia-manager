@@ -116,6 +116,22 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
 
+  BookUserDetailsTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: 'Users'
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
 Outputs:
   MyMultimediaManager:
     Description: API Gateway MyMultimediaManager Endpoint
