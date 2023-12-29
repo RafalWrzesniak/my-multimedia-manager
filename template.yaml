@@ -168,10 +168,10 @@ Resources:
       TableName: 'mmm_prod_Books'
       DeletionProtectionEnabled: true
       AttributeDefinitions:
-        - AttributeName: 'bookId'
+        - AttributeName: 'lubimyCzytacUrl'
           AttributeType: 'S'
       KeySchema:
-        - AttributeName: 'bookId'
+        - AttributeName: 'lubimyCzytacUrl'
           KeyType: 'HASH'
       ProvisionedThroughput:
         ReadCapacityUnits: 1
@@ -209,10 +209,10 @@ Resources:
       TableName: 'mmm_prod_Movies'
       DeletionProtectionEnabled: true
       AttributeDefinitions:
-        - AttributeName: 'movieId'
+        - AttributeName: 'filmwebUrl'
           AttributeType: 'S'
       KeySchema:
-        - AttributeName: 'movieId'
+        - AttributeName: 'filmwebUrl'
           KeyType: 'HASH'
       ProvisionedThroughput:
         ReadCapacityUnits: 1
@@ -250,10 +250,10 @@ Resources:
       TableName: 'mmm_prod_Games'
       DeletionProtectionEnabled: true
       AttributeDefinitions:
-        - AttributeName: 'gameId'
+        - AttributeName: 'gryOnlineUrl'
           AttributeType: 'S'
       KeySchema:
-        - AttributeName: 'gameId'
+        - AttributeName: 'gryOnlineUrl'
           KeyType: 'HASH'
       ProvisionedThroughput:
         ReadCapacityUnits: 1
