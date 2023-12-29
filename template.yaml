@@ -161,23 +161,23 @@ Resources:
 
 # Product tables
   # Books
-  BooksTableProd:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: 'mmm_prod_Books'
-      DeletionProtectionEnabled: true
-      AttributeDefinitions:
-        - AttributeName: 'lubimyCzytacUrl'
-          AttributeType: 'S'
-      KeySchema:
-        - AttributeName: 'lubimyCzytacUrl'
-          KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: true
+#  BooksTableProd:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: 'mmm_prod_Books'
+#      DeletionProtectionEnabled: true
+#      AttributeDefinitions:
+#        - AttributeName: 'lubimyCzytacUrl'
+#          AttributeType: 'S'
+#      KeySchema:
+#        - AttributeName: 'lubimyCzytacUrl'
+#          KeyType: 'HASH'
+#      ProvisionedThroughput:
+#        ReadCapacityUnits: 1
+#        WriteCapacityUnits: 1
+#      PointInTimeRecoverySpecification:
+#        PointInTimeRecoveryEnabled: true
 
   BookUserDetailsTableProd:
     Type: AWS::DynamoDB::Table
@@ -202,23 +202,23 @@ Resources:
         PointInTimeRecoveryEnabled: true
 
   # Movies
-  MoviesTableProd:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: 'mmm_prod_Movies'
-      DeletionProtectionEnabled: true
-      AttributeDefinitions:
-        - AttributeName: 'filmwebUrl'
-          AttributeType: 'S'
-      KeySchema:
-        - AttributeName: 'filmwebUrl'
-          KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: true
+#  MoviesTableProd:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: 'mmm_prod_Movies'
+#      DeletionProtectionEnabled: true
+#      AttributeDefinitions:
+#        - AttributeName: 'filmwebUrl'
+#          AttributeType: 'S'
+#      KeySchema:
+#        - AttributeName: 'filmwebUrl'
+#          KeyType: 'HASH'
+#      ProvisionedThroughput:
+#        ReadCapacityUnits: 1
+#        WriteCapacityUnits: 1
+#      PointInTimeRecoverySpecification:
+#        PointInTimeRecoveryEnabled: true
 
   MovieUserDetailsTableProd:
     Type: AWS::DynamoDB::Table
@@ -243,23 +243,23 @@ Resources:
         PointInTimeRecoveryEnabled: true
 
   # Games
-  GamesTableProd:
-    Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
-    Properties:
-      TableName: 'mmm_prod_Games'
-      DeletionProtectionEnabled: true
-      AttributeDefinitions:
-        - AttributeName: 'gryOnlineUrl'
-          AttributeType: 'S'
-      KeySchema:
-        - AttributeName: 'gryOnlineUrl'
-          KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      PointInTimeRecoverySpecification:
-        PointInTimeRecoveryEnabled: true
+#  GamesTableProd:
+#    Type: AWS::DynamoDB::Table
+#    DeletionPolicy: Retain
+#    Properties:
+#      TableName: 'mmm_prod_Games'
+#      DeletionProtectionEnabled: true
+#      AttributeDefinitions:
+#        - AttributeName: 'gryOnlineUrl'
+#          AttributeType: 'S'
+#      KeySchema:
+#        - AttributeName: 'gryOnlineUrl'
+#          KeyType: 'HASH'
+#      ProvisionedThroughput:
+#        ReadCapacityUnits: 1
+#        WriteCapacityUnits: 1
+#      PointInTimeRecoverySpecification:
+#        PointInTimeRecoveryEnabled: true
 
   GameUserDetailsTableProd:
     Type: AWS::DynamoDB::Table
