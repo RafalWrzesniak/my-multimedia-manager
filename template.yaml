@@ -116,6 +116,9 @@ Resources:
       UserPoolId: !Ref MyCognitoUserPool
       Domain: "my-multimedia-manager"
 
+### DynamoDB ###
+## PROD ##
+# Common tables
   UsersTableProd:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
@@ -128,6 +131,152 @@ Resources:
       KeySchema:
         - AttributeName: 'username'
           KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  ContentListsTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_ContentLists'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'listId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'listId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+# Product tables
+  # Books
+  BooksTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_Books'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'bookId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'bookId'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  BookUserDetailsTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_BookUserDetails'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'bookId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'bookId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Movies
+  MoviesTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_Movies'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'movieId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'movieId'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  MovieUserDetailsTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_MovieUserDetails'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'movieId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'movieId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Games
+  GamesTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_Games'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'gameId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'gameId'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  GameUserDetailsTableProd:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_prod_GameUserDetails'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'gameId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'gameId'
+          KeyType: 'RANGE'
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
