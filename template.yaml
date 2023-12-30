@@ -72,6 +72,9 @@ Resources:
       AutoPublishAlias: live
       SnapStart:
         ApplyOn: PublishedVersions
+      Environment:
+        Variables:
+          SPRING_PROFILES_ACTIVE: prod
       Events:
         ApiEvents:
           Type: Api

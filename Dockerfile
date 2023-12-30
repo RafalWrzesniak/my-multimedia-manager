@@ -8,4 +8,4 @@ FROM openjdk:21
 WORKDIR /app
 COPY --from=build /app/target/my-multimedia-manager-*.jar my-multimedia-manager.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "my-multimedia-manager.jar"]
+CMD ["java", "-jar", "my-multimedia-manager.jar"]
