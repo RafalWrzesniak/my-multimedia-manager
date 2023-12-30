@@ -26,7 +26,7 @@ application:
     search: search?q=
 
   lubimy-czytac:
-    default-descritption: Ta książka nie ma opisu..
+    default-description: Ta książka nie ma opisu..
     unknown-publisher: Nieznany wydawca
     parsing:
       main-attribute: type
