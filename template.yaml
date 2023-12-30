@@ -283,6 +283,173 @@ Resources:
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
+
+  ## DEV ##
+  # Common tables
+  UsersTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_Users'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  ContentListsTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_ContentLists'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'listId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'listId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Product tables
+  # Books
+  BooksTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_Books'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'lubimyCzytacUrl'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'lubimyCzytacUrl'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  BookUserDetailsTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_BookUserDetails'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'bookId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'bookId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Movies
+  MoviesTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_Movies'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'filmwebUrl'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'filmwebUrl'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  MovieUserDetailsTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_MovieUserDetails'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'movieId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'movieId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Games
+  GamesTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_Games'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'gryOnlineUrl'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'gryOnlineUrl'
+          KeyType: 'HASH'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  GameUserDetailsTableDev:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: 'mmm_dev_GameUserDetails'
+      DeletionProtectionEnabled: true
+      AttributeDefinitions:
+        - AttributeName: 'username'
+          AttributeType: 'S'
+        - AttributeName: 'gameId'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'username'
+          KeyType: 'HASH'
+        - AttributeName: 'gameId'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
 Outputs:
   MyMultimediaManager:
     Description: API Gateway MyMultimediaManager Endpoint

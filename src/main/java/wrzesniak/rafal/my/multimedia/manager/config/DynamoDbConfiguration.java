@@ -25,46 +25,47 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.UserDynamo;
 @RequiredArgsConstructor
 public class DynamoDbConfiguration {
 
+    private final DynamoDbTablesProperties dynamoDbTableNames;
 
     @Bean
     public DynamoDbClientGeneric<UserDynamo> userDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), UserDynamo.class, "Users");
+        return new DynamoDbClientGeneric<>(enhancedClient(), UserDynamo.class, dynamoDbTableNames.getUsers());
     }
 
     @Bean
     public DynamoDbClientGeneric<ContentListDynamo> contentListsDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), ContentListDynamo.class, "ContentLists");
+        return new DynamoDbClientGeneric<>(enhancedClient(), ContentListDynamo.class, dynamoDbTableNames.getContentLists());
     }
 
     @Bean
     public DynamoDbClientGeneric<MovieDynamo> movieDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), MovieDynamo.class, "Movies");
+        return new DynamoDbClientGeneric<>(enhancedClient(), MovieDynamo.class, dynamoDbTableNames.getMovies());
     }
 
     @Bean
     public DynamoDbClientGeneric<MovieUserDetailsDynamo> movieUserDetailsDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), MovieUserDetailsDynamo.class, "MovieUserDetails");
+        return new DynamoDbClientGeneric<>(enhancedClient(), MovieUserDetailsDynamo.class, dynamoDbTableNames.getMovieUserDetails());
     }
 
     @Bean
     public DynamoDbClientGeneric<BookDynamo> bookDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), BookDynamo.class, "Books");
+        return new DynamoDbClientGeneric<>(enhancedClient(), BookDynamo.class, dynamoDbTableNames.getBooks());
     }
 
     @Bean
     public DynamoDbClientGeneric<BookUserDetailsDynamo> bookUserDetailsDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), BookUserDetailsDynamo.class, "BookUserDetails");
+        return new DynamoDbClientGeneric<>(enhancedClient(), BookUserDetailsDynamo.class, dynamoDbTableNames.getBookUserDetails());
     }
 
 
     @Bean
     public DynamoDbClientGeneric<GameDynamo> gameDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), GameDynamo.class, "Games");
+        return new DynamoDbClientGeneric<>(enhancedClient(), GameDynamo.class, dynamoDbTableNames.getGames());
     }
 
     @Bean
     public DynamoDbClientGeneric<GameUserDetailsDtoDynamo> gameUserDetailsDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), GameUserDetailsDtoDynamo.class, "GameUserDetails");
+        return new DynamoDbClientGeneric<>(enhancedClient(), GameUserDetailsDtoDynamo.class, dynamoDbTableNames.getGameUserDetails());
     }
 
     @Bean

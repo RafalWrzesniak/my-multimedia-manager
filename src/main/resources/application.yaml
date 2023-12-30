@@ -37,6 +37,17 @@ application:
       description: book-description
       series: /cykl/
 
+dynamodb:
+  table:
+    users: mmm_${spring.profiles.active}_Users
+    content-lists: mmm_${spring.profiles.active}_ContentLists
+    books: mmm_${spring.profiles.active}_Books
+    book-user-details: mmm_${spring.profiles.active}_BookUserDetails
+    movies: mmm_${spring.profiles.active}_Movies
+    movie-user-details: mmm_${spring.profiles.active}_MovieUserDetails
+    games: mmm_${spring.profiles.active}_Games
+    game-user-details: mmm_${spring.profiles.active}_GameUserDetails
+
 server:
   servlet:
     session:
