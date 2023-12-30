@@ -83,8 +83,8 @@ public class DynamoDbConfiguration {
         return new DefaultDynamoRepository<>(gameDynamoDb(), gameUserDetailsDynamoDb(), GameUserDetailsDtoDynamo::new, GameWithUserDetailsDto::of);
     }
 
-
-    private DynamoDbEnhancedClient enhancedClient() {
+    @Bean
+    public DynamoDbEnhancedClient enhancedClient() {
         DynamoDbClient dynamoClient = DynamoDbClient.builder()
                 .region(Region.EU_CENTRAL_1)
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())

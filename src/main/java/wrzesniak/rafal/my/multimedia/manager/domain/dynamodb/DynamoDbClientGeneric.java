@@ -56,4 +56,7 @@ public class DynamoDbClientGeneric<TYPE> {
         getItemById(partitionKey, sortKey).ifPresent(table::deleteItem);
     }
 
+    public List<TYPE> scan() {
+        return table.scan().items().stream().toList();
+    }
 }
