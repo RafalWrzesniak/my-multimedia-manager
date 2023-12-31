@@ -118,15 +118,15 @@ public abstract class BaseProductController<
     public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(@RequestParam String productId,
                                                                    @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        return defaultProductService.findListsContainingProduct(productId, username);
+        return defaultProductService.findListsContainingProduct(String.valueOf(toURL(productId)), username);
     }
 
     @PostMapping("/list/add")
     public void addProductToContentList(@RequestParam String listId,
-                                         @RequestParam String productId,
+                                        @RequestParam String productId,
                                         @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        defaultProductService.addProductToList(productId, listId, username);
+        defaultProductService.addProductToList(String.valueOf(toURL(productId)), listId, username);
     }
 
     @DeleteMapping("/list/remove")
@@ -134,7 +134,7 @@ public abstract class BaseProductController<
                                       @RequestParam String productId,
                                       @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        defaultProductService.removeProductFromContentList(productId, listId, username);
+        defaultProductService.removeProductFromContentList(String.valueOf(toURL(productId)), listId, username);
     }
 
     @PostMapping("/list/rename")
