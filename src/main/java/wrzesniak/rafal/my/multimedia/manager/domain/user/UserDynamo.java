@@ -17,10 +17,14 @@ import java.time.LocalDateTime;
 public class UserDynamo {
 
     private String username;
+    private String preferredUsername;
+    private String email;
     private LocalDateTime createdOn;
 
-    public UserDynamo(String username) {
+    public UserDynamo(String username, String preferredUsername, String email) {
         this.username = username;
+        this.preferredUsername = preferredUsername;
+        this.email = email;
         this.createdOn = LocalDateTime.now();
     }
 

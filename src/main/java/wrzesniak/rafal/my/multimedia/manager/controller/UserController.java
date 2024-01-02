@@ -7,6 +7,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.ListDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.UserDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 
@@ -32,14 +33,17 @@ public class UserController {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         log.info("Starts fetching basic list info for {}", username);
         List<ContentListDynamo> allContentLists = contentListDynamoService.getAllContentLists(username);
-        if(allContentLists.isEmpty()) {
-            userService.saveNewUser(username);
-            allContentLists = userService.createAllContentListForNewUser(username);
-        }
         return allContentLists.stream()
                 .map(ListDto::new)
                 .sorted(Comparator.comparing(ListDto::getName))
                 .toList();
+    }
+
+    @PostMapping("/register")
+    public UserDynamo registerNewUser(@RequestParam String username,
+                                      @RequestParam String preferredUsername,
+                                      @RequestParam String email) {
+        return userService.createNewUser(username, preferredUsername, email);
     }
 
 }
