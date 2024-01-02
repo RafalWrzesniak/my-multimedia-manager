@@ -19,7 +19,7 @@ public class SimpleItem implements Product {
     public static SimpleItem of(Product product) {
         return SimpleItem.builder()
                 .id(product.getId())
-                .title(product.getTitle())
+                .title(product.getDisplayedTitle())
                 .webImageUrl(product.getWebImageUrl())
                 .build();
     }
@@ -27,5 +27,10 @@ public class SimpleItem implements Product {
     @DynamoDbPartitionKey
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getDisplayedTitle() {
+        return title;
     }
 }

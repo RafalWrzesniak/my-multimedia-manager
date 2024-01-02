@@ -88,11 +88,19 @@ public class FilmwebMovieCreator {
     }
     
     double parseRating(Document document) {
-        return Double.parseDouble(document.getElementsByAttributeValue(CLASS, "filmRating__rateValue").first().text().replaceAll(",", "."));
+        try {
+            return Double.parseDouble(document.getElementsByAttributeValue(CLASS, "filmRating__rateValue").first().text().replaceAll(",", "."));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     int parseRatingCount(Document document) {
-        return Integer.parseInt(document.getElementsByAttributeValue(CLASS, "filmRating__count").first().text().replaceAll(" ", "").replaceAll("[a-z]", ""));
+        try {
+            return Integer.parseInt(document.getElementsByAttributeValue(CLASS, "filmRating__count").first().text().replaceAll(" ", "").replaceAll("[a-z]", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     String parseDescription(Document document) {

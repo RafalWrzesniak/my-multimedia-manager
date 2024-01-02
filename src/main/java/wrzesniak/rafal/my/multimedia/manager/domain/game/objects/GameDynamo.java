@@ -58,4 +58,8 @@ public class GameDynamo implements Product {
     public Set<GamePlatform> getGamePlatform() {
         return gamePlatform;
     }
+
+    public String getDisplayedTitle() {
+        return title;
+    }
 }

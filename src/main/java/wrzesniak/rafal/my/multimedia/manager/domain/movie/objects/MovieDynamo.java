@@ -13,6 +13,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -58,5 +59,9 @@ public class MovieDynamo implements Product {
     @DynamoDbConvertedBy(SeriesInfoDynamoConverter.class)
     public SeriesInfo getSeriesInfo() {
         return seriesInfo;
+    }
+
+    public String getDisplayedTitle() {
+        return Optional.ofNullable(polishTitle).orElse(title);
     }
 }

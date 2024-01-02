@@ -57,4 +57,7 @@ public class BookDynamo implements Product {
         return series;
     }
 
+    public String getDisplayedTitle() {
+        return title;
+    }
 }
