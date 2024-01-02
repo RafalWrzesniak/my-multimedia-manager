@@ -3,6 +3,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.game.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.GameNotCreatedException;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
@@ -12,6 +13,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDe
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductCreatorService;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.gryonline.GryOnlineUrl;
 import wrzesniak.rafal.my.multimedia.manager.web.gryonline.GryOnlineService;
 
 import java.net.URL;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Validated
 @RequiredArgsConstructor
 public class GameCreatorService implements ProductCreatorService<GameWithUserDetailsDto> {
 
@@ -30,7 +33,7 @@ public class GameCreatorService implements ProductCreatorService<GameWithUserDet
         return createGameFromUrl(gryOnlineUrl, null, username);
     }
 
-    public GameWithUserDetailsDto createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform, String username) {
+    public GameWithUserDetailsDto createGameFromUrl(@GryOnlineUrl URL gryOnlineUrl, GamePlatform gamePlatform, String username) {
         Optional<GameWithUserDetailsDto> gameInDatabase = gameDynamoRepository.getById(gryOnlineUrl.toString(), username);
         if(gameInDatabase.isPresent()) {
             log.info("Game already exist for url: {}", gryOnlineUrl);

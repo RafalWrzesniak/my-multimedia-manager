@@ -8,8 +8,10 @@ import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
@@ -30,6 +32,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.firstNo
 
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class FilmwebMovieCreator {
 
@@ -41,7 +44,7 @@ public class FilmwebMovieCreator {
     private final RetryPolicy<Object> retryPolicy;
 
     @SneakyThrows
-    public MovieDynamo createMovieFromUrl(URL filmwebUrl) {
+    public MovieDynamo createMovieFromUrl(@FilmwebMovieUrl URL filmwebUrl) {
         AtomicReference<Document> parsedUrlAtomic = new AtomicReference<>();
         Failsafe.with(retryPolicy)
                 .run(() -> parsedUrlAtomic.set(webOperations.parseUrl(filmwebUrl)));

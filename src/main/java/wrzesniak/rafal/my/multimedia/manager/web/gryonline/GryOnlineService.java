@@ -44,7 +44,7 @@ public class GryOnlineService {
         try {
             gameDto = objectMapper.readValue(data, GameDto.class);
         } catch (JsonProcessingException e) {
-            log.warn("Failed to map objet to GameDto because `{}` from data: {}", e.getMessage(), data);
+            log.warn("Failed to map object to GameDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
         }
         LocalDate releaseDate = getDateReleaseDateForPlatform(parsedUrl.get(), platform);

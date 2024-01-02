@@ -10,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.validation.lubimyczytac.LubimyCzytacUrl;
 import wrzesniak.rafal.my.multimedia.manager.util.SeriesDynamoConverter;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
@@ -22,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
+@Validated
 @RequiredArgsConstructor
 public class LubimyCzytacService {
 
@@ -32,7 +35,7 @@ public class LubimyCzytacService {
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
-    public Optional<BookDto> createBookDtoFromUrl(URL lubimyCzytacBookUrl) {
+    public Optional<BookDto> createBookDtoFromUrl(@LubimyCzytacUrl URL lubimyCzytacBookUrl) {
         log.info("Trying to parse book information from {}", lubimyCzytacBookUrl);
         AtomicReference<Document> parsedUrlAtomic = new AtomicReference<>();
         Failsafe.with(retryPolicy)
@@ -47,7 +50,7 @@ public class LubimyCzytacService {
         try {
             bookDto = objectMapper.readValue(data, BookDto.class);
         } catch (JsonProcessingException e) {
-            log.warn("Failed to map objet to BookDto because `{}` from data: {}", e.getMessage(), data);
+            log.warn("Failed to map object to BookDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
         }
         bookDto.setUrl(lubimyCzytacBookUrl.toString());

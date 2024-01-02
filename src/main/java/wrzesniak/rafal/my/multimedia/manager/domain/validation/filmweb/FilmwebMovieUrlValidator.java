@@ -14,6 +14,6 @@ public class FilmwebMovieUrlValidator implements ConstraintValidator<FilmwebMovi
 
     @Override
     public boolean isValid(URL filmwebUrl, ConstraintValidatorContext constraintValidatorContext) {
-        return filmwebUrl == null || filmwebUrl.toString().matches("^https://www\\.filmweb\\.pl/film/.+");
+        return filmwebUrl == null || filmwebUrl.toString().matches("^https://www\\.filmweb\\.pl/(film|serial)/.+");
     }
 }
