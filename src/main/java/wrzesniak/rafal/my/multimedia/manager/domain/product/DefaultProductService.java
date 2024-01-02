@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -138,6 +139,14 @@ public class DefaultProductService<
             field.setAccessible(true);
             Comparable value1 = (Comparable) field.get(obj1);
             Comparable value2 = (Comparable) field.get(obj2);
+            if(value1 == null && value2 == null) {
+                return 0;
+            }
+            if(value1 == null) {
+                return 1;
+            } else if(value2 == null) {
+                return -1;
+            }
             return pageRequest.direction().equals("ASC") ? value1.compareTo(value2) : value2.compareTo(value1);
         } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
             return 0;
