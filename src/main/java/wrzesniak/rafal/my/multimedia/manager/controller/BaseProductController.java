@@ -66,7 +66,7 @@ public abstract class BaseProductController<
     }
 
     @GetMapping("/lastFinished")
-    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "36") Integer numberOfPositions,
+    public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "30") Integer numberOfPositions,
                                                                         @RequestParam String productType,
                                                                         @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
