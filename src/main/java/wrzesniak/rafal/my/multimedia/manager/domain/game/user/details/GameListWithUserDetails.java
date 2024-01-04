@@ -19,17 +19,17 @@ public class GameListWithUserDetails {
 
     String id;
     String name;
-    int gamesNumber;
+    int productsNumber;
     boolean isAllGamesList;
     ContentListType listType;
     List<GameWithUserDetailsDto> gameWithUserDetailsDtos;
 
-    public static GameListWithUserDetails of(ContentListDynamo contentListDynamo, List<GameWithUserDetailsDto> gameDtos) {
+    public static GameListWithUserDetails of(ContentListDynamo contentListDynamo, List<GameWithUserDetailsDto> gameDtos, int productsNumber) {
         return GameListWithUserDetails.builder()
                 .id(contentListDynamo.getListId())
                 .name(contentListDynamo.getListName())
                 .isAllGamesList(contentListDynamo.isAllContentList())
-                .gamesNumber(gameDtos.size())
+                .productsNumber(productsNumber)
                 .listType(GAME_LIST)
                 .gameWithUserDetailsDtos(gameDtos)
                 .build();

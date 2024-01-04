@@ -8,16 +8,15 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
 import wrzesniak.rafal.my.multimedia.manager.util.SimplePageRequest;
+import wrzesniak.rafal.my.multimedia.manager.util.TriFunction;
 
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 
 @Slf4j
@@ -29,7 +28,7 @@ public class DefaultProductService<
         PRODUCT extends Product> {
 
     private final ContentListType contentListType;
-    private final BiFunction<ContentListDynamo, List<PRODUCT_WITH_USER_DETAILS>, LIST_DETAILED_PRODUCTS> mergeListWithDetailedProductsFunction;
+    private final TriFunction<ContentListDynamo, List<PRODUCT_WITH_USER_DETAILS>, Integer, LIST_DETAILED_PRODUCTS> mergeListWithDetailedProductsFunction;
 
     private final ContentListDynamoService contentListDynamoService;
     private final ProductCreatorService<PRODUCT_WITH_USER_DETAILS> productCreatorService;
@@ -49,7 +48,7 @@ public class DefaultProductService<
 
     public List<LIST_DETAILED_PRODUCTS> findListsContainingProduct(String productId, String username) {
         return contentListDynamoService.findListIdsContainingProduct(productId, contentListType, username).stream()
-                .map(dynamoList -> mergeListWithDetailedProductsFunction.apply(dynamoList, List.of()))
+                .map(dynamoList -> mergeListWithDetailedProductsFunction.apply(dynamoList, List.of(), 0))
                 .toList();
     }
 
@@ -67,13 +66,18 @@ public class DefaultProductService<
         return product.map(prod -> dynamoDbProductRepository.mergeProductWithDetails(prod, productUserDetails));
     }
 
-    public List<PRODUCT_WITH_USER_DETAILS> findByPropertyName(String listId, String propertyName, String propertyValue, SimplePageRequest pageRequest, String username) {
+    public LIST_DETAILED_PRODUCTS findListProductsWithRequest(String listId, String propertyName, String propertyValue, SimplePageRequest pageRequest, String username) {
+        ContentListDynamo list = contentListDynamoService.getListById(listId, username);
         List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
-        return allProducts.stream()
+        List<PRODUCT_WITH_USER_DETAILS> foundAndSortedProducts = allProducts.stream()
                 .filter(product -> productPropertyContains(product, propertyName, propertyValue))
+                .sorted((obj1, obj2) -> compareProducts(pageRequest, obj1, obj2))
+                .toList();
+        List<PRODUCT_WITH_USER_DETAILS> pagedProducts = foundAndSortedProducts.stream()
                 .skip((long) pageRequest.pageSize() * pageRequest.page())
                 .limit(pageRequest.pageSize())
                 .toList();
+        return mergeListWithDetailedProductsFunction.apply(list, pagedProducts, foundAndSortedProducts.size());
     }
 
     public List<PRODUCT_WITH_USER_DETAILS> findLastFinished(int numberOfPositions, String username, String controllerType) {
@@ -82,17 +86,6 @@ public class DefaultProductService<
 
     public ContentListDynamo getListById(String listId, String username) {
         return contentListDynamoService.getListById(listId, username);
-    }
-
-    public LIST_DETAILED_PRODUCTS getListById(String listId, SimplePageRequest pageRequest, String username) {
-        ContentListDynamo list = contentListDynamoService.getListById(listId, username);
-        List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
-        List<PRODUCT_WITH_USER_DETAILS> products = allProducts.stream()
-                .sorted((obj1, obj2) -> compareProducts(pageRequest, obj1, obj2))
-                .skip((long) pageRequest.pageSize() * pageRequest.page())
-                .limit(pageRequest.pageSize())
-                .toList();
-        return mergeListWithDetailedProductsFunction.apply(list, products);
     }
 
     public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems, String username) {
@@ -124,6 +117,9 @@ public class DefaultProductService<
     }
 
     private boolean productPropertyContains(PRODUCT_WITH_USER_DETAILS product, String propertyName, String propertyValue) {
+        if(propertyName == null && propertyValue == null) {
+            return true;
+        }
         try {
             Field field = product.getClass().getDeclaredField(propertyName);
             field.setAccessible(true);

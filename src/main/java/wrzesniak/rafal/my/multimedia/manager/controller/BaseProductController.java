@@ -51,20 +51,6 @@ public abstract class BaseProductController<
         return defaultProductService.getById(id, username);
     }
 
-    @GetMapping("/property")
-    public List<PRODUCT_WITH_USER_DETAILS> findProductsByProperty(@RequestParam String listId,
-                                                                  @RequestParam String propertyName,
-                                                                  @RequestParam @Size(min = 2, max = 15) String value,
-                                                                  @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
-                                                                  @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
-                                                                  @RequestParam(defaultValue = "id") @Size(min = 2, max = 20) String sortKey,
-                                                                  @RequestParam(defaultValue = "ASC") String direction,
-                                                                  @RequestHeader(TOKEN_HEADER) String jwtToken) {
-        SimplePageRequest pageRequest = new SimplePageRequest(page, pageSize, sortKey, direction);
-        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        return defaultProductService.findByPropertyName(listId, propertyName, value.replaceAll("[^a-zA-Z0-9 ]", ""), pageRequest, username);
-    }
-
     @GetMapping("/lastFinished")
     public List<PRODUCT_WITH_USER_DETAILS> findRecentlyFinishedProducts(@RequestParam(defaultValue = "30") Integer numberOfPositions,
                                                                         @RequestParam String productType,
@@ -90,14 +76,19 @@ public abstract class BaseProductController<
 
     @GetMapping("/list")
     public LIST_DETAILED_PRODUCTS findProductListById(@RequestParam String listId,
+                                                      @RequestParam(required = false) String propertyName,
+                                                      @RequestParam(required = false) @Size(min = 2, max = 15) String value,
                                                       @RequestParam(defaultValue = "0") @PositiveOrZero Integer page,
                                                       @RequestParam(defaultValue = PAGE_SIZE) @PositiveOrZero Integer pageSize,
-                                                      @RequestParam(defaultValue = "id") String sortKey,
+                                                      @RequestParam(defaultValue = "id") @Size(min = 2, max = 20) String sortKey,
                                                       @RequestParam(defaultValue = "ASC") String direction,
                                                       @RequestHeader(TOKEN_HEADER) String jwtToken) {
-        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         SimplePageRequest pageRequest = new SimplePageRequest(page, pageSize, sortKey, direction);
-        return defaultProductService.getListById(listId, pageRequest, username);
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        String refactoredValue = Optional.ofNullable(value)
+                .map(s -> s.replaceAll("[^a-zA-Z0-9 ]", ""))
+                .orElse(null);
+        return defaultProductService.findListProductsWithRequest(listId, propertyName, refactoredValue, pageRequest, username);
     }
 
     @PostMapping("/list")

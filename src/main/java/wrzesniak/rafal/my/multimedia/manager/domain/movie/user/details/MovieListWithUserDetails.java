@@ -19,19 +19,17 @@ public class MovieListWithUserDetails {
 
     String id;
     String name;
-    int moviesNumber;
-    boolean isToWatchList;
-    ContentListType listType;
+    int productsNumber;
     boolean isAllMoviesList;
-    boolean isRecentlyWatchedList;
+    ContentListType listType;
     List<MovieWithUserDetailsDto> movieWithUserDetailsDtos;
 
-    public static MovieListWithUserDetails of(ContentListDynamo contentListDynamo, List<MovieWithUserDetailsDto> movieDtos) {
+    public static MovieListWithUserDetails of(ContentListDynamo contentListDynamo, List<MovieWithUserDetailsDto> movieDtos, int productsNumber) {
         return MovieListWithUserDetails.builder()
                 .id(contentListDynamo.getListId())
                 .name(contentListDynamo.getListName())
                 .isAllMoviesList(contentListDynamo.isAllContentList())
-                .moviesNumber(movieDtos.size())
+                .productsNumber(productsNumber)
                 .listType(MOVIE_LIST)
                 .movieWithUserDetailsDtos(movieDtos)
                 .build();

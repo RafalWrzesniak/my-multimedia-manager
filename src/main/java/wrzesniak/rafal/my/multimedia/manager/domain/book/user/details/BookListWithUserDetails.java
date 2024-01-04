@@ -19,17 +19,17 @@ public class BookListWithUserDetails {
 
     String id;
     String name;
-    int booksNumber;
+    int productsNumber;
     boolean isAllBooksList;
     ContentListType listType;
     List<BookWithUserDetailsDto> bookWithUserDetailsDtos;
 
-    public static BookListWithUserDetails of(ContentListDynamo contentListDynamo, List<BookWithUserDetailsDto> bookWithUserDetailsDtos) {
+    public static BookListWithUserDetails of(ContentListDynamo contentListDynamo, List<BookWithUserDetailsDto> bookWithUserDetailsDtos, int productsNumber) {
         return BookListWithUserDetails.builder()
                 .id(contentListDynamo.getListId())
                 .name(contentListDynamo.getListName())
                 .isAllBooksList(contentListDynamo.isAllContentList())
-                .booksNumber(bookWithUserDetailsDtos.size())
+                .productsNumber(productsNumber)
                 .listType(BOOK_LIST)
                 .bookWithUserDetailsDtos(bookWithUserDetailsDtos)
                 .build();
