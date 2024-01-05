@@ -22,7 +22,7 @@ Resources:
       Cors:
         AllowHeaders: "'*'"
         AllowMethods: "'GET,POST,PUT,DELETE,OPTION'"
-        AllowOrigin: "'https://master.d5i6lke35o8tb.amplifyapp.com,https://www.my-multimedia-manager.com'"
+        AllowOrigin: "'https://www.my-multimedia-manager.com'"
 
   MyMultimediaManagerLambdaRoleTemplate:
     Type: 'AWS::IAM::Role'
