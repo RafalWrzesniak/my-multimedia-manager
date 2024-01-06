@@ -7,13 +7,14 @@ Globals:
     Runtime: java21
     MemorySize: 256
     Timeout: 900
+  Api:
+    TimeoutInMillis: 60000
 
 Resources:
   MyMultimediaManagerApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      TimeoutInMillis: 60000
       Auth:
         DefaultAuthorizer: MyCognitoAuthorizer
         Authorizers:
