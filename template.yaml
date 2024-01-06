@@ -13,6 +13,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
+      TimeoutInMillis: 60000
       Auth:
         DefaultAuthorizer: MyCognitoAuthorizer
         Authorizers:
