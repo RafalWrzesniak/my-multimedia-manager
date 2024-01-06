@@ -134,9 +134,7 @@ Resources:
       KeySchema:
         - AttributeName: 'username'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -156,9 +154,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'listId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -176,9 +172,7 @@ Resources:
       KeySchema:
         - AttributeName: 'lubimyCzytacUrl'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -198,9 +192,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'bookId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -217,9 +209,7 @@ Resources:
       KeySchema:
         - AttributeName: 'filmwebUrl'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -239,9 +229,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'movieId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -258,9 +246,7 @@ Resources:
       KeySchema:
         - AttributeName: 'gryOnlineUrl'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -280,9 +266,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'gameId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -301,9 +285,7 @@ Resources:
       KeySchema:
         - AttributeName: 'username'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -323,9 +305,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'listId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -343,9 +323,7 @@ Resources:
       KeySchema:
         - AttributeName: 'lubimyCzytacUrl'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -365,9 +343,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'bookId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -384,9 +360,7 @@ Resources:
       KeySchema:
         - AttributeName: 'filmwebUrl'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -406,9 +380,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'movieId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -425,9 +397,7 @@ Resources:
       KeySchema:
         - AttributeName: 'gryOnlineUrl'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
@@ -447,9 +417,7 @@ Resources:
           KeyType: 'HASH'
         - AttributeName: 'gameId'
           KeyType: 'RANGE'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
 
