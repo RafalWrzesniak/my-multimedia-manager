@@ -7,8 +7,6 @@ Globals:
     Runtime: java21
     MemorySize: 256
     Timeout: 900
-  Api:
-    TimeoutInMillis: 60000
 
 Resources:
   MyMultimediaManagerApi:
