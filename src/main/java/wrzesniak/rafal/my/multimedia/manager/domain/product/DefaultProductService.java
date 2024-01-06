@@ -61,6 +61,7 @@ public class DefaultProductService<
     }
 
     public Optional<PRODUCT_WITH_USER_DETAILS> getById(String id, String username) {
+        log.info("Getting information about product with id: {} for username: {}", id, username);
         Optional<PRODUCT> product = dynamoDbProductRepository.getRawProductById(id);
         PRODUCT_USER_DETAILS productUserDetails = dynamoDbProductRepository.getProductUserDetails(id, username);
         return product.map(prod -> dynamoDbProductRepository.mergeProductWithDetails(prod, productUserDetails));
