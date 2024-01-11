@@ -19,11 +19,13 @@ public class UserService {
     private final ContentListDynamoService contentListDynamoService;
     private final DynamoDbClientGeneric<UserDynamo> userDynamoDb;
 
-    private void createAllContentListForNewUser(String username) {
-        Arrays.stream(ContentListType.values())
-                .forEach(contentListType -> contentListDynamoService.createContentList(contentListType.getAllProductsListName(),
-                        username, contentListType, true));
+    public List<ContentListDynamo> createAllContentListForNewUser(String username) {
+        List<ContentListDynamo> lists = Arrays.stream(ContentListType.values())
+                .map(contentListType -> contentListDynamoService.createContentList(contentListType.getAllProductsListName(),
+                        username, contentListType, true))
+                .toList();
         log.info("New users list created successfully: {}", username);
+        return lists;
     }
 
     public UserDynamo createNewUser(String username, String preferredUsername, String email) {

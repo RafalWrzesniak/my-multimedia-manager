@@ -33,6 +33,9 @@ public class UserController {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         log.info("Starts fetching basic list info for {}", username);
         List<ContentListDynamo> allContentLists = contentListDynamoService.getAllContentLists(username);
+        if(allContentLists.isEmpty()) {
+            allContentLists = userService.createAllContentListForNewUser(username);
+        }
         return allContentLists.stream()
                 .map(ListDto::new)
                 .sorted(Comparator.comparing(ListDto::getName))
