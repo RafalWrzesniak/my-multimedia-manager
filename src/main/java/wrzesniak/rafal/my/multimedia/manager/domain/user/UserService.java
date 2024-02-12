@@ -7,6 +7,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DynamoDbClientGeneric;
+import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,4 +36,11 @@ public class UserService {
         log.info("New user created successfully: {}, {}", username, preferredUsername);
         return user;
     }
+
+    public void markUserLoggedIn(String username) {
+        UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
+        userDynamo.markedLoggedIn();
+        userDynamoDb.saveItem(userDynamo);
+    }
+
 }

@@ -36,6 +36,7 @@ public class UserController {
         if(allContentLists.isEmpty()) {
             allContentLists = userService.createAllContentListForNewUser(username);
         }
+        userService.markUserLoggedIn(username);
         return allContentLists.stream()
                 .map(ListDto::new)
                 .sorted(Comparator.comparing(ListDto::getName))
