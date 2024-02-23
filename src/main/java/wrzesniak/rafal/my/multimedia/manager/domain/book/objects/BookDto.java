@@ -1,15 +1,13 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book.objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.With;
+import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.author.AuthorDto;
 
 import java.time.LocalDate;
 
 @Data
 @With
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookDto {

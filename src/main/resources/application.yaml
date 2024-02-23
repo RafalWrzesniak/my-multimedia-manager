@@ -32,10 +32,12 @@ application:
       main-attribute: type
       main-attribute-value: application/ld+json
       href: href
+      title: title
       publisher: wydawnictwo
       id: id
       description: book-description
       series: /cykl/
+      original-release: Data pierwszego wydania oryginalnego
 
 dynamodb:
   table:

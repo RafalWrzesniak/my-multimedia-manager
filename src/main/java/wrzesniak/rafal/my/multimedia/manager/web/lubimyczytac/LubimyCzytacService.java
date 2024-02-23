@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -18,7 +19,10 @@ import wrzesniak.rafal.my.multimedia.manager.util.SeriesDynamoConverter;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -53,21 +57,44 @@ public class LubimyCzytacService {
             log.warn("Failed to map object to BookDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
         }
+        BookDto enrichedDto = enrichDtoWithAdditionalData(bookDto, lubimyCzytacBookUrl, parsedUrl);
+        log.info("Created BookDto: {}", enrichedDto);
+        return Optional.of(enrichedDto);
+    }
+
+    private BookDto enrichDtoWithAdditionalData(BookDto bookDto, URL lubimyCzytacBookUrl, Document parsedUrl) {
         bookDto.setUrl(lubimyCzytacBookUrl.toString());
-        String description = parseDescription(parsedUrl);
-        bookDto.setDescription(description);
-        String publisher = parsePublisher(parsedUrl);
-        bookDto.setPublisher(publisher);
+        bookDto.setDescription(parseDescription(parsedUrl));
+        bookDto.setPublisher(parsePublisher(parsedUrl));
+        parseOriginalDatePublished(parsedUrl).ifPresent(bookDto::setDatePublished);
         String series = parseSeries(parsedUrl);
         bookDto.setSeries(seriesConverter.transformTo(AttributeValue.fromS(series)));
-        log.info("Created BookDto: {}", bookDto);
-        return Optional.of(bookDto);
+        return bookDto;
+    }
+
+    private Optional<LocalDate> parseOriginalDatePublished(Document parsedUrl) {
+        Map<String, String> parsing = configuration.getParsing();
+        Optional<Element> originalReleaseText = Optional.ofNullable(parsedUrl.getElementsByAttributeValue(parsing.get("title"), parsing.get("original-release")).first());
+        Optional<Elements> elementsWithOriginalDate = originalReleaseText.map(element -> parsedUrl.getElementsByIndexEquals(element.elementSiblingIndex() + 1));
+        return elementsWithOriginalDate
+                .flatMap(elements -> elements.stream()
+                    .map(Element::text)
+                    .map(this::tryMappingToLocalDate)
+                    .filter(Objects::nonNull)
+                    .findFirst());
+    }
+
+    private LocalDate tryMappingToLocalDate(String s) {
+        try {
+            return LocalDate.parse(s);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     private String parseSeries(Document parsedUrl) {
         Map<String, String> parsing = configuration.getParsing();
-        Element seriesElement = parsedUrl.getElementsByAttributeValueContaining(parsing.get("href"), parsing.get("series"))
-                .first();
+        Element seriesElement = parsedUrl.getElementsByAttributeValueContaining(parsing.get("href"), parsing.get("series")).first();
         return seriesElement != null ? seriesElement.text() : null;
     }
 
