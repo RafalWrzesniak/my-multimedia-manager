@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MOVIE_LIST;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,7 +63,6 @@ public class DefaultProductService<
     }
 
     public Optional<PRODUCT_WITH_USER_DETAILS> getById(String id, String username) {
-        log.info("Getting information about product with id: {} for username: {}", id, username);
         Optional<PRODUCT> product = dynamoDbProductRepository.getRawProductById(id);
         PRODUCT_USER_DETAILS productUserDetails = dynamoDbProductRepository.getProductUserDetails(id, username);
         return product.map(prod -> dynamoDbProductRepository.mergeProductWithDetails(prod, productUserDetails));
@@ -69,16 +70,26 @@ public class DefaultProductService<
 
     public LIST_DETAILED_PRODUCTS findListProductsWithRequest(String listId, String propertyName, String propertyValue, SimplePageRequest pageRequest, String username) {
         ContentListDynamo list = contentListDynamoService.getListById(listId, username);
-        List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
-        List<PRODUCT_WITH_USER_DETAILS> foundAndSortedProducts = allProducts.stream()
-                .filter(product -> productPropertyContains(product, propertyName, propertyValue))
+        List<PRODUCT_WITH_USER_DETAILS> foundProducts;
+        if(("title".equals(propertyName) && !list.getContentListType().equals(MOVIE_LIST)) || "polishTitle".equals(propertyName)) {
+            foundProducts = list.getItems().stream()
+                    .filter(simpleItem -> simpleItem.getTitle().toLowerCase().contains(propertyValue.toLowerCase()))
+                    .map(simpleItem -> getById(simpleItem.getId(), username))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList();
+        } else {
+            List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
+            foundProducts = allProducts.stream()
+                    .filter(product -> productPropertyContains(product, propertyName, propertyValue))
+                    .toList();
+        }
+        List<PRODUCT_WITH_USER_DETAILS> pagedAndSortedProducts = foundProducts.stream()
                 .sorted((obj1, obj2) -> compareProducts(pageRequest, obj1, obj2))
-                .toList();
-        List<PRODUCT_WITH_USER_DETAILS> pagedProducts = foundAndSortedProducts.stream()
                 .skip((long) pageRequest.pageSize() * pageRequest.page())
                 .limit(pageRequest.pageSize())
                 .toList();
-        return mergeListWithDetailedProductsFunction.apply(list, pagedProducts, foundAndSortedProducts.size());
+        return mergeListWithDetailedProductsFunction.apply(list, pagedAndSortedProducts, foundProducts.size());
     }
 
     public List<PRODUCT_WITH_USER_DETAILS> findLastFinished(int numberOfPositions, String username, String controllerType) {
@@ -150,7 +161,7 @@ public class DefaultProductService<
         }
     }
 
-    private List<PRODUCT_WITH_USER_DETAILS> getAllProductsForList(String listId, String username) {
+    public List<PRODUCT_WITH_USER_DETAILS> getAllProductsForList(String listId, String username) {
         return contentListDynamoService.getListById(listId, username).getItems().parallelStream()
                 .map(SimpleItem::getId)
                 .map((String id) -> getById(id, username))

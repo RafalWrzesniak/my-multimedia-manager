@@ -28,7 +28,7 @@ public class ContentListDynamoService {
     }
 
     public void addProductToAllProductsList(SimpleItem product, ContentListType contentListType, String username) {
-        String listIdWithAllProducts = getListWithAllProducts(contentListType, username).getListId();
+        String listIdWithAllProducts = getAllProductsList(contentListType, username).getListId();
         addProductToList(product, listIdWithAllProducts, username);
     }
 
@@ -67,7 +67,7 @@ public class ContentListDynamoService {
                 .toList();
     }
 
-    public ContentListDynamo getListWithAllProducts(ContentListType contentListType, String username) {
+    public ContentListDynamo getAllProductsList(ContentListType contentListType, String username) {
         return listClient.findObjectsByPartitionKey(username).stream()
                 .filter(list -> contentListType.equals(list.getContentListType()))
                 .filter(ContentListDynamo::isAllContentList)
