@@ -42,7 +42,6 @@ public class UserController {
             allContentLists = userService.createAllContentListForNewUser(username);
         }
         userService.markUserLoggedIn(username);
-        warmUpCaches(username);
         return allContentLists.stream()
                 .map(ListDto::new)
                 .sorted(Comparator.comparing(ListDto::getName))
