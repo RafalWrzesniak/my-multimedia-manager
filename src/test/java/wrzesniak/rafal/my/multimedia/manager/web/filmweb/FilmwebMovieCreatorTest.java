@@ -1,12 +1,10 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.RetryPolicy;
 import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
@@ -99,9 +97,6 @@ class FilmwebMovieCreatorTest {
         String imageUrl = filmwebMovieCreator.parseImage(document);
         assertEquals("https://fwcdn.pl/fpo/81/44/728144/7722526_1.3.jpg", imageUrl);
     }
-
-
-
 
     @SneakyThrows
     @Test

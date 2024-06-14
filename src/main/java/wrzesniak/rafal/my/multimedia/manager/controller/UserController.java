@@ -7,15 +7,19 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.dto.ListDto;
+import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.GameFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieFacade;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static wrzesniak.rafal.my.multimedia.manager.controller.BaseProductController.PAGE_SIZE;
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.*;
 import static wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder.TOKEN_HEADER;
 
@@ -38,14 +42,36 @@ public class UserController {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         log.info("Starts fetching basic list info for {}", username);
         List<ContentListDynamo> allContentLists = contentListDynamoService.getAllContentLists(username);
+        log.info("Found {} lists", allContentLists.size());
         if(allContentLists.isEmpty()) {
             allContentLists = userService.createAllContentListForNewUser(username);
         }
         userService.markUserLoggedIn(username);
-        return allContentLists.stream()
-                .map(ListDto::new)
+        List<ListDto> list = allContentLists.stream()
+                .map((ContentListDynamo contentListDynamo) -> ListDto.of(contentListDynamo, enrichedListWithUserDetails(contentListDynamo, username)))
                 .sorted(Comparator.comparing(ListDto::getName))
                 .toList();
+        log.info("Enriched lists with user details");
+        return list;
+    }
+
+    private List<SimpleItemDtoWithUserDetails> enrichedListWithUserDetails(ContentListDynamo contentList, String username) {
+        int numberOfItemsToParsed = Math.min(Integer.parseInt(PAGE_SIZE), contentList.getItems().size());
+        List<SimpleItem> itemsToParse = contentList.getItems().subList(0, numberOfItemsToParsed);
+        List<SimpleItemDtoWithUserDetails> detailsForItems = new ArrayList<>();
+        switch (contentList.getContentListType()) {
+            case BOOK_LIST -> detailsForItems = new ArrayList<>(bookFacade.getDetailsForItems(itemsToParse, username));
+            case MOVIE_LIST -> detailsForItems = new ArrayList<>(movieFacade.getDetailsForItems(itemsToParse, username));
+            case GAME_LIST -> detailsForItems = new ArrayList<>(gameFacade.getDetailsForItems(itemsToParse, username));
+        }
+        if(contentList.getItems().size() > Integer.parseInt(PAGE_SIZE)) {
+            List<SimpleItem> simpleItemsWithoutDetails = contentList.getItems().subList(numberOfItemsToParsed, contentList.getItems().size());
+            List<SimpleItemDtoWithUserDetails> list = simpleItemsWithoutDetails.stream()
+                    .map(simpleItem -> new SimpleItemDtoWithUserDetails(null, simpleItem))
+                    .toList();
+            detailsForItems.addAll(list);
+        }
+        return detailsForItems;
     }
 
     @PostMapping("/register")

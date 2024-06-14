@@ -29,7 +29,7 @@ public abstract class BaseProductController<
         LIST_DETAILED_PRODUCTS,
         PRODUCT extends Product> {
 
-    private static final String PAGE_SIZE = "36";
+    public static final String PAGE_SIZE = "36";
 
     private final DefaultProductService<PRODUCT_WITH_USER_DETAILS, PRODUCT_USER_DETAILS, LIST_DETAILED_PRODUCTS, PRODUCT> defaultProductService;
     private final JwtTokenDecoder jwtTokenDecoder;
