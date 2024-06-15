@@ -47,15 +47,15 @@ public class UserController {
             allContentLists = userService.createAllContentListForNewUser(username);
         }
         userService.markUserLoggedIn(username);
-        List<ListDto> list = allContentLists.stream()
-                .map((ContentListDynamo contentListDynamo) -> ListDto.of(contentListDynamo, enrichedListWithUserDetails(contentListDynamo, username)))
+        List<ListDto> list = allContentLists.parallelStream()
+                .map((ContentListDynamo contentListDynamo) -> ListDto.of(contentListDynamo, enrichedItemsWithUserDetails(contentListDynamo, username)))
                 .sorted(Comparator.comparing(ListDto::getName))
                 .toList();
         log.info("Enriched lists with user details");
         return list;
     }
 
-    private List<SimpleItemDtoWithUserDetails> enrichedListWithUserDetails(ContentListDynamo contentList, String username) {
+    private List<SimpleItemDtoWithUserDetails> enrichedItemsWithUserDetails(ContentListDynamo contentList, String username) {
         int numberOfItemsToParsed = Math.min(Integer.parseInt(PAGE_SIZE), contentList.getItems().size());
         List<SimpleItem> itemsToParse = contentList.getItems().subList(0, numberOfItemsToParsed);
         List<SimpleItemDtoWithUserDetails> detailsForItems = new ArrayList<>();
