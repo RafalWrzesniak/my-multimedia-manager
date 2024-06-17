@@ -102,6 +102,7 @@ public class DefaultProductService<
 
     public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems, String username) {
         return simpleItems.parallelStream()
+                .peek(item -> log.info("Processing {}", item))
                 .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId(), username),
                         simpleItem.withTitle(URLDecoder.decode(simpleItem.getDisplayedTitle(), StandardCharsets.UTF_8))))
                 .toList();
