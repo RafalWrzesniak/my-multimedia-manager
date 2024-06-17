@@ -102,10 +102,13 @@ public class DefaultProductService<
 
     public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems, String username) {
         return simpleItems.parallelStream()
-                .peek(item -> log.info("Processing {}", item))
-                .map(simpleItem -> new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId(), username),
-                        simpleItem.withTitle(URLDecoder.decode(simpleItem.getDisplayedTitle(), StandardCharsets.UTF_8))))
+                .map(simpleItem -> fetchDetails(simpleItem, username))
                 .toList();
+    }
+
+    private SimpleItemDtoWithUserDetails fetchDetails(SimpleItem simpleItem, String username) {
+        return new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId(), username),
+                simpleItem.withTitle(URLDecoder.decode(simpleItem.getDisplayedTitle(), StandardCharsets.UTF_8)));
     }
 
     public ContentListDynamo createContentList(String listName, String username) {
