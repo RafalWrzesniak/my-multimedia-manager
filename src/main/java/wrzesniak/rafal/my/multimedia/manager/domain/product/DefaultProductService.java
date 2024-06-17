@@ -2,6 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.expression.spel.SpelEvaluationException;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
@@ -107,6 +108,15 @@ public class DefaultProductService<
     }
 
     private SimpleItemDtoWithUserDetails fetchDetails(SimpleItem simpleItem, String username) {
+        for (int i = 0; i < 5; i++) {
+            try {
+                return fetchDetailsForItem(simpleItem, username);
+            } catch (SpelEvaluationException ignored) {}
+        }
+        return new SimpleItemDtoWithUserDetails(null, simpleItem);
+    }
+
+    private SimpleItemDtoWithUserDetails fetchDetailsForItem(SimpleItem simpleItem, String username) throws SpelEvaluationException {
         return new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetails(simpleItem.getId(), username),
                 simpleItem.withTitle(URLDecoder.decode(simpleItem.getDisplayedTitle(), StandardCharsets.UTF_8)));
     }
