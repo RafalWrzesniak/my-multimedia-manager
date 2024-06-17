@@ -62,6 +62,7 @@ logging:
   level:
     org:
       springframework:
+        expression: DEBUG
         web:
           filter:
             CommonsRequestLoggingFilter: DEBUG
