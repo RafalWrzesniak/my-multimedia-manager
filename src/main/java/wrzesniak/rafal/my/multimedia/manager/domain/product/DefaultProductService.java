@@ -113,6 +113,7 @@ public class DefaultProductService<
                 return fetchDetailsForItem(simpleItem, username);
             } catch (SpelEvaluationException ignored) {}
         }
+        log.warn("Failed to save details in cache for {}", simpleItem);
         return new SimpleItemDtoWithUserDetails(null, simpleItem);
     }
 
