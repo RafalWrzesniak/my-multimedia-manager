@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.*;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductUserDetailsAbstract;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,6 +70,11 @@ public class DefaultDynamoRepository<
     public PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
         return productUserDetailsDynamoClient.getItemById(username, productId)
                 .orElse(createNewUserDetailsFunction.apply(username, productId));
+    }
+
+    public PRODUCT_USER_DETAILS getProductUserDetailsWithoutCache(String productId, String username) {
+        return productUserDetailsDynamoClient.getItemById(username, productId)
+            .orElse(createNewUserDetailsFunction.apply(username, productId));
     }
 
     @Caching(put = {
