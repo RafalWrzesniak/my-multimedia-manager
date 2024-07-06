@@ -23,6 +23,7 @@ public class UserDynamo {
     private String email;
     private LocalDateTime createdOn;
     private List<LocalDateTime> loggedInTimestamps;
+    private LocalDateTime lastSynchronization;
 
     public UserDynamo(String username, String preferredUsername, String email) {
         this.username = username;

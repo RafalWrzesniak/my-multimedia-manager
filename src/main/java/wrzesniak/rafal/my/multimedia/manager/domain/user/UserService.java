@@ -29,6 +29,17 @@ public class UserService {
         return lists;
     }
 
+    public void setSynchronizationInfo(String username, SyncInfo syncInfo) {
+        UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
+        userDynamo.setLastSynchronization(syncInfo.syncTimestamp());
+        userDynamoDb.saveItem(userDynamo);
+    }
+
+    public SyncInfo getLastSynchronizationInfo(String username) {
+        UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
+        return new SyncInfo(userDynamo.getLastSynchronization());
+    }
+
     public UserDynamo createNewUser(String username, String preferredUsername, String email) {
         UserDynamo user = new UserDynamo(username, preferredUsername, email);
         userDynamoDb.saveItem(user);

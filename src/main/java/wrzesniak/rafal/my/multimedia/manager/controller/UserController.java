@@ -11,6 +11,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDet
 import wrzesniak.rafal.my.multimedia.manager.domain.game.GameFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.SyncInfo;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
@@ -53,6 +54,18 @@ public class UserController {
                 .toList();
         log.info("Enriched lists with user details");
         return list;
+    }
+
+    @PostMapping("/sync")
+    public void setSynchronization(@RequestHeader(TOKEN_HEADER) String jwtToken, @RequestBody SyncInfo syncInfo) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        userService.setSynchronizationInfo(username, syncInfo);
+    }
+
+    @GetMapping("/sync")
+    public SyncInfo getLastSynchronizationInfo(@RequestHeader(TOKEN_HEADER) String jwtToken) {
+        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
+        return userService.getLastSynchronizationInfo(username);
     }
 
     private List<SimpleItemDtoWithUserDetails> enrichedItemsWithUserDetails(ContentListDynamo contentList, String username) {
