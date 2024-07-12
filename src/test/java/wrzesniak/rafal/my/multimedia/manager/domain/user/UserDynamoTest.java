@@ -6,12 +6,15 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.time.ZoneOffset.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static java.time.ZoneOffset.UTC;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class UserDynamoTest {
@@ -33,7 +36,7 @@ public class UserDynamoTest {
 
         // then
         assertEquals(1, user.getLoggedInTimestamps().size());
-        assertEquals(TIMESTAMP, user.getLoggedInTimestamps().get(0));
+        assertEquals(TIMESTAMP, user.getLoggedInTimestamps().getFirst());
     }
 
     @Test
@@ -51,7 +54,8 @@ public class UserDynamoTest {
 
         // then
         assertEquals(4, user.getLoggedInTimestamps().size());
-        assertEquals(TIMESTAMP, user.getLoggedInTimestamps().get(0));
+        assertEquals(TIMESTAMP, user.getLoggedInTimestamps().getFirst());
+
     }
     @Test
     public void shouldMarkAnotherLoggedInAndRemoveLastWhenRichTheLimit() {
@@ -68,7 +72,7 @@ public class UserDynamoTest {
 
         // then
         assertEquals(30, user.getLoggedInTimestamps().size());
-        assertEquals(TIMESTAMP, user.getLoggedInTimestamps().get(0));
+        assertEquals(TIMESTAMP, user.getLoggedInTimestamps().getFirst());
     }
 
     private List<LocalDateTime> prepareListOfTimeStamps(int count) {

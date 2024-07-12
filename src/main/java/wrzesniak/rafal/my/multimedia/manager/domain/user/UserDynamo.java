@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import wrzesniak.rafal.my.multimedia.manager.util.SynchronizationConverter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class UserDynamo {
     private String email;
     private LocalDateTime createdOn;
     private List<LocalDateTime> loggedInTimestamps;
-    private LocalDateTime lastSynchronization;
+    private List<SyncInfo> lastSynchronization;
 
     public UserDynamo(String username, String preferredUsername, String email) {
         this.username = username;
@@ -31,6 +33,15 @@ public class UserDynamo {
         this.email = email;
         this.createdOn = LocalDateTime.now();
         this.loggedInTimestamps = new ArrayList<>();
+        this.lastSynchronization = new ArrayList<>();
+    }
+
+    public void addNewSynchronization(SyncInfo syncInfo) {
+        if(lastSynchronization == null) lastSynchronization = new ArrayList<>();
+        lastSynchronization.addFirst(syncInfo);
+        if(lastSynchronization.size() > 15) {
+            lastSynchronization.removeLast();
+        }
     }
 
     public void markedLoggedIn() {
@@ -46,4 +57,8 @@ public class UserDynamo {
         return username;
     }
 
+    @DynamoDbConvertedBy(SynchronizationConverter.class)
+    public List<SyncInfo> getLastSynchronization() {
+        return lastSynchronization;
+    }
 }

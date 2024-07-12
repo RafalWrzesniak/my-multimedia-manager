@@ -28,12 +28,13 @@ public class ContentListDynamo {
     @ToString.Exclude
     private List<SimpleItem> items;
 
-    public ContentListDynamo(String name, String username, ContentListType contentListType) {
+    public ContentListDynamo(String name, String username, ContentListType contentListType, boolean isAllContentList) {
         this.listId = UUID.randomUUID().toString();
         this.createdOn = LocalDateTime.now();
         this.username = username;
         this.listName = name;
         this.contentListType = contentListType;
+        this.isAllContentList = isAllContentList;
         this.items = new ArrayList<>();
     }
 
