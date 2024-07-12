@@ -24,7 +24,7 @@ public class UserController {
     private final JwtTokenDecoder jwtTokenDecoder;
     private final UserService userService;
 
-    @GetMapping("/lists")
+    @PostMapping("/lists")
     public List<ListDto> getNeededListsData(@RequestHeader(TOKEN_HEADER) String jwtToken, @RequestBody SyncInfoWrapper syncInfoWrapper) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         return userService.fetchNeededListData(username, syncInfoWrapper);

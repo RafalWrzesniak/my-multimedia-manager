@@ -19,17 +19,19 @@ public class SynchronizationConverter implements AttributeConverter<List<SyncInf
 
     @Override
     public AttributeValue transformFrom(List<SyncInfo> input) {
+        String preparedString = input.stream()
+                .map(syncInfo -> syncInfo.syncTimestamp().toString() + " | " + syncInfo.changedListIds().toString().substring(1, syncInfo.changedListIds().toString().length() - 1))
+                .reduce("", (s1, s2) -> s1 + " || " + s2);
         return AttributeValue.builder()
-                .s(input.stream()
-                        .map(syncInfo -> syncInfo.syncTimestamp().toString() + " | " + syncInfo.changedListIds().toString().substring(1, syncInfo.changedListIds().toString().length()-1))
-                        .reduce("", (s1, s2) -> s1 + " || " + s2)
-                        .substring(4)
-                )
+                .s(preparedString.length() > 4 ? preparedString.substring(4) : "")
                 .build();
     }
 
     @Override
     public List<SyncInfo> transformTo(AttributeValue input) {
+        if(input.s().isEmpty()) {
+            return List.of();
+        }
         return Arrays.stream(input.s().split(" \\|\\| "))
             .map(s -> {
                 String[] splited = s.split(" \\| ");
