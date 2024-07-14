@@ -141,11 +141,11 @@ public class UserServiceTest {
         LocalDateTime lastUiSyncDateTime = LocalDateTime.of(2024, 7, 5, 16, 0);
         SyncInfo lastUiSyncInfo = new SyncInfo(lastUiSyncDateTime, List.of("id3"));
         USER_DYNAMO.setLastSynchronization(List.of(
-                new SyncInfo(lastUiSyncDateTime.minusDays(3), List.of("id1", "id2")),
-                new SyncInfo(lastUiSyncDateTime.minusDays(2), List.of("id3")),
-                lastUiSyncInfo,
+                new SyncInfo(lastUiSyncDateTime.plusDays(2), List.of("id4", "id5")),
                 new SyncInfo(lastUiSyncDateTime.plusDays(1), List.of("id4")),
-                new SyncInfo(lastUiSyncDateTime.plusDays(2), List.of("id4", "id5"))
+                lastUiSyncInfo,
+                new SyncInfo(lastUiSyncDateTime.minusDays(2), List.of("id3")),
+                new SyncInfo(lastUiSyncDateTime.minusDays(3), List.of("id1", "id2"))
         ));
         when(userDynamoDb.getItemById(USERNAME)).thenReturn(Optional.of(USER_DYNAMO));
         when(contentListDynamoService.getListById("id4", USERNAME)).thenReturn(EMPTY_BOOK_LIST);

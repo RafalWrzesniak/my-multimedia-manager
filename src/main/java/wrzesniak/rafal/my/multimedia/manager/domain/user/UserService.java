@@ -55,12 +55,8 @@ public class UserService {
         markUserLoggedIn(userDynamo.getUsername());
         List<ContentListDynamo> rawLists;
         List<String> removedListIds = new ArrayList<>();
-        if(syncFromUiUpToDateOrNewerThanLatestOnServer(syncInfoWrapper.syncInfo(), userDynamo)) {
+        if(syncFromUiUpToDateOrNewerThanLatestOnServer(syncInfoWrapper.syncInfo(), userDynamo) && syncInfoWrapper.currentLists() != null) {
             log.info("UI has latest data, returning list from UI");
-            return syncInfoWrapper.currentLists();
-        }
-        if(noSyncOnServer(userDynamo) && requestContainsLists(syncInfoWrapper)) {
-            log.info("So sync data on server, returning list from UI");
             return syncInfoWrapper.currentLists();
         }
         if(lastSynchronizationContains(userDynamo, syncInfoWrapper.syncInfo()) && requestContainsLists(syncInfoWrapper)) {
@@ -82,6 +78,9 @@ public class UserService {
     }
 
     private boolean syncFromUiUpToDateOrNewerThanLatestOnServer(SyncInfo syncInfo, UserDynamo userDynamo) {
+        if(syncInfo == null) {
+            return false;
+        }
         LocalDateTime uiSyncTimestamp = syncInfo.syncTimestamp();
         if(uiSyncTimestamp == null) {
             return false;
@@ -203,7 +202,7 @@ public class UserService {
     }
 
     private boolean lastSynchronizationContains(UserDynamo userDynamo, SyncInfo syncInfo) {
-        if(syncInfo == null || syncInfo.syncTimestamp() == null) {
+        if(syncInfo == null || syncInfo.syncTimestamp() == null || userDynamo.getLastSynchronization() == null || userDynamo.getLastSynchronization().isEmpty()) {
             return false;
         }
         LocalDateTime first = userDynamo.getLastSynchronization().getFirst().syncTimestamp();

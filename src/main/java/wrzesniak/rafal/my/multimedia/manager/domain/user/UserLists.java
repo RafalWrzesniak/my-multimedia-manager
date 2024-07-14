@@ -8,6 +8,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieList
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 public class UserLists {
@@ -53,8 +54,8 @@ public class UserLists {
     }
 
     public void sortLists() {
-        bookLists = bookLists.stream().sorted(Comparator.comparing(BookListWithUserDetails::getName)).toList();
-        movieLists = movieLists.stream().sorted(Comparator.comparing(MovieListWithUserDetails::getName)).toList();
-        gameLists = gameLists.stream().sorted(Comparator.comparing(GameListWithUserDetails::getName)).toList();
+        bookLists = bookLists.stream().filter(Objects::nonNull).sorted(Comparator.comparing(BookListWithUserDetails::getName)).toList();
+        movieLists = movieLists.stream().filter(Objects::nonNull).sorted(Comparator.comparing(MovieListWithUserDetails::getName)).toList();
+        gameLists = gameLists.stream().filter(Objects::nonNull).sorted(Comparator.comparing(GameListWithUserDetails::getName)).toList();
     }
 }
