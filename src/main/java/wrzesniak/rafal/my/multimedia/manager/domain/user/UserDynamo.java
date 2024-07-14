@@ -1,9 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbConvertedBy;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
@@ -25,7 +22,9 @@ public class UserDynamo {
     private String preferredUsername;
     private String email;
     private LocalDateTime createdOn;
+    @ToString.Exclude
     private List<LocalDateTime> loggedInTimestamps;
+    @ToString.Exclude
     private List<SyncInfo> lastSynchronization;
 
     public UserDynamo(String username, String preferredUsername, String email) {

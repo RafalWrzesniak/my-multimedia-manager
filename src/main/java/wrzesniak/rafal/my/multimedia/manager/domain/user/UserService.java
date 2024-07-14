@@ -54,6 +54,7 @@ public class UserService {
         log.info("Starts fetching basic list info for {}", userDynamo.getPreferredUsername());
         markUserLoggedIn(userDynamo.getUsername());
         List<ContentListDynamo> rawLists;
+        List<String> removedListIds = new ArrayList<>();
         if(syncFromUiUpToDateOrNewerThanLatestOnServer(syncInfoWrapper.syncInfo(), userDynamo)) {
             log.info("UI has latest data, returning list from UI");
             return syncInfoWrapper.currentLists();
@@ -64,13 +65,18 @@ public class UserService {
         }
         if(lastSynchronizationContains(userDynamo, syncInfoWrapper.syncInfo()) && requestContainsLists(syncInfoWrapper)) {
             rawLists = fetchOnlyMissingLists(syncInfoWrapper, userDynamo);
+            removedListIds = rawLists.stream()
+                    .filter(contentListDynamo -> contentListDynamo.getContentListType() == null && contentListDynamo.getUsername() == null)
+                    .map(ContentListDynamo::getListId)
+                    .toList();
         } else {
             rawLists = fetchAllContentLists(userDynamo.getUsername());
         }
         log.info("Enriching remaining lists with user details");
         UserLists enrichedLists = enrichRawListsWithUserDetails(rawLists, userDynamo.getUsername());
         log.info("Merging lists");
-        UserLists mergedLists = mergeEnrichedListsWithGivenOnes(syncInfoWrapper, enrichedLists);
+        UserLists mergedLists = mergeEnrichedListsWithGivenOnes(syncInfoWrapper, enrichedLists, removedListIds);
+        mergedLists.sortLists();
         log.info("Returning {} lists", mergedLists.getAllLists().size());
         return mergedLists;
     }
@@ -101,17 +107,15 @@ public class UserService {
         log.info("Found {} lists to synchronize", listIds.size());
         rawLists = listIds.stream()
                 .map(listId -> getListIfExists(listId, userDynamo.getUsername()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .toList();
         return rawLists;
     }
 
-    private Optional<ContentListDynamo> getListIfExists(String listId, String username) {
+    private ContentListDynamo getListIfExists(String listId, String username) {
         try {
-            return Optional.of(contentListDynamoService.getListById(listId, username));
+            return contentListDynamoService.getListById(listId, username);
         } catch (NoListWithSuchIdException e) {
-            return Optional.empty();
+            return new ContentListDynamo().withListId(listId);
         }
     }
 
@@ -133,21 +137,21 @@ public class UserService {
         return lists;
     }
 
-    private UserLists mergeEnrichedListsWithGivenOnes(SyncInfoWrapper syncInfoWrapper, UserLists fetchedLists) {
+    private UserLists mergeEnrichedListsWithGivenOnes(SyncInfoWrapper syncInfoWrapper, UserLists fetchedLists, List<String> removedListIds) {
         if(syncInfoWrapper.currentLists() == null || syncInfoWrapper.currentLists().isEmpty()) {
             return fetchedLists;
         }
         syncInfoWrapper.currentLists().getBookLists().stream()
                 .filter(list -> !fetchedLists.contains(list))
-                .filter(list -> !syncInfoWrapper.syncInfo().changedListIds().contains(list.getId()))
+                .filter(list -> !removedListIds.contains(list.getId()))
                 .forEach(fetchedLists::add);
           syncInfoWrapper.currentLists().getMovieLists().stream()
                 .filter(list -> !fetchedLists.contains(list))
-                .filter(list -> !syncInfoWrapper.syncInfo().changedListIds().contains(list.getId()))
+                .filter(list -> !removedListIds.contains(list.getId()))
                 .forEach(fetchedLists::add);
           syncInfoWrapper.currentLists().getGameLists().stream()
                 .filter(list -> !fetchedLists.contains(list))
-                .filter(list -> !syncInfoWrapper.syncInfo().changedListIds().contains(list.getId()))
+                .filter(list -> !removedListIds.contains(list.getId()))
                 .forEach(fetchedLists::add);
         return fetchedLists;
     }

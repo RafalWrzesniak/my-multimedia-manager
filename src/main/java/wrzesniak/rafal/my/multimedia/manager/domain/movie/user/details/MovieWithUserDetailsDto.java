@@ -20,7 +20,6 @@ import java.util.Set;
 public class MovieWithUserDetailsDto {
 
     String id;
-    String imdbId;
     String title;
     String polishTitle;
     LocalDate releaseDate;

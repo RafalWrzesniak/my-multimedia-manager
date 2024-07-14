@@ -6,6 +6,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameListWi
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Data
@@ -49,5 +50,11 @@ public class UserLists {
             case GameListWithUserDetails gameListWithUserDetails -> gameLists.add(gameListWithUserDetails);
             default -> throw new IllegalStateException("Unexpected value: " + list);
         };
+    }
+
+    public void sortLists() {
+        bookLists = bookLists.stream().sorted(Comparator.comparing(BookListWithUserDetails::getName)).toList();
+        movieLists = movieLists.stream().sorted(Comparator.comparing(MovieListWithUserDetails::getName)).toList();
+        gameLists = gameLists.stream().sorted(Comparator.comparing(GameListWithUserDetails::getName)).toList();
     }
 }
