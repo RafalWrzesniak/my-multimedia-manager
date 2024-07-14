@@ -5,11 +5,13 @@ import lombok.Value;
 import lombok.With;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 @With
@@ -53,6 +55,17 @@ public class MovieWithUserDetailsDto {
                 .watchedOn(movieUserDetailsDynamo.getWatchedOn())
                 .webImageUrl(movieDynamo.getWebImageUrl())
                 .seriesInfo(movieDynamo.getSeriesInfo())
+                .build();
+    }
+
+    public static MovieWithUserDetailsDto fromSimpleItemAndUserDetails(SimpleItem simpleItem, MovieUserDetailsDynamo movieUserDetailsDynamo) {
+        return MovieWithUserDetailsDto.builder()
+                .id(simpleItem.getId())
+                .title(simpleItem.getDisplayedTitle())
+                .webImageUrl(simpleItem.getWebImageUrl())
+                .watchedOn(Optional.ofNullable(movieUserDetailsDynamo).map(MovieUserDetailsDynamo::getWatchedOn).orElse(null))
+                .createdOn(Optional.ofNullable(movieUserDetailsDynamo).map(MovieUserDetailsDynamo::getCreatedOn).orElse(null))
+                .updatedOn(Optional.ofNullable(movieUserDetailsDynamo).map(MovieUserDetailsDynamo::getUpdatedOn).orElse(null))
                 .build();
     }
 

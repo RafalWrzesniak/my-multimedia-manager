@@ -5,10 +5,12 @@ import lombok.Value;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Series;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Value
 @Builder
@@ -50,6 +52,18 @@ public class BookWithUserDetailsDto {
                 .readOn(bookUserDetailsDynamo.getReadOn())
                 .series(bookDynamo.getSeries())
                 .webImageUrl(bookDynamo.getWebImageUrl())
+                .build();
+    }
+
+    public static BookWithUserDetailsDto fromSimpleItemAndUserDetails(SimpleItem simpleItem, BookUserDetailsDynamo bookUserDetailsDynamo) {
+        return BookWithUserDetailsDto.builder()
+                .id(simpleItem.getId())
+                .title(simpleItem.getDisplayedTitle())
+                .webImageUrl(simpleItem.getWebImageUrl())
+                .readOn(Optional.ofNullable(bookUserDetailsDynamo).map(BookUserDetailsDynamo::getReadOn).orElse(null))
+                .bookFormat(Optional.ofNullable(bookUserDetailsDynamo).map(BookUserDetailsDynamo::getBookFormat).orElse(null))
+                .createdOn(Optional.ofNullable(bookUserDetailsDynamo).map(BookUserDetailsDynamo::getCreatedOn).orElse(null))
+                .updatedOn(Optional.ofNullable(bookUserDetailsDynamo).map(BookUserDetailsDynamo::getUpdatedOn).orElse(null))
                 .build();
     }
 

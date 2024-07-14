@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameUserDetailsDtoDynamo extends ProductUserDetailsAbstract<GameUserDetailsDtoDynamo> {
+public class GameUserDetailsDynamo extends ProductUserDetailsAbstract<GameUserDetailsDynamo> {
 
     private String username;
     private String gameId;
@@ -27,7 +27,7 @@ public class GameUserDetailsDtoDynamo extends ProductUserDetailsAbstract<GameUse
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
 
-    public GameUserDetailsDtoDynamo(String username, String gameId) {
+    public GameUserDetailsDynamo(String username, String gameId) {
         this.username = username;
         this.gameId = gameId;
         this.createdOn = LocalDateTime.now();

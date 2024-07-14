@@ -8,6 +8,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.user.SyncInfo;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -24,12 +25,23 @@ public class SynchronizationConverterTest {
         // given
         SyncInfo syncInfo1 = new SyncInfo(SYNC_DATE_TIME, List.of("id1", "id2"));
         SyncInfo syncInfo2 = new SyncInfo(SYNC_DATE_TIME.plusDays(1), List.of("id2", "id3"));
+        AttributeValue expected = AttributeValue.builder()
+                .l(
+                        AttributeValue.builder()
+                                .m(Map.of(SYNC_DATE_TIME.toString(), AttributeValue.fromSs(List.of("id1", "id2"))))
+                                .build(),
+                        AttributeValue.builder()
+                                .m(Map.of(SYNC_DATE_TIME.plusDays(1).toString(), AttributeValue.fromSs(List.of("id2", "id3"))))
+                                .build()
+                        )
+                .build();
 
         // when
         AttributeValue attributeValue = synchronizationConverter.transformFrom(List.of(syncInfo1, syncInfo2));
 
         // then
-        assertEquals("2024-07-05T16:00 | id1, id2 || 2024-07-06T16:00 | id2, id3", attributeValue.s());
+        System.out.println(expected);
+        assertEquals(expected, attributeValue);
     }
 
     @Test
@@ -37,9 +49,19 @@ public class SynchronizationConverterTest {
         // given
         SyncInfo syncInfo1 = new SyncInfo(SYNC_DATE_TIME, List.of("id1", "id2"));
         SyncInfo syncInfo2 = new SyncInfo(SYNC_DATE_TIME.plusDays(1), List.of("id2", "id3"));
+        AttributeValue given = AttributeValue.builder()
+                .l(
+                        AttributeValue.builder()
+                                .m(Map.of(SYNC_DATE_TIME.toString(), AttributeValue.fromSs(List.of("id1", "id2"))))
+                                .build(),
+                        AttributeValue.builder()
+                                .m(Map.of(SYNC_DATE_TIME.plusDays(1).toString(), AttributeValue.fromSs(List.of("id2", "id3"))))
+                                .build()
+                )
+                .build();
 
         // when
-        List<SyncInfo> syncInfos = synchronizationConverter.transformTo(AttributeValue.builder().s("2024-07-05T16:00 | id1, id2 || 2024-07-06T16:00 | id2, id3").build());
+        List<SyncInfo> syncInfos = synchronizationConverter.transformTo(given);
 
         // then
         assertThat("List equality without order", syncInfos, containsInAnyOrder(List.of(syncInfo1, syncInfo2).toArray()));

@@ -5,11 +5,13 @@ import lombok.Value;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode;
+import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
 
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 @Value
@@ -36,7 +38,7 @@ public class GameWithUserDetailsDto {
     String webImageUrl;
 
 
-    public static GameWithUserDetailsDto of(GameDynamo game, GameUserDetailsDtoDynamo gameUserDetailsDynamo) {
+    public static GameWithUserDetailsDto of(GameDynamo game, GameUserDetailsDynamo gameUserDetailsDynamo) {
         return GameWithUserDetailsDto.builder()
                 .id(game.getId())
                 .title(game.getTitle())
@@ -56,6 +58,18 @@ public class GameWithUserDetailsDto {
                 .finishedOn(gameUserDetailsDynamo.getFinishedOn())
                 .playedHours(gameUserDetailsDynamo.getPlayedHours())
                 .webImageUrl(game.getWebImageUrl())
+                .build();
+    }
+
+    public static GameWithUserDetailsDto fromSimpleItemAndUserDetails(SimpleItem simpleItem, GameUserDetailsDynamo gameUserDetailsDynamo) {
+        return GameWithUserDetailsDto.builder()
+                .id(simpleItem.getId())
+                .title(simpleItem.getDisplayedTitle())
+                .webImageUrl(simpleItem.getWebImageUrl())
+                .finishedOn(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getFinishedOn).orElse(null))
+                .userGamePlatform(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getGamePlatform).orElse(null))
+                .createdOn(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getCreatedOn).orElse(null))
+                .updatedOn(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getUpdatedOn).orElse(null))
                 .build();
     }
 

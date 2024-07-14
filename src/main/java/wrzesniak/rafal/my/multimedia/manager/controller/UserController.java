@@ -3,14 +3,8 @@ package wrzesniak.rafal.my.multimedia.manager.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import wrzesniak.rafal.my.multimedia.manager.domain.dto.ListDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.SyncInfo;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.SyncInfoWrapper;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserDynamo;
-import wrzesniak.rafal.my.multimedia.manager.domain.user.UserService;
+import wrzesniak.rafal.my.multimedia.manager.domain.user.*;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
-
-import java.util.List;
 
 import static wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder.TOKEN_HEADER;
 
@@ -25,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/lists")
-    public List<ListDto> getNeededListsData(@RequestHeader(TOKEN_HEADER) String jwtToken, @RequestBody SyncInfoWrapper syncInfoWrapper) {
+    public UserLists getNeededListsData(@RequestHeader(TOKEN_HEADER) String jwtToken, @RequestBody SyncInfoWrapper syncInfoWrapper) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         return userService.fetchNeededListData(username, syncInfoWrapper);
     }

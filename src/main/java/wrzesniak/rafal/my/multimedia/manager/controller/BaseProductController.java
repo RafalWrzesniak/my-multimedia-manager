@@ -7,11 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
-import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.DefaultProductService;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductUserDetailsAbstract;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 import wrzesniak.rafal.my.multimedia.manager.util.SimplePageRequest;
 
@@ -57,13 +55,6 @@ public abstract class BaseProductController<
                                                                         @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         return defaultProductService.findLastFinished(numberOfPositions, username, productType);
-    }
-
-    @PostMapping("/details")
-    public List<SimpleItemDtoWithUserDetails> getDetailsForSimpleItems(@RequestBody List<SimpleItem> items,
-                                                                       @RequestHeader(TOKEN_HEADER) String jwtToken) {
-        String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
-        return defaultProductService.getDetailsForItems(items, username);
     }
 
     @PostMapping("/finish")

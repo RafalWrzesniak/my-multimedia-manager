@@ -4,20 +4,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFacade;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookListWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
-import wrzesniak.rafal.my.multimedia.manager.domain.dto.ListDto;
-import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DynamoDbClientGeneric;
+import wrzesniak.rafal.my.multimedia.manager.domain.error.NoListWithSuchIdException;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.NoSuchUserException;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.GameFacade;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameListWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieFacade;
-import wrzesniak.rafal.my.multimedia.manager.domain.product.SimpleItem;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import static wrzesniak.rafal.my.multimedia.manager.controller.BaseProductController.PAGE_SIZE;
+import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.*;
 
 @Slf4j
 @Service
@@ -44,28 +49,70 @@ public class UserService {
         userDynamoDb.saveItem(userDynamo);
     }
 
-    public List<ListDto> fetchNeededListData(String username, SyncInfoWrapper syncInfoWrapper) {
-        log.info("Starts fetching basic list info for {}", username);
-        markUserLoggedIn(username);
+    public UserLists fetchNeededListData(String username, SyncInfoWrapper syncInfoWrapper) {
+        UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
+        log.info("Starts fetching basic list info for {}", userDynamo.getPreferredUsername());
+        markUserLoggedIn(userDynamo.getUsername());
         List<ContentListDynamo> rawLists;
-        if(lastSynchronizationContains(username, syncInfoWrapper.syncInfo()) && (syncInfoWrapper.currentLists() != null && !syncInfoWrapper.currentLists().isEmpty())) {
-            rawLists = fetchOnlyMissingLists(syncInfoWrapper, username);
-        } else {
-            rawLists = fetchAllContentLists(username);
+        if(syncFromUiUpToDateOrNewerThanLatestOnServer(syncInfoWrapper.syncInfo(), userDynamo)) {
+            log.info("UI has latest data, returning list from UI");
+            return syncInfoWrapper.currentLists();
         }
-        List<ListDto> enrichedLists = enrichRawListsWithUserDetails(rawLists, username);
-        log.info("Enriched remaining lists with user details");
-        return mergeEnrichedListsWithGivenOnes(syncInfoWrapper, enrichedLists);
+        if(noSyncOnServer(userDynamo) && requestContainsLists(syncInfoWrapper)) {
+            log.info("So sync data on server, returning list from UI");
+            return syncInfoWrapper.currentLists();
+        }
+        if(lastSynchronizationContains(userDynamo, syncInfoWrapper.syncInfo()) && requestContainsLists(syncInfoWrapper)) {
+            rawLists = fetchOnlyMissingLists(syncInfoWrapper, userDynamo);
+        } else {
+            rawLists = fetchAllContentLists(userDynamo.getUsername());
+        }
+        log.info("Enriching remaining lists with user details");
+        UserLists enrichedLists = enrichRawListsWithUserDetails(rawLists, userDynamo.getUsername());
+        log.info("Merging lists");
+        UserLists mergedLists = mergeEnrichedListsWithGivenOnes(syncInfoWrapper, enrichedLists);
+        log.info("Returning {} lists", mergedLists.getAllLists().size());
+        return mergedLists;
     }
 
-    private List<ContentListDynamo> fetchOnlyMissingLists(SyncInfoWrapper syncInfoWrapper, String username) {
+    private boolean syncFromUiUpToDateOrNewerThanLatestOnServer(SyncInfo syncInfo, UserDynamo userDynamo) {
+        LocalDateTime uiSyncTimestamp = syncInfo.syncTimestamp();
+        if(uiSyncTimestamp == null) {
+            return false;
+        }
+        if(noSyncOnServer(userDynamo)) {
+            return true;
+        }
+        LocalDateTime lastServerTimestamp = userDynamo.getLastSynchronization().getFirst().syncTimestamp();
+        return uiSyncTimestamp.isAfter(lastServerTimestamp) || uiSyncTimestamp.equals(lastServerTimestamp);
+    }
+
+    private boolean requestContainsLists(SyncInfoWrapper syncInfoWrapper) {
+        return syncInfoWrapper.currentLists() != null && !syncInfoWrapper.currentLists().isEmpty();
+    }
+
+    private boolean noSyncOnServer(UserDynamo userDynamo) {
+        return userDynamo.getLastSynchronization().isEmpty();
+    }
+
+    private List<ContentListDynamo> fetchOnlyMissingLists(SyncInfoWrapper syncInfoWrapper, UserDynamo userDynamo) {
         List<ContentListDynamo> rawLists;
-        List<String> listIds = getNotSynchronizedListsSince(username, syncInfoWrapper.syncInfo());
+        List<String> listIds = getNotSynchronizedListsSince(userDynamo, syncInfoWrapper.syncInfo());
         log.info("Found {} lists to synchronize", listIds.size());
         rawLists = listIds.stream()
-                .map(listId -> contentListDynamoService.getListById(listId, username))
+                .map(listId -> getListIfExists(listId, userDynamo.getUsername()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
         return rawLists;
+    }
+
+    private Optional<ContentListDynamo> getListIfExists(String listId, String username) {
+        try {
+            return Optional.of(contentListDynamoService.getListById(listId, username));
+        } catch (NoListWithSuchIdException e) {
+            return Optional.empty();
+        }
     }
 
     private List<ContentListDynamo> fetchAllContentLists(String username) {
@@ -86,28 +133,60 @@ public class UserService {
         return lists;
     }
 
-    private List<ListDto> mergeEnrichedListsWithGivenOnes(SyncInfoWrapper syncInfoWrapper, List<ListDto> fetchedLists) {
-        List<ListDto> listsToReturn = new ArrayList<>(fetchedLists);
+    private UserLists mergeEnrichedListsWithGivenOnes(SyncInfoWrapper syncInfoWrapper, UserLists fetchedLists) {
         if(syncInfoWrapper.currentLists() == null || syncInfoWrapper.currentLists().isEmpty()) {
-            return listsToReturn;
+            return fetchedLists;
         }
-        syncInfoWrapper.currentLists().stream()
+        syncInfoWrapper.currentLists().getBookLists().stream()
                 .filter(list -> !fetchedLists.contains(list))
-                .forEach(listsToReturn::add);
-        return listsToReturn;
+                .filter(list -> !syncInfoWrapper.syncInfo().changedListIds().contains(list.getId()))
+                .forEach(fetchedLists::add);
+          syncInfoWrapper.currentLists().getMovieLists().stream()
+                .filter(list -> !fetchedLists.contains(list))
+                .filter(list -> !syncInfoWrapper.syncInfo().changedListIds().contains(list.getId()))
+                .forEach(fetchedLists::add);
+          syncInfoWrapper.currentLists().getGameLists().stream()
+                .filter(list -> !fetchedLists.contains(list))
+                .filter(list -> !syncInfoWrapper.syncInfo().changedListIds().contains(list.getId()))
+                .forEach(fetchedLists::add);
+        return fetchedLists;
     }
 
-    private List<ListDto> enrichRawListsWithUserDetails(List<ContentListDynamo> rawLists, String username) {
-        return new ArrayList<>(rawLists.parallelStream()
-                .map((ContentListDynamo contentListDynamo) -> ListDto.of(contentListDynamo, enrichedItemsWithUserDetails(contentListDynamo, username)))
-                .sorted(Comparator.comparing(ListDto::getName))
-                .toList());
+    private UserLists enrichRawListsWithUserDetails(List<ContentListDynamo> rawLists, String username) {
+        Callable<List<BookListWithUserDetails>> fetchBooks = () -> getListWithUserDetails(rawLists, username, BOOK_LIST,
+                bookFacade::getListWithEnrichedProductsForPageSize, BookListWithUserDetails::getName);
+        Callable<List<MovieListWithUserDetails>> fetchMovies = () -> getListWithUserDetails(rawLists, username, MOVIE_LIST,
+                movieFacade::getListWithEnrichedProductsForPageSize, MovieListWithUserDetails::getName);
+        Callable<List<GameListWithUserDetails>> fetchGames = () -> getListWithUserDetails(rawLists, username, GAME_LIST,
+                gameFacade::getListWithEnrichedProductsForPageSize, GameListWithUserDetails::getName);
+
+        try (ExecutorService executor = Executors.newFixedThreadPool(3)) {
+            Future<List<BookListWithUserDetails>> booksFetcher = executor.submit(fetchBooks);
+            Future<List<MovieListWithUserDetails>> moviesFetcher = executor.submit(fetchMovies);
+            Future<List<GameListWithUserDetails>> gamesFetcher = executor.submit(fetchGames);
+
+            List<BookListWithUserDetails> bookLists = booksFetcher.get();
+            List<MovieListWithUserDetails> movieLists = moviesFetcher.get();
+            List<GameListWithUserDetails> gameLists = gamesFetcher.get();
+            return new UserLists(bookLists, movieLists, gameLists);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private List<String> getNotSynchronizedListsSince(String username, SyncInfo syncInfo) {
-        UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
+    private <T> List<T> getListWithUserDetails(List<ContentListDynamo> rawLists, String username, ContentListType listType,
+                                               BiFunction<ContentListDynamo, String, T> getList,
+                                               Function<T, String> sorting) {
+        return rawLists.parallelStream()
+                .filter(contentListDynamo -> listType.equals(contentListDynamo.getContentListType()))
+                .map(contentListDynamo -> getList.apply(contentListDynamo, username))
+                .sorted(Comparator.comparing(sorting))
+                .toList();
+    }
+
+    private List<String> getNotSynchronizedListsSince(UserDynamo userDynamo, SyncInfo syncInfo) {
         List<SyncInfo> lastSynchronizations = userDynamo.getLastSynchronization();
-        if(!lastSynchronizationContains(username, syncInfo)) {
+        if(!lastSynchronizationContains(userDynamo, syncInfo)) {
             log.warn("Sync {} not found in users: {}", syncInfo, lastSynchronizations);
             throw new IllegalStateException("Sync not found in user");
         }
@@ -119,12 +198,13 @@ public class UserService {
                 .toList();
     }
 
-    private boolean lastSynchronizationContains(String username, SyncInfo syncInfo) {
-        UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
-        if(syncInfo == null) {
+    private boolean lastSynchronizationContains(UserDynamo userDynamo, SyncInfo syncInfo) {
+        if(syncInfo == null || syncInfo.syncTimestamp() == null) {
             return false;
         }
-        return userDynamo.getLastSynchronization().contains(syncInfo);
+        LocalDateTime first = userDynamo.getLastSynchronization().getFirst().syncTimestamp();
+        LocalDateTime last = userDynamo.getLastSynchronization().getLast().syncTimestamp();
+        return last.isBefore(syncInfo.syncTimestamp()) && first.isAfter(syncInfo.syncTimestamp());
     }
 
 
@@ -132,25 +212,6 @@ public class UserService {
         UserDynamo userDynamo = userDynamoDb.getItemById(username).orElseThrow(NoSuchUserException::new);
         userDynamo.markedLoggedIn();
         userDynamoDb.saveItem(userDynamo);
-    }
-
-    private List<SimpleItemDtoWithUserDetails> enrichedItemsWithUserDetails(ContentListDynamo contentList, String username) {
-        int numberOfItemsToParsed = Math.min(Integer.parseInt(PAGE_SIZE), contentList.getItems().size());
-        List<SimpleItem> itemsToParse = contentList.getItems().subList(0, numberOfItemsToParsed);
-        List<SimpleItemDtoWithUserDetails> detailsForItems = new ArrayList<>();
-        switch (contentList.getContentListType()) {
-            case BOOK_LIST -> detailsForItems = new ArrayList<>(bookFacade.getDetailsForItems(itemsToParse, username));
-            case MOVIE_LIST -> detailsForItems = new ArrayList<>(movieFacade.getDetailsForItems(itemsToParse, username));
-            case GAME_LIST -> detailsForItems = new ArrayList<>(gameFacade.getDetailsForItems(itemsToParse, username));
-        }
-        if(contentList.getItems().size() > Integer.parseInt(PAGE_SIZE)) {
-            List<SimpleItem> simpleItemsWithoutDetails = contentList.getItems().subList(numberOfItemsToParsed, contentList.getItems().size());
-            List<SimpleItemDtoWithUserDetails> list = simpleItemsWithoutDetails.stream()
-                    .map(simpleItem -> new SimpleItemDtoWithUserDetails(null, simpleItem))
-                    .toList();
-            detailsForItems.addAll(list);
-        }
-        return detailsForItems;
     }
 
 }

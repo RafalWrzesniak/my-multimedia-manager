@@ -6,13 +6,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.BookFacade;
+import wrzesniak.rafal.my.multimedia.manager.domain.book.user.details.BookListWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
-import wrzesniak.rafal.my.multimedia.manager.domain.dto.ListDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DynamoDbClientGeneric;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.GameFacade;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameListWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.MovieFacade;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieListWithUserDetails;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -148,15 +150,19 @@ public class UserServiceTest {
         when(userDynamoDb.getItemById(USERNAME)).thenReturn(Optional.of(USER_DYNAMO));
         when(contentListDynamoService.getListById("id4", USERNAME)).thenReturn(EMPTY_BOOK_LIST);
         when(contentListDynamoService.getListById("id5", USERNAME)).thenReturn(EMPTY_GAME_LIST);
+        UserLists userLists = new UserLists(
+                List.of(
+                        BookListWithUserDetails.of(EMPTY_BOOK_LIST, null, 0).withId("id1"),
+                        BookListWithUserDetails.of(EMPTY_BOOK_LIST, null, 0).withId("id4")),
+                List.of(
+                        MovieListWithUserDetails.of(EMPTY_MOVIE_LIST, null, 0).withId("id2"),
+                        MovieListWithUserDetails.of(EMPTY_MOVIE_LIST, null, 0).withId("id5")
+                ),
+                List.of(GameListWithUserDetails.of(EMPTY_GAME_LIST, null, 0).withId("id3"))
+        );
 
         // when
-        userService.fetchNeededListData(USERNAME, new SyncInfoWrapper(lastUiSyncInfo, List.of(
-                ListDto.builder().id("id1").build(),
-                ListDto.builder().id("id2").build(),
-                ListDto.builder().id("id3").build(),
-                ListDto.builder().id("id4").build(),
-                ListDto.builder().id("id5").build())
-        ));
+        userService.fetchNeededListData(USERNAME, new SyncInfoWrapper(lastUiSyncInfo, userLists));
 
         // then
         verify(contentListDynamoService, times(0)).getAllContentLists(anyString());

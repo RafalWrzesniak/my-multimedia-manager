@@ -12,6 +12,7 @@ import wrzesniak.rafal.my.multimedia.manager.util.SynchronizationConverter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Builder
@@ -37,9 +38,9 @@ public class UserDynamo {
     }
 
     public void addNewSynchronization(SyncInfo syncInfo) {
-        if(lastSynchronization == null) lastSynchronization = new ArrayList<>();
+        if(lastSynchronization == null || lastSynchronization.isEmpty()) lastSynchronization = new ArrayList<>();
         lastSynchronization.addFirst(syncInfo);
-        if(lastSynchronization.size() > 15) {
+        if(lastSynchronization.size() > 30) {
             lastSynchronization.removeLast();
         }
     }
@@ -59,6 +60,6 @@ public class UserDynamo {
 
     @DynamoDbConvertedBy(SynchronizationConverter.class)
     public List<SyncInfo> getLastSynchronization() {
-        return lastSynchronization;
+        return Optional.ofNullable(lastSynchronization).orElse(new ArrayList<>());
     }
 }
