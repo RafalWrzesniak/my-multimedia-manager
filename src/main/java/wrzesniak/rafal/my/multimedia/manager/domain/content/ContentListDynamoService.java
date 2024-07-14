@@ -40,8 +40,7 @@ public class ContentListDynamoService {
     }
 
     public ContentListDynamo createContentList(String listName, String username, ContentListType contentListType, boolean isAllContentList) {
-        ContentListDynamo contentListDynamo = new ContentListDynamo(listName, username, contentListType)
-                .withAllContentList(isAllContentList);
+        ContentListDynamo contentListDynamo = new ContentListDynamo(listName, username, contentListType, isAllContentList);
         listClient.saveItem(contentListDynamo);
         log.info("Created new list {}", contentListDynamo);
         return contentListDynamo;

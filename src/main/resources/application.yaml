@@ -1,22 +1,12 @@
 spring:
   name: my-multimedia-manager
+  output:
+    ansi:
+      enabled: always
   main:
     allow-bean-definition-overriding: true
 
 application:
-  imdb:
-    url: https://imdb-api.com/API
-    url-pl: https://imdb-api.com/pl/API
-    api-key: secret
-    not-found: Server busy
-    image-size: 384x528
-    wikipedia: Wikipedia
-    api:
-      actor: Name
-      movie: Title
-      search: SearchMovie
-      resize: ResizeImage
-
   filmweb:
     link:
       url: https://www.filmweb.pl

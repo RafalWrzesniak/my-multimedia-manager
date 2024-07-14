@@ -58,7 +58,10 @@ public class GryOnlineService {
         Element platformReleaseDateElement = getReleaseDateElementForPlatform(premiereElements, platform);
         Optional<String> stringDate = buildStringDateFromElement(platformReleaseDateElement);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[d][dd] [MMM] yyyy", new Locale("pl"));
-        return stringDate.map(dateString -> LocalDate.parse(dateString, formatter)).orElse(null);
+        return stringDate
+                .map(dateString -> dateString.contains(" za ") ? dateString.substring(0, dateString.indexOf(" za ")) : dateString)
+                .map(dateString -> LocalDate.parse(dateString, formatter))
+                .orElse(null);
     }
 
     private Optional<String> buildStringDateFromElement(Element element) {

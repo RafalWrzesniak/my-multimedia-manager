@@ -8,14 +8,13 @@ import wrzesniak.rafal.my.multimedia.manager.domain.game.GameFacade;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameListWithUserDetails;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDtoDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.GAME_LIST;
 import static wrzesniak.rafal.my.multimedia.manager.util.JwtTokenDecoder.TOKEN_HEADER;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
@@ -24,7 +23,7 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 @CrossOrigin
 @RestController
 @RequestMapping("game")
-public class GameController extends BaseProductController<GameWithUserDetailsDto, GameUserDetailsDtoDynamo, GameListWithUserDetails, GameDynamo> {
+public class GameController extends BaseProductController<GameWithUserDetailsDto, GameUserDetailsDynamo, GameListWithUserDetails, GameDynamo> {
 
     private final GameFacade gameFacade;
     private final JwtTokenDecoder jwtTokenDecoder;

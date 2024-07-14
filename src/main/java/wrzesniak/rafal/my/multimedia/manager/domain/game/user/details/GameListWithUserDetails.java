@@ -2,6 +2,7 @@ package wrzesniak.rafal.my.multimedia.manager.domain.game.user.details;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.With;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
@@ -15,8 +16,10 @@ import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListTy
 @Value
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class GameListWithUserDetails {
 
+    @EqualsAndHashCode.Include
     String id;
     String name;
     int productsNumber;

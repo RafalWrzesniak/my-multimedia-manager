@@ -14,7 +14,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DynamoDbClientGeneric;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDtoDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details.MovieUserDetailsDynamo;
@@ -64,8 +64,8 @@ public class DynamoDbConfiguration {
     }
 
     @Bean
-    public DynamoDbClientGeneric<GameUserDetailsDtoDynamo> gameUserDetailsDynamoDb() {
-        return new DynamoDbClientGeneric<>(enhancedClient(), GameUserDetailsDtoDynamo.class, dynamoDbTableNames.getGameUserDetails());
+    public DynamoDbClientGeneric<GameUserDetailsDynamo> gameUserDetailsDynamoDb() {
+        return new DynamoDbClientGeneric<>(enhancedClient(), GameUserDetailsDynamo.class, dynamoDbTableNames.getGameUserDetails());
     }
 
     @Bean
@@ -79,8 +79,8 @@ public class DynamoDbConfiguration {
     }
 
     @Bean
-    public DefaultDynamoRepository<GameWithUserDetailsDto, GameUserDetailsDtoDynamo, GameDynamo> gameDynamoRepository() {
-        return new DefaultDynamoRepository<>(gameDynamoDb(), gameUserDetailsDynamoDb(), GameUserDetailsDtoDynamo::new, GameWithUserDetailsDto::of);
+    public DefaultDynamoRepository<GameWithUserDetailsDto, GameUserDetailsDynamo, GameDynamo> gameDynamoRepository() {
+        return new DefaultDynamoRepository<>(gameDynamoDb(), gameUserDetailsDynamoDb(), GameUserDetailsDynamo::new, GameWithUserDetailsDto::of);
     }
 
     @Bean

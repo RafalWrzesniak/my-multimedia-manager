@@ -8,8 +8,10 @@ import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.ISBN;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
@@ -40,8 +42,8 @@ public class DtoMapper {
                 .title(gameDto.getName())
                 .gryOnlineUrl(gameDto.getUrl())
                 .description(gameDto.getDescription())
-                .ratingValue(gameDto.getAggregateRating().ratingValue())
-                .ratingCount(gameDto.getAggregateRating().ratingCount())
+                .ratingValue(Optional.ofNullable(gameDto.getAggregateRating()).map(GameDto.AggregateRating::ratingValue).orElse(BigDecimal.ZERO))
+                .ratingCount(Optional.ofNullable(gameDto.getAggregateRating()).map(GameDto.AggregateRating::ratingCount).orElse(0))
                 .studio(gameDto.getAuthor().name())
                 .publisher(gameDto.getPublisher())
                 .playModes(new HashSet<>(gameDto.getPlayMode()))

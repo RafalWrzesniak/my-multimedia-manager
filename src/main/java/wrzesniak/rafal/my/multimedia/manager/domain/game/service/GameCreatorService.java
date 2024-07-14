@@ -9,7 +9,7 @@ import wrzesniak.rafal.my.multimedia.manager.domain.error.GameNotCreatedExceptio
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDtoDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameWithUserDetailsDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.mapper.DtoMapper;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductCreatorService;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GameCreatorService implements ProductCreatorService<GameWithUserDetailsDto> {
 
-    private final DefaultDynamoRepository<GameWithUserDetailsDto, GameUserDetailsDtoDynamo, GameDynamo> gameDynamoRepository;
+    private final DefaultDynamoRepository<GameWithUserDetailsDto, GameUserDetailsDynamo, GameDynamo> gameDynamoRepository;
     private final GryOnlineService gryOnlineService;
 
     @Override

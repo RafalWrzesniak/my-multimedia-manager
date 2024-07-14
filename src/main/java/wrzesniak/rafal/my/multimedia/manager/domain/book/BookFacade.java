@@ -22,7 +22,7 @@ public class BookFacade extends DefaultProductService<BookWithUserDetailsDto, Bo
     public BookFacade(DefaultDynamoRepository<BookWithUserDetailsDto, BookUserDetailsDynamo, BookDynamo> bookDynamoRepository,
                       BookCreatorService bookCreatorService,
                       ContentListDynamoService contentListDynamoService) {
-        super(BOOK_LIST, BookListWithUserDetails::of, contentListDynamoService, bookCreatorService, bookDynamoRepository);
+        super(BOOK_LIST, BookListWithUserDetails::of, BookWithUserDetailsDto::fromSimpleItemAndUserDetails, contentListDynamoService, bookCreatorService, bookDynamoRepository);
     }
 
     public void setFormatForUserBook(String bookId, BookFormat bookFormat, String username) {

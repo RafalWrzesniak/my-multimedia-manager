@@ -2,22 +2,23 @@ package wrzesniak.rafal.my.multimedia.manager.domain.product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.utils.Pair;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamoService;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
-import wrzesniak.rafal.my.multimedia.manager.domain.dto.SimpleItemDtoWithUserDetails;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
 import wrzesniak.rafal.my.multimedia.manager.util.SimplePageRequest;
 import wrzesniak.rafal.my.multimedia.manager.util.TriFunction;
 
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
+import static wrzesniak.rafal.my.multimedia.manager.controller.BaseProductController.PAGE_SIZE;
 import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType.MOVIE_LIST;
 
 
@@ -31,6 +32,7 @@ public class DefaultProductService<
 
     private final ContentListType contentListType;
     private final TriFunction<ContentListDynamo, List<PRODUCT_WITH_USER_DETAILS>, Integer, LIST_DETAILED_PRODUCTS> mergeListWithDetailedProductsFunction;
+    private final BiFunction<SimpleItem, PRODUCT_USER_DETAILS, PRODUCT_WITH_USER_DETAILS> mergeSimpleItemWithUserDetails;
 
     private final ContentListDynamoService contentListDynamoService;
     private final ProductCreatorService<PRODUCT_WITH_USER_DETAILS> productCreatorService;
@@ -100,17 +102,6 @@ public class DefaultProductService<
         return contentListDynamoService.getListById(listId, username);
     }
 
-    public List<SimpleItemDtoWithUserDetails> getDetailsForItems(List<SimpleItem> simpleItems, String username) {
-        return simpleItems.parallelStream()
-                .map(simpleItem -> fetchDetails(simpleItem, username))
-                .toList();
-    }
-
-    private SimpleItemDtoWithUserDetails fetchDetails(SimpleItem simpleItem, String username) {
-        return new SimpleItemDtoWithUserDetails(dynamoDbProductRepository.getProductUserDetailsWithoutCache(simpleItem.getId(), username),
-                simpleItem.withTitle(URLDecoder.decode(simpleItem.getDisplayedTitle(), StandardCharsets.UTF_8)));
-    }
-
     public ContentListDynamo createContentList(String listName, String username) {
         ContentListDynamo createdList = contentListDynamoService.createContentList(listName, contentListType, username);
         return getListById(createdList.getListId(), username);
@@ -178,4 +169,24 @@ public class DefaultProductService<
         log.info("Renaming list to name {}. List id: {}", newListName, listId);
         contentListDynamoService.renameList(listId, newListName, username);
     }
+
+
+    public LIST_DETAILED_PRODUCTS getListWithEnrichedProductsForPageSize(ContentListDynamo contentList, String username) {
+        int numberOfItemsToParsed = Math.min(Integer.parseInt(PAGE_SIZE), contentList.getItems().size());
+        List<SimpleItem> itemsToParse = contentList.getItems().subList(0, numberOfItemsToParsed);
+        List<PRODUCT_WITH_USER_DETAILS> detailsForItems = new ArrayList<>(itemsToParse.stream()
+                .map(simpleItem -> Pair.of(simpleItem, getProductUserDetails(simpleItem.getId(), username)))
+                .map(pair -> mergeSimpleItemWithUserDetails.apply(pair.left(), pair.right()))
+                .toList());
+
+        if(contentList.getItems().size() > Integer.parseInt(PAGE_SIZE)) {
+            List<SimpleItem> simpleItemsWithoutDetails = contentList.getItems().subList(numberOfItemsToParsed, contentList.getItems().size());
+            List<PRODUCT_WITH_USER_DETAILS> list = simpleItemsWithoutDetails.stream()
+                    .map(simpleItem -> mergeSimpleItemWithUserDetails.apply(simpleItem, null))
+                    .toList();
+            detailsForItems.addAll(list);
+        }
+        return mergeListWithDetailedProductsFunction.apply(contentList, detailsForItems, detailsForItems.size());
+    }
+
 }

@@ -21,7 +21,7 @@ public class MovieFacade extends DefaultProductService<MovieWithUserDetailsDto, 
                        MovieCreatorService movieCreatorService,
                        ContentListDynamoService contentListDynamoService) {
 
-        super(MOVIE_LIST, MovieListWithUserDetails::of, contentListDynamoService, movieCreatorService, movieDynamoRepository);
+        super(MOVIE_LIST, MovieListWithUserDetails::of, MovieWithUserDetailsDto::fromSimpleItemAndUserDetails, contentListDynamoService, movieCreatorService, movieDynamoRepository);
     }
 
 }
