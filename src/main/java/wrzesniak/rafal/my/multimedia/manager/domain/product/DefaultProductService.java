@@ -119,6 +119,10 @@ public class DefaultProductService<
         return dynamoDbProductRepository.getProductUserDetails(productId, username);
     }
 
+    protected PRODUCT_USER_DETAILS getProductUserDetailsWithoutCache(String productId, String username) {
+        return dynamoDbProductRepository.getProductUserDetailsWithoutCache(productId, username);
+    }
+
     protected void updateUserProductDetails(PRODUCT_USER_DETAILS userDetails, String username) {
         dynamoDbProductRepository.updateUserDetails(userDetails, username);
     }
@@ -175,7 +179,7 @@ public class DefaultProductService<
         int numberOfItemsToParsed = Math.min(Integer.parseInt(PAGE_SIZE), contentList.getItems().size());
         List<SimpleItem> itemsToParse = contentList.getItems().subList(0, numberOfItemsToParsed);
         List<PRODUCT_WITH_USER_DETAILS> detailsForItems = new ArrayList<>(itemsToParse.stream()
-                .map(simpleItem -> Pair.of(simpleItem, getProductUserDetails(simpleItem.getId(), username)))
+                .map(simpleItem -> Pair.of(simpleItem, getProductUserDetailsWithoutCache(simpleItem.getId(), username)))
                 .map(pair -> mergeSimpleItemWithUserDetails.apply(pair.left(), pair.right()))
                 .toList());
 
