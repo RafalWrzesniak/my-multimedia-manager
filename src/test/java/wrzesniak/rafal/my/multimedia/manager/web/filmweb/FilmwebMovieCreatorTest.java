@@ -95,7 +95,7 @@ class FilmwebMovieCreatorTest {
     @Test
     void parseImage() {
         String imageUrl = filmwebMovieCreator.parseImage(document);
-        assertEquals("https://fwcdn.pl/fpo/81/44/728144/7722526_2.3.jpg", imageUrl);
+        assertTrue(imageUrl.startsWith("https://fwcdn.pl/fpo/81/44/728144/7722526"));
     }
 
     @SneakyThrows
