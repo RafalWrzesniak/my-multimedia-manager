@@ -9,8 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
+import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.filmweb.FilmwebMovieUrl;
 import wrzesniak.rafal.my.multimedia.manager.util.StringFunctions;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
@@ -100,7 +100,7 @@ public class FilmwebMovieCreator {
 
     int parseRatingCount(Document document) {
         try {
-            return Integer.parseInt(document.getElementsByAttributeValue(CLASS, "filmRating__count").first().text().replaceAll(" ", "").replaceAll("[a-z]", ""));
+            return Integer.parseInt(document.getElementsByAttributeValueContaining(CLASS, "filmRating--filmRate").first().attr("data-count"));
         } catch (NumberFormatException e) {
             return 0;
         }
