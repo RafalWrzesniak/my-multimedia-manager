@@ -67,6 +67,7 @@ public class GameWithUserDetailsDto {
                 .title(simpleItem.getDisplayedTitle())
                 .webImageUrl(simpleItem.getWebImageUrl())
                 .finishedOn(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getFinishedOn).orElse(null))
+                .playedHours(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getPlayedHours).orElse(null))
                 .userGamePlatform(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getGamePlatform).orElse(null))
                 .createdOn(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getCreatedOn).orElse(null))
                 .updatedOn(Optional.ofNullable(gameUserDetailsDynamo).map(GameUserDetailsDynamo::getUpdatedOn).orElse(null))

@@ -37,4 +37,4 @@ images
 /V0__schema.sql
 /multimedia-manager.ppk
 /backup-command.txt
-/src/main/java/wrzesniak/rafal/my/multimedia/manager/controller/MigrationController.java
+/src/main/java/wrzesniak/rafal/my/multimedia/manager/controller/ServiceController.java

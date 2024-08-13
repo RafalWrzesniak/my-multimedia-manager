@@ -82,4 +82,8 @@ public class ContentListDynamoService {
         ContentListDynamo list = getListById(listId, username);
         listClient.saveItem(list.withListName(newListName));
     }
+
+    public void updateList(ContentListDynamo contentListDynamo) {
+        listClient.updateItem(contentListDynamo);
+    }
 }
