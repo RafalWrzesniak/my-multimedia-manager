@@ -23,7 +23,7 @@ public class GameListWithUserDetails {
     String id;
     String name;
     int productsNumber;
-    boolean isAllGamesList;
+    boolean allGamesList;
     ContentListType listType;
     List<GameWithUserDetailsDto> gameWithUserDetailsDtos;
 
@@ -31,7 +31,7 @@ public class GameListWithUserDetails {
         return GameListWithUserDetails.builder()
                 .id(contentListDynamo.getListId())
                 .name(contentListDynamo.getListName())
-                .isAllGamesList(contentListDynamo.isAllContentList())
+                .allGamesList(contentListDynamo.isAllContentList())
                 .productsNumber(productsNumber)
                 .listType(GAME_LIST)
                 .gameWithUserDetailsDtos(gameDtos)

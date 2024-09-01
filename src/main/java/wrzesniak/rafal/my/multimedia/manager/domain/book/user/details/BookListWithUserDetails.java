@@ -23,7 +23,7 @@ public class BookListWithUserDetails {
     String id;
     String name;
     int productsNumber;
-    boolean isAllBooksList;
+    boolean allBooksList;
     ContentListType listType;
     List<BookWithUserDetailsDto> bookWithUserDetailsDtos;
 
@@ -31,7 +31,7 @@ public class BookListWithUserDetails {
         return BookListWithUserDetails.builder()
                 .id(contentListDynamo.getListId())
                 .name(contentListDynamo.getListName())
-                .isAllBooksList(contentListDynamo.isAllContentList())
+                .allBooksList(contentListDynamo.isAllContentList())
                 .productsNumber(productsNumber)
                 .listType(BOOK_LIST)
                 .bookWithUserDetailsDtos(bookWithUserDetailsDtos)

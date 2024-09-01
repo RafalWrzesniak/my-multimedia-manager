@@ -23,7 +23,7 @@ public class MovieListWithUserDetails {
     String id;
     String name;
     int productsNumber;
-    boolean isAllMoviesList;
+    boolean allMoviesList;
     ContentListType listType;
     List<MovieWithUserDetailsDto> movieWithUserDetailsDtos;
 
@@ -31,7 +31,7 @@ public class MovieListWithUserDetails {
         return MovieListWithUserDetails.builder()
                 .id(contentListDynamo.getListId())
                 .name(contentListDynamo.getListName())
-                .isAllMoviesList(contentListDynamo.isAllContentList())
+                .allMoviesList(contentListDynamo.isAllContentList())
                 .productsNumber(productsNumber)
                 .listType(MOVIE_LIST)
                 .movieWithUserDetailsDtos(movieDtos)
