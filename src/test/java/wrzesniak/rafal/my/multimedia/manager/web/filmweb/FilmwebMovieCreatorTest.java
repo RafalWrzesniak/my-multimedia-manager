@@ -98,14 +98,24 @@ class FilmwebMovieCreatorTest {
         assertTrue(imageUrl.startsWith("https://fwcdn.pl/fpo/81/44/728144/7722526"));
     }
 
-    @SneakyThrows
     @Test
+    @SneakyThrows
     void shouldCreateSeries() {
         // given
         Document document = webOperations.parseUrl(toURL("https://www.filmweb.pl/serial/Gra+o+tron-2011-476848"));
         SeriesInfo seriesInfo = filmwebMovieCreator.parseSeriesInfo(document);
 
         assertEquals(new SeriesInfo(8, 79), seriesInfo);
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldParseReleaseDateInSeries() {
+        // given
+        Document document = webOperations.parseUrl(toURL("https://www.filmweb.pl/serial/Gra+o+tron-2011-476848"));
+        LocalDate localDate = filmwebMovieCreator.parseReleaseDate(document);
+
+        assertEquals(LocalDate.of(2010, 12, 5), localDate);
     }
 
 }

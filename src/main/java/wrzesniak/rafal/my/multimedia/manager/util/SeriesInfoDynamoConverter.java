@@ -25,8 +25,8 @@ public class SeriesInfoDynamoConverter implements AttributeConverter<SeriesInfo>
     public SeriesInfo transformTo(AttributeValue input) {
         String seriesInfo = input.s();
         if(seriesInfo == null) return null;
-        int seasonsCount = Integer.parseInt(seriesInfo.substring(seriesInfo.indexOf("=") + 1, seriesInfo.indexOf("=") + 2));
-        int allEpisodesCount = Integer.parseInt(seriesInfo.substring(seriesInfo.lastIndexOf("=") + 1, seriesInfo.lastIndexOf("=") + 2));
+        int seasonsCount = Integer.parseInt(seriesInfo.substring(seriesInfo.indexOf("=") + 1, seriesInfo.lastIndexOf(",")));
+        int allEpisodesCount = Integer.parseInt(seriesInfo.substring(seriesInfo.lastIndexOf("=") + 1, seriesInfo.lastIndexOf("]")));
         return new SeriesInfo(seasonsCount, allEpisodesCount);
     }
 
