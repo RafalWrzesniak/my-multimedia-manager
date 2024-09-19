@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
@@ -83,6 +85,20 @@ public class FilmwebMovieCreator {
             String foundStringDate = document.getElementsByAttributeValue(ITEMPROP, "datePublished").text();
             Locale.setDefault(Locale.of("pl", "PL"));
             return LocalDate.parse(foundStringDate.substring(0, StringFunctions.findLastDigitIndex(foundStringDate)+1), DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+        } catch (NullPointerException npe) {
+            Elements keywords = document.getElementsByAttributeValueContaining(CLASS, "filmInfo__group");
+            String globalPremiereDateString = "globalPremiereDate";
+            String globalPremiereDateRawString = keywords.stream()
+                    .map(Element::firstChild)
+                    .filter(Objects::nonNull)
+                    .map(Node::toString)
+                    .filter(s -> s.contains(globalPremiereDateString))
+                    .findFirst()
+                    .orElseThrow();
+            String globalPremiereDate = globalPremiereDateRawString
+                    .substring(globalPremiereDateRawString.indexOf(globalPremiereDateString) + globalPremiereDateString.length(), globalPremiereDateRawString.indexOf(globalPremiereDateString) + globalPremiereDateString.length() + 13)
+                    .replaceAll("[\":]", "");
+            return LocalDate.parse(globalPremiereDate);
         }
     }
     
@@ -130,8 +146,8 @@ public class FilmwebMovieCreator {
 
     @SneakyThrows
     public SeriesInfo parseSeriesInfo(Document document) {
-        Element sourceElement = document.getElementsByAttributeValue("class", "source").first();
-        if(sourceElement == null) {
+        Element sourceElement = document.getElementsByAttributeValue(CLASS, "source").first();
+        if(sourceElement == null || sourceElement.firstChild() == null) {
             return null;
         }
         String parsed = sourceElement.firstChild().toString();
