@@ -157,11 +157,11 @@ public class UserService {
 
     private UserLists enrichRawListsWithUserDetails(List<ContentListDynamo> rawLists, String username) {
         Callable<List<BookListWithUserDetails>> fetchBooks = () -> getListWithUserDetails(rawLists, username, BOOK_LIST,
-                bookFacade::getListWithEnrichedProductsForPageSize, BookListWithUserDetails::getName);
+                bookFacade::getListWithFullProductDetails, BookListWithUserDetails::getName);
         Callable<List<MovieListWithUserDetails>> fetchMovies = () -> getListWithUserDetails(rawLists, username, MOVIE_LIST,
-                movieFacade::getListWithEnrichedProductsForPageSize, MovieListWithUserDetails::getName);
+                movieFacade::getListWithFullProductDetails, MovieListWithUserDetails::getName);
         Callable<List<GameListWithUserDetails>> fetchGames = () -> getListWithUserDetails(rawLists, username, GAME_LIST,
-                gameFacade::getListWithEnrichedProductsForPageSize, GameListWithUserDetails::getName);
+                gameFacade::getListWithFullProductDetails, GameListWithUserDetails::getName);
 
         try (ExecutorService executor = Executors.newFixedThreadPool(3)) {
             Future<List<BookListWithUserDetails>> booksFetcher = executor.submit(fetchBooks);

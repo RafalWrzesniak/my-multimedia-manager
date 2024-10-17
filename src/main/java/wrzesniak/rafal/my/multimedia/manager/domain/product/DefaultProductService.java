@@ -174,6 +174,11 @@ public class DefaultProductService<
         contentListDynamoService.renameList(listId, newListName, username);
     }
 
+    public LIST_DETAILED_PRODUCTS getListWithFullProductDetails(ContentListDynamo contentList, String username) {
+        List<PRODUCT_WITH_USER_DETAILS> allProductsForList = getAllProductsForList(contentList.getListId(), username);
+        return mergeListWithDetailedProductsFunction.apply(contentList, allProductsForList, allProductsForList.size());
+    }
+
 
     public LIST_DETAILED_PRODUCTS getListWithEnrichedProductsForPageSize(ContentListDynamo contentList, String username) {
         int numberOfItemsToParsed = Math.min(Integer.parseInt(PAGE_SIZE), contentList.getItems().size());
