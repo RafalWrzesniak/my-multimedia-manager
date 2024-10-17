@@ -2,9 +2,6 @@ package wrzesniak.rafal.my.multimedia.manager.domain.dynamodb;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.Product;
 import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductUserDetailsAbstract;
 
@@ -12,8 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-
-import static wrzesniak.rafal.my.multimedia.manager.config.CacheConfiguration.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,7 +45,6 @@ public class DefaultDynamoRepository<
         return mergeProductWithUserDetails.apply(product, userDetails);
     }
 
-    @Cacheable(value = RECENTLY_DONE_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#controllerType, #username)")
     public List<PRODUCT_WITH_USER_DETAILS> findRecentlyDone(int limit, String username, String controllerType) {
         log.info("Finding {} recently done for {}", controllerType, username);
         return productUserDetailsDynamoClient.findObjectsByPartitionKey(username).stream()
@@ -63,10 +57,6 @@ public class DefaultDynamoRepository<
                 .toList();
     }
 
-    @Caching(cacheable = {
-            @Cacheable(value = BOOK_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productId, #username)", condition="#productId.contains('lubimyczytac')"),
-            @Cacheable(value = GAME_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productId, #username)", condition="#productId.contains('gry-online')"),
-            @Cacheable(value = MOVIE_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productId, #username)", condition="#productId.contains('filmweb')")})
     public PRODUCT_USER_DETAILS getProductUserDetails(String productId, String username) {
         return productUserDetailsDynamoClient.getItemById(username, productId)
                 .orElse(createNewUserDetailsFunction.apply(username, productId));
@@ -77,20 +67,12 @@ public class DefaultDynamoRepository<
             .orElse(createNewUserDetailsFunction.apply(username, productId));
     }
 
-    @Caching(put = {
-            @CachePut(value = BOOK_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productUserDetails.getId(), #username)", condition = "#productUserDetails.getId().contains('lubimyczytac')"),
-            @CachePut(value = GAME_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productUserDetails.getId(), #username)", condition = "#productUserDetails.getId().contains('gry-online')"),
-            @CachePut(value = MOVIE_USER_DETAILS_CACHE, key = "new org.springframework.cache.interceptor.SimpleKey(#productUserDetails.getId(), #username)", condition = "#productUserDetails.getId().contains('filmweb')")})
     public PRODUCT_USER_DETAILS updateUserDetails(PRODUCT_USER_DETAILS productUserDetails, String username) {
         log.info("Updating product user details {}", productUserDetails);
         productUserDetailsDynamoClient.updateItem(productUserDetails.withUpdatedOn(LocalDateTime.now()));
         return productUserDetails;
     }
 
-    @Caching(cacheable = {
-            @Cacheable(value = BOOK_DETAILS_CACHE, key = "#productId", condition="#productId.contains('lubimyczytac')"),
-            @Cacheable(value = GAME_DETAILS_CACHE, key = "#productId", condition="#productId.contains('gry-online')"),
-            @Cacheable(value = MOVIE_DETAILS_CACHE, key = "#productId", condition="#productId.contains('filmweb')")})
     public Optional<PRODUCT> getRawProductById(String productId) {
         return productDynamoClient.getItemById(productId);
     }
