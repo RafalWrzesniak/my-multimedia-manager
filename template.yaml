@@ -5,7 +5,7 @@ Description: My Multimedia Manager application
 Globals:
   Function:
     Runtime: java21
-    MemorySize: 256
+    MemorySize: 512
     Timeout: 900
 
 Resources:
