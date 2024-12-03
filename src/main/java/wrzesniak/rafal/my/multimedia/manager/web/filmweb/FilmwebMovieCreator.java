@@ -127,8 +127,7 @@ public class FilmwebMovieCreator {
     }
 
     Set<String> parseGenres(Document document) {
-        Set<String> filmGenres = parseSetOfTextHrefAttributes(document, "/ranking/film/genre");
-        return filmGenres.isEmpty() ? parseSetOfTextHrefAttributes(document, "/ranking/serial/genre") : filmGenres;
+        return document.getElementsByAttributeValue(ITEMPROP, "genre").stream().map(Element::text).collect(Collectors.toSet());
     }
 
     Set<String> parseCountries(Document document) {
