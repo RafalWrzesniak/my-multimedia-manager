@@ -71,7 +71,7 @@ public class FilmwebMovieCreator {
 
     String parseTitle(Document document) {
         Element element = document.getElementsByAttributeValue("class", "filmCoverSection__originalTitle").first();
-        return Objects.isNull(element) ? "" : element.text();
+        return Objects.isNull(element) ? "" : element.ownText();
     }
 
     String parsePolishTitle(Document document) {
