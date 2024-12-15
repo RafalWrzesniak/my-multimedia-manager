@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import wrzesniak.rafal.my.multimedia.manager.domain.dynamodb.DefaultDynamoRepository;
 import wrzesniak.rafal.my.multimedia.manager.domain.error.GameNotCreatedException;
-import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.user.details.GameUserDetailsDynamo;
@@ -17,7 +16,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.validation.gryonline.GryOnli
 import wrzesniak.rafal.my.multimedia.manager.web.gryonline.GryOnlineService;
 
 import java.net.URL;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -34,17 +32,10 @@ public class GameCreatorService implements ProductCreatorService<GameWithUserDet
     }
 
     public GameWithUserDetailsDto createGameFromUrl(@GryOnlineUrl URL gryOnlineUrl, GamePlatform gamePlatform, String username) {
-        Optional<GameWithUserDetailsDto> gameInDatabase = gameDynamoRepository.getById(gryOnlineUrl.toString(), username);
-        if(gameInDatabase.isPresent()) {
-            log.info("Game already exist for url: {}", gryOnlineUrl);
-            gameDynamoRepository.createOrUpdateUserDetailsFor(gryOnlineUrl.toString(), username);
-            return gameInDatabase.get();
-        }
-        GameDto gameDtoFromUrl = gryOnlineService.createGameDtoFromUrl(gryOnlineUrl, gamePlatform).orElseThrow(GameNotCreatedException::new);
-        GameDynamo game = DtoMapper.mapToGame(gameDtoFromUrl);
-        GameWithUserDetailsDto savedGame = gameDynamoRepository.saveProduct(game, username);
-        log.info("Game created from URL: {}", savedGame);
-        return savedGame;
+        return gryOnlineService.createGameDtoFromUrl(gryOnlineUrl, gamePlatform)
+                .map(DtoMapper::mapToGame)
+                .map(gameDynamo -> gameDynamoRepository.saveProduct(gameDynamo, username))
+                .orElseThrow(GameNotCreatedException::new);
     }
 
 }

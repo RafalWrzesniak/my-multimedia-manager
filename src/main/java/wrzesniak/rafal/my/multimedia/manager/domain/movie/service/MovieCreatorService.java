@@ -13,7 +13,6 @@ import wrzesniak.rafal.my.multimedia.manager.domain.product.ProductCreatorServic
 import wrzesniak.rafal.my.multimedia.manager.web.filmweb.FilmwebMovieCreator;
 
 import java.net.URL;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,12 +26,6 @@ public class MovieCreatorService implements ProductCreatorService<MovieWithUserD
     @Override
     @TrackExecutionTime
     public MovieWithUserDetailsDto createProductFromUrl(URL filmwebMovieUrl, String username) {
-        Optional<MovieWithUserDetailsDto> movieInDatabase = movieDynamoRepository.getById(filmwebMovieUrl.toString(), username);
-        if(movieInDatabase.isPresent()) {
-            log.info("Movie with url `{}` already exists in database: {}", filmwebMovieUrl, movieInDatabase);
-            movieDynamoRepository.createOrUpdateUserDetailsFor(filmwebMovieUrl.toString(), username);
-            return movieInDatabase.get();
-        }
         MovieDynamo movie = filmwebMovieCreator.createMovieFromUrl(filmwebMovieUrl);
         MovieWithUserDetailsDto savedMovie = movieDynamoRepository.saveProduct(movie, username);
         log.info("Movie saved in database: {}", savedMovie);
