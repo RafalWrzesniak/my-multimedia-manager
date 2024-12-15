@@ -13,14 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Extract JDK version from pom.xml
-        id: extract-java-version
-        run: echo "JAVA_VERSION=$(xmllint --xpath 'string(//maven.compiler.source)' pom.xml)" >> $GITHUB_ENV
-
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '21'
           distribution: 'corretto'
 
       - name: Cache Maven dependencies
