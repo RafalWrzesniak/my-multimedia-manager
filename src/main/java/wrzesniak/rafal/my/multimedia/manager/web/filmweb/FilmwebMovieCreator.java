@@ -109,7 +109,7 @@ public class FilmwebMovieCreator {
     double parseRating(Document document) {
         try {
             return Double.parseDouble(document.getElementsByAttributeValue(CLASS, "filmRating__rateValue").first().text().replaceAll(",", "."));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             return 0;
         }
     }
@@ -117,7 +117,7 @@ public class FilmwebMovieCreator {
     int parseRatingCount(Document document) {
         try {
             return Integer.parseInt(document.getElementsByAttributeValueContaining(CLASS, "filmRating--filmRate").first().attr("data-count"));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             return 0;
         }
     }
