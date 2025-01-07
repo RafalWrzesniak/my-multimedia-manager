@@ -161,7 +161,7 @@ class FilmwebMovieCreatorTest {
     @ParameterizedTest
     @CsvSource({
             BRIDGE_OF_SPIES +",https://fwcdn.pl/fpo/81/44/728144/7722526",
-            KILER+",https://fwcdn.pl/fpo/05/29/529/6900785",
+            KILER+",https://fwcdn.pl/fpo/05/29/529/8160166",
             GAME_OF_THRONES+",https://fwcdn.pl/fpo/68/48/476848/8145248"
     })
     void parseImage(String movieUrl, String expectedImageUrlStart) {
