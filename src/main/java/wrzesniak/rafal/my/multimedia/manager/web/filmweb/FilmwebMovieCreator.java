@@ -26,6 +26,7 @@ import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -102,8 +103,11 @@ public class FilmwebMovieCreator {
         }
     }
     
-    int parseDuration(Document document) {
-        return Integer.parseInt(document.getElementsByAttributeValue(ITEMPROP, "timeRequired").first().attr("data-duration"));
+    Integer parseDuration(Document document) {
+        return Optional.ofNullable(document.getElementsByAttributeValue(ITEMPROP, "timeRequired").first())
+                .map(element -> element.attr("data-duration"))
+                .map(Integer::valueOf)
+                .orElse(null);
     }
     
     double parseRating(Document document) {
