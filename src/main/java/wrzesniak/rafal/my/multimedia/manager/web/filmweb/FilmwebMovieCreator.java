@@ -1,6 +1,5 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.firstNotEmpty;
@@ -97,8 +98,8 @@ public class FilmwebMovieCreator {
                     .findFirst()
                     .orElseThrow();
             String globalPremiereDate = globalPremiereDateRawString
-                    .substring(globalPremiereDateRawString.indexOf(globalPremiereDateString) + globalPremiereDateString.length(), globalPremiereDateRawString.indexOf(globalPremiereDateString) + globalPremiereDateString.length() + 13)
-                    .replaceAll("[\":]", "");
+                    .substring(globalPremiereDateRawString.indexOf(globalPremiereDateString) + globalPremiereDateString.length(), globalPremiereDateRawString.indexOf(globalPremiereDateString) + globalPremiereDateString.length() + 15)
+                    .replaceAll("[\":, ]", "");
             return LocalDate.parse(globalPremiereDate);
         }
     }
@@ -154,15 +155,17 @@ public class FilmwebMovieCreator {
             return null;
         }
         String parsed = sourceElement.firstChild().toString();
-        String formattedInfo = "{" + parsed
-                .substring(parsed.indexOf("\"seasonsCount"))
-                .replaceAll(";window\\.IRI\\.setSource\\(", "")
-                .replaceAll(",", ":")
-                .replaceAll("}\\)", ", ")
-                .replaceAll("\\);", "}")
-                .replaceAll(":\\{count", "");
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(formattedInfo, SeriesInfo.class);
+        Pattern seasonPattern = Pattern.compile("'count'\\s*:\\s*(\\d+)");
+        Pattern episodePattern = Pattern.compile("setSource\\(\"allEpisodesCount\",\\s*(\\d+)\\s*\\)");
+        int seasonCount = findNumberFromPatter(seasonPattern, parsed);
+        int episodesCount = findNumberFromPatter(episodePattern, parsed);
+        return new SeriesInfo(seasonCount, episodesCount);
+    }
+
+    private int findNumberFromPatter(Pattern pattern, String text) {
+        Matcher seasonMatcher = pattern.matcher(text);
+        seasonMatcher.find();
+        return Integer.parseInt(seasonMatcher.group(1));
     }
 
 }
