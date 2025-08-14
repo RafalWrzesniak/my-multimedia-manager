@@ -1,10 +1,7 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.game.objects;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import wrzesniak.rafal.my.multimedia.manager.util.StringCollectionCustomDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameDto implements Serializable {
@@ -23,11 +21,12 @@ public class GameDto implements Serializable {
     private String description;
     private String publisher;
     private List<String> genre;
-    @JsonDeserialize(using = StringCollectionCustomDeserializer.class)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<PlayMode> playMode;
-    @JsonDeserialize(using = StringCollectionCustomDeserializer.class)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<GamePlatform> gamePlatform;
     private Author author;
+    @EqualsAndHashCode.Exclude
     private AggregateRating aggregateRating;
     private LocalDate releaseDate;
 

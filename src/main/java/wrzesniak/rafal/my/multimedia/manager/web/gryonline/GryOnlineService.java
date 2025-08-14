@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,9 @@ public class GryOnlineService {
                 .run(() -> parsedUrl.set(webOperations.parseUrl(gryOnlineUrl)));
         Element dataElement = parsedUrl.get().getElementsByAttributeValue("type", "application/ld+json")
                 .first();
-        String data = dataElement != null ? dataElement.data() : "Failed to find game data";
+        String data = Optional.ofNullable(dataElement)
+                .map(Element::data)
+                .orElse(null);
         GameDto gameDto;
         try {
             gameDto = objectMapper.readValue(data, GameDto.class);
@@ -49,8 +53,15 @@ public class GryOnlineService {
         }
         LocalDate releaseDate = getDateReleaseDateForPlatform(parsedUrl.get(), platform);
         gameDto.setReleaseDate(releaseDate);
+        Optional.ofNullable(getGameImageUrl(parsedUrl.get())).ifPresent(gameDto::setImage);
         log.info("Created GameDto: {}", gameDto);
         return Optional.of(gameDto);
+    }
+
+    private URL getGameImageUrl(Document parsedUrl) {
+        return Optional.ofNullable(parsedUrl.getElementById("game-cover-src"))
+                .map(element -> toURL(element.attr("src")))
+                .orElse(null);
     }
 
     private LocalDate getDateReleaseDateForPlatform(Document parsedUrl, GamePlatform platform) {
