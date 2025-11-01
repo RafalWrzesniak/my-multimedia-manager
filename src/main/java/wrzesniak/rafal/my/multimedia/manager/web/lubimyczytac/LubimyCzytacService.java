@@ -47,8 +47,7 @@ public class LubimyCzytacService {
 
         Document parsedUrl = parsedUrlAtomic.get();
         Map<String, String> parsing = configuration.getParsing();
-        Element dataElement = parsedUrl.getElementsByAttributeValue(parsing.get("main-attribute"), parsing.get("main-attribute-value"))
-                .first();
+        Element dataElement = parsedUrl.getElementsByAttributeValue(parsing.get("main-attribute"), parsing.get("main-attribute-value")).get(1);
         String data = dataElement != null ? dataElement.data() : "Failed to find book data";
         BookDto bookDto;
         try {
