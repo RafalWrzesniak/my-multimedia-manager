@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto.Publisher;
+import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto.builder;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform.*;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode.MultiPlayer;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode.SinglePlayer;
@@ -64,12 +66,12 @@ class GryOnlineServiceTest {
     }
 
     private static GameDto buildCsgoDto() {
-        return GameDto.builder()
+        return builder()
                 .name("Counter-Strike: Global Offensive")
                 .url(CSGO_GAME_URL)
                 .image(toURL("https://cdn.gracza.pl/galeria/gry13/grupy/11644.jpg"))
                 .description("Nowa odsłona legendarnej sieciowej strzelaniny, która zadebiutowała blisko dekadę wcześniej jako modyfikacja pierwszej części FPS-a Half-Life. Za jej powstanie odpowiada sama firma Valve Corporation, która, korzystając z popularności moda, wykupiła prawa do jego rozwijania.")
-                .publisher("Valve Corporation")
+                .publisher(new Publisher("Valve Corporation"))
                 .genre(List.of("Akcji"))
                 .playMode(List.of(SinglePlayer, MultiPlayer))
                 .gamePlatform(List.of(PC, XBOX_360, PS3))
@@ -79,12 +81,12 @@ class GryOnlineServiceTest {
     }
 
     private static GameDto buildIndianaJonesDto() {
-        return GameDto.builder()
+        return builder()
                 .name("Indiana Jones i Wielki Krąg")
                 .url(INDIANA_JONES_GAME_URL)
                 .image(toURL("https://cdn.gracza.pl/galeria/gry13/grupy/90185656.jpg"))
                 .description("Przygodowa gra akcji FPP od studia MachineGames (znanego z serii Wolfenstein). Indiana Jones and the Great Circle opowiada oryginalną historię o przygodach tytułowego archeologa (nieopartą na żadnym z filmów), któremu wizerunku użyczył Harrison Ford.")
-                .publisher("Bethesda Softworks")
+                .publisher(new Publisher("Bethesda Softworks"))
                 .genre(List.of("Akcji"))
                 .playMode(List.of(SinglePlayer))
                 .gamePlatform(List.of(PC, XSX, PS5))

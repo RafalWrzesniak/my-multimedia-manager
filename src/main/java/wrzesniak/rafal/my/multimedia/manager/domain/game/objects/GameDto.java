@@ -19,7 +19,7 @@ public class GameDto implements Serializable {
     private URL url;
     private URL image;
     private String description;
-    private String publisher;
+    private Publisher publisher;
     private List<String> genre;
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<PlayMode> playMode;
@@ -30,11 +30,17 @@ public class GameDto implements Serializable {
     private AggregateRating aggregateRating;
     private LocalDate releaseDate;
 
+    public String getPublisher() {
+        return publisher.name();
+    }
+
     public record Author(String name) {
     }
 
     public record AggregateRating(BigDecimal ratingValue,
                                    int ratingCount) {
     }
+
+    public record Publisher(String name) {}
 
 }

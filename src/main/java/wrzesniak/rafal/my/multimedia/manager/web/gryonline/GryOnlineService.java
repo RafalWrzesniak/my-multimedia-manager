@@ -46,7 +46,7 @@ public class GryOnlineService {
                 .orElse(null);
         GameDto gameDto;
         try {
-            gameDto = objectMapper.readValue(data, GameDto.class);
+            gameDto = objectMapper.readValue(data, GameDtoWrapper.class).about();
         } catch (JsonProcessingException e) {
             log.warn("Failed to map object to GameDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
@@ -59,16 +59,17 @@ public class GryOnlineService {
     }
 
     private URL getGameImageUrl(Document parsedUrl) {
-        return Optional.ofNullable(parsedUrl.getElementById("game-cover-src"))
+        return Optional.ofNullable(parsedUrl.getElementsByClass("S016-box-img-c").first())
+                .map(element -> element.getElementsByTag("img").first())
                 .map(element -> toURL(element.attr("src")))
                 .orElse(null);
     }
 
     private LocalDate getDateReleaseDateForPlatform(Document parsedUrl, GamePlatform platform) {
-        Elements premiereElements = parsedUrl.getElementsByAttributeValue("class", "multi-p");
+        Elements premiereElements = parsedUrl.getElementsByAttributeValue("class", "mta-dd");
         Element platformReleaseDateElement = getReleaseDateElementForPlatform(premiereElements, platform);
         Optional<String> stringDate = buildStringDateFromElement(platformReleaseDateElement);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[d][dd] [MMM] yyyy", new Locale("pl"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.of("pl"));
         return stringDate
                 .map(dateString -> dateString.contains(" za ") ? dateString.substring(0, dateString.indexOf(" za ")) : dateString)
                 .map(dateString -> LocalDate.parse(dateString, formatter))
@@ -76,17 +77,21 @@ public class GryOnlineService {
     }
 
     private Optional<String> buildStringDateFromElement(Element element) {
-        return Optional.ofNullable(element).flatMap(e -> e.getElementsByTag("span").stream()
-                .map(el -> el.attr("class").equals("s2") ? el.text().substring(0, 3) : el.text())
-                .reduce((s1, s2) -> s1 + " " + s2));
+        return Optional.ofNullable(element)
+                .map(el -> el.getElementsByAttributeValue("class", "mta-span-br").first())
+                .map(Element::text);
     }
 
     private Element getReleaseDateElementForPlatform(Elements premiereElements, GamePlatform platform) {
         return premiereElements.stream()
-                .filter(element -> element.getElementsByTag("a").stream().
-                        anyMatch(element1 -> platform == null || element1.text().equals(platform.name())))
+                .filter(element -> {
+                    Element element1 = element.getElementsByTag("b").first();
+                    return element1 != null && element1.text().contains(platform.name());
+                })
                 .findFirst()
                 .orElse(premiereElements.first());
     }
+
+    private record GameDtoWrapper(GameDto about) {}
 
 }
