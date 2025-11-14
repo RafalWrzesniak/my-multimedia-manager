@@ -83,6 +83,9 @@ public class GryOnlineService {
     }
 
     private Element getReleaseDateElementForPlatform(Elements premiereElements, GamePlatform platform) {
+        if(platform == null) {
+            return premiereElements.first();
+        }
         return premiereElements.stream()
                 .filter(element -> {
                     Element element1 = element.getElementsByTag("b").first();
