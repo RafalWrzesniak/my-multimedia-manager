@@ -66,7 +66,7 @@ public class GryOnlineService {
     }
 
     private LocalDate getDateReleaseDateForPlatform(Document parsedUrl, GamePlatform platform) {
-        Elements premiereElements = parsedUrl.getElementsByAttributeValue("class", "mta-dd");
+        Elements premiereElements = parsedUrl.getElementsByClass("S016meta-plat-box2");
         Element platformReleaseDateElement = getReleaseDateElementForPlatform(premiereElements, platform);
         Optional<String> stringDate = buildStringDateFromElement(platformReleaseDateElement);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.of("pl"));
@@ -78,7 +78,7 @@ public class GryOnlineService {
 
     private Optional<String> buildStringDateFromElement(Element element) {
         return Optional.ofNullable(element)
-                .map(el -> el.getElementsByAttributeValue("class", "mta-span-br").first())
+                .map(el -> el.getElementsByClass("S016meta-s-p5").first())
                 .map(Element::text);
     }
 
@@ -88,7 +88,7 @@ public class GryOnlineService {
         }
         return premiereElements.stream()
                 .filter(element -> {
-                    Element element1 = element.getElementsByTag("b").first();
+                    Element element1 = element.getElementsByTag("p").first();
                     return element1 != null && element1.text().contains(platform.name());
                 })
                 .findFirst()
