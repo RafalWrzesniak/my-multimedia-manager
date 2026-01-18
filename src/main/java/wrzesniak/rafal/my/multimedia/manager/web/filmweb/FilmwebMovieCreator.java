@@ -82,7 +82,7 @@ public class FilmwebMovieCreator {
     
     LocalDate parseReleaseDate(Document document) {
         try {
-            return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("d.MM.yyyy"));
         } catch(DateTimeParseException e) {
             String foundStringDate = document.getElementsByAttributeValue(ITEMPROP, "datePublished").text();
             Locale.setDefault(Locale.of("pl", "PL"));
