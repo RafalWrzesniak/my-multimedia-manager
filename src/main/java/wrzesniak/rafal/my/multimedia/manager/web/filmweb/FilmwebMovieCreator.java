@@ -50,8 +50,7 @@ public class FilmwebMovieCreator {
     @SneakyThrows
     public MovieDynamo createMovieFromUrl(@FilmwebMovieUrl URL filmwebUrl) {
         AtomicReference<Document> parsedUrlAtomic = new AtomicReference<>();
-        Failsafe.with(retryPolicy)
-                .run(() -> parsedUrlAtomic.set(webOperations.parseUrl(filmwebUrl)));
+        Failsafe.with(retryPolicy).run(() -> parsedUrlAtomic.set(webOperations.parseUrl(filmwebUrl)));
         Document document = parsedUrlAtomic.get();
 
         return MovieDynamo.builder()

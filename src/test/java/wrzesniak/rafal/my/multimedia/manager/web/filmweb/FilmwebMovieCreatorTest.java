@@ -1,5 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 
+import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import lombok.SneakyThrows;
 import org.jsoup.nodes.Document;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +40,9 @@ class FilmwebMovieCreatorTest {
 
     @SneakyThrows
     private Document parseToDocument(String movieUrl) {
-        return webOperations.parseUrl(toURL(movieUrl));
+        AtomicReference<Document> parsedUrlAtomic = new AtomicReference<>();
+        Failsafe.with(retryPolicy).run(() -> parsedUrlAtomic.set(webOperations.parseUrl(toURL(movieUrl))));
+        return parsedUrlAtomic.get();
     }
 
     @ParameterizedTest
