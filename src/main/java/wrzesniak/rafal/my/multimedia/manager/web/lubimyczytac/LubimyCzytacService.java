@@ -110,8 +110,6 @@ public class LubimyCzytacService {
         try {
             description = parsedUrl.getElementsByAttributeValue(parsing.get("id"), parsing.get("description"))
                     .first()
-                    .getElementsByTag("p")
-                    .first()
                     .text();
         } catch (NullPointerException ignored) {
             log.warn("Could not find description for this document");
