@@ -1,15 +1,13 @@
 package wrzesniak.rafal.my.multimedia.manager.web.lubimyczytac;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.FailsafeException;
 import dev.failsafe.RetryPolicy;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.databind.ObjectMapper;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.author.AuthorDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Series;
@@ -21,11 +19,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Profile("test")
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 class LubimyCzytacServiceTest {
 
     @Autowired

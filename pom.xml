@@ -5,20 +5,32 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>4.0.6</version>
+		<relativePath/>
+		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>wrzesniak.rafal</groupId>
 	<artifactId>my-multimedia-manager</artifactId>
-	<version>1.0.1</version>
+	<version>2.0.0</version>
 	<name>my-multimedia-manager</name>
 	<description>My MultiMedia Manager</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>25</java.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2025.1.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 
-<!--		Spring Boot -->
+		<!--		Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -55,73 +67,71 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
-<!--		Lombok -->
+		<!--		Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<scope>provided</scope>
 		</dependency>
 
-<!--		JsoUp -->
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
-            <scope>compile</scope>
-        </dependency>
+		<!--		JsoUp -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.22.2</version>
+			<scope>compile</scope>
+		</dependency>
 
-<!--		FailSafe -->
+		<!--		FailSafe -->
 		<dependency>
 			<groupId>dev.failsafe</groupId>
 			<artifactId>failsafe</artifactId>
-			<version>3.3.0</version>
+			<version>3.3.2</version>
 		</dependency>
 
-<!--		Aws -->
+		<!--		Aws -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>secretsmanager</artifactId>
-			<version>2.21.37</version>
+			<version>2.46.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>dynamodb-enhanced</artifactId>
-			<version>2.20.138</version>
+			<version>2.46.2</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-dynamodb</artifactId>
-			<version>1.12.744</version>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>dynamodb</artifactId>
+			<version>2.46.0</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.amazonaws.serverless</groupId>
-			<artifactId>aws-serverless-java-container-springboot3</artifactId>
-			<version>2.0.2</version>
+			<artifactId>aws-serverless-java-container-springboot4</artifactId>
+			<version>3.0.1</version>
 		</dependency>
 
-<!--		Aspect -->
+		<!--		Aspect -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.9.22.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.9.22.1</version>
 		</dependency>
 
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.5.1</version>
 				<configuration>
 					<createDependencyReducedPom>false</createDependencyReducedPom>
 				</configuration>
@@ -140,6 +150,20 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.15.0</version> <configuration>
+				<source>25</source> <target>25</target> <annotationProcessorPaths>
+				<path>
+					<groupId>org.projectlombok</groupId>
+					<artifactId>lombok</artifactId>
+					<version>1.18.46</version>
+				</path>
+			</annotationProcessorPaths>
+			</configuration>
 			</plugin>
 		</plugins>
 	</build>

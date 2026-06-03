@@ -1,7 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book.user.details;
 
 import lombok.Builder;
-import lombok.Value;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookFormat;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.Series;
@@ -12,27 +11,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Value
 @Builder
-public class BookWithUserDetailsDto {
-
-    String id;
-    String title;
-    String category;
-    String description;
-    String publisher;
-    int numberOfPages;
-    String isbn;
-    String author;
-    URL lubimyCzytacUrl;
-    BookFormat bookFormat;
-    LocalDate datePublished;
-    LocalDateTime createdOn;
-    LocalDateTime updatedOn;
-    Series series;
-    LocalDate readOn;
-    String webImageUrl;
-
+public record BookWithUserDetailsDto(String id,
+                                     String title,
+                                     String category,
+                                     String description,
+                                     String publisher,
+                                     int numberOfPages,
+                                     String isbn,
+                                     String author,
+                                     URL lubimyCzytacUrl,
+                                     BookFormat bookFormat,
+                                     LocalDate datePublished,
+                                     LocalDateTime createdOn,
+                                     LocalDateTime updatedOn,
+                                     Series series,
+                                     LocalDate readOn,
+                                     String webImageUrl) {
 
     public static BookWithUserDetailsDto of(BookDynamo bookDynamo, BookUserDetailsDynamo bookUserDetailsDynamo) {
         return BookWithUserDetailsDto.builder()

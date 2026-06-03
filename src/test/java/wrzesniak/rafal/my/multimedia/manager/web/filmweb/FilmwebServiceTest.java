@@ -3,20 +3,18 @@ package wrzesniak.rafal.my.multimedia.manager.web.filmweb;
 import dev.failsafe.RetryPolicy;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 
+import java.net.URI;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Profile("test")
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
 class FilmwebServiceTest {
 
     @Autowired
@@ -58,7 +56,7 @@ class FilmwebServiceTest {
     @Test
     void shouldFindLongTitleForUrl() {
         // when
-        String titleResult = filmwebService.findTitleFromUrl(new URL(PIRATES_URL));
+        String titleResult = filmwebService.findTitleFromUrl(URI.create(PIRATES_URL).toURL());
 
         // then
         assertEquals(PIRATES_TITLE + " (2003)", titleResult);

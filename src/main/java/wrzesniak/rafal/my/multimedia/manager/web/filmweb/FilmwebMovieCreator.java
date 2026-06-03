@@ -82,11 +82,11 @@ public class FilmwebMovieCreator {
     LocalDate parseReleaseDate(Document document) {
         try {
             return LocalDate.parse(document.getElementsByAttributeValue(ITEMPROP, "datePublished").first().attr("content"), DateTimeFormatter.ofPattern("d.MM.yyyy"));
-        } catch(DateTimeParseException e) {
+        } catch(DateTimeParseException _) {
             String foundStringDate = document.getElementsByAttributeValue(ITEMPROP, "datePublished").text();
             Locale.setDefault(Locale.of("pl", "PL"));
             return LocalDate.parse(foundStringDate.substring(0, StringFunctions.findLastDigitIndex(foundStringDate)+1), DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException _) {
             Elements keywords = document.getElementsByAttributeValueContaining(CLASS, "filmInfo__group");
             String globalPremiereDateString = "globalPremiereDate";
             String globalPremiereDateRawString = keywords.stream()
@@ -113,7 +113,7 @@ public class FilmwebMovieCreator {
     double parseRating(Document document) {
         try {
             return Double.parseDouble(document.getElementsByAttributeValue(CLASS, "filmRating__rateValue").first().text().replaceAll(",", "."));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException _) {
             return 0;
         }
     }
@@ -121,7 +121,7 @@ public class FilmwebMovieCreator {
     int parseRatingCount(Document document) {
         try {
             return Integer.parseInt(document.getElementsByAttributeValueContaining(CLASS, "filmRating--filmRate").first().attr("data-count"));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException _) {
             return 0;
         }
     }

@@ -34,8 +34,8 @@ public class GameFacade extends DefaultProductService<GameWithUserDetailsDto, Ga
     public GameWithUserDetailsDto createGameFromUrl(URL gryOnlineUrl, GamePlatform gamePlatform, String username, String listId) {
         GameWithUserDetailsDto game = gameCreatorService.createGameFromUrl(gryOnlineUrl, gamePlatform, username);
         super.createFromUrl(gryOnlineUrl, username);
-        Optional.ofNullable(listId).ifPresent(list -> addProductToList(game.getId(), list, username));
-        Optional.ofNullable(gamePlatform).ifPresent(platform -> setPlatformForUserGame(game.getGryOnlineUrl().toString(), platform, username));
+        Optional.ofNullable(listId).ifPresent(list -> addProductToList(game.id(), list, username));
+        Optional.ofNullable(gamePlatform).ifPresent(platform -> setPlatformForUserGame(game.gryOnlineUrl().toString(), platform, username));
         return game;
     }
 

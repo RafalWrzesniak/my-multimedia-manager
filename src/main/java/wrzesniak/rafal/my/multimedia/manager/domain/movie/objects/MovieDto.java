@@ -43,7 +43,7 @@ public class MovieDto implements FilmwebSearchable {
     @Override
     public String getFilmwebSearchString() {
         String titleToSearch = originalTitle != null && !originalTitle.isEmpty() ? originalTitle : title;
-        return String.format("%s (%s)", titleToSearch, releaseDate.getYear());
+        return "%s (%s)".formatted(titleToSearch, releaseDate.getYear());
     }
 
     public record WikipediaData(String titleInLanguage) {

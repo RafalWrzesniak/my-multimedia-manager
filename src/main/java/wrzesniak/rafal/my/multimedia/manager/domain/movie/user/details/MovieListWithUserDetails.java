@@ -1,10 +1,7 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
-import lombok.With;
+import lombok.*;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListType;
 
@@ -15,6 +12,7 @@ import static wrzesniak.rafal.my.multimedia.manager.domain.content.ContentListTy
 @With
 @Value
 @Builder
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MovieListWithUserDetails {

@@ -77,8 +77,7 @@ public class DefaultProductService<
             foundProducts = list.getItems().stream()
                     .filter(simpleItem -> simpleItem.getTitle().toLowerCase().contains(propertyValue.toLowerCase()))
                     .map(simpleItem -> getById(simpleItem.getId(), username))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+                    .flatMap(Optional::stream)
                     .toList();
         } else {
             List<PRODUCT_WITH_USER_DETAILS> allProducts = getAllProductsForList(listId, username);
@@ -135,7 +134,7 @@ public class DefaultProductService<
             Field field = product.getClass().getDeclaredField(propertyName);
             field.setAccessible(true);
             return field.get(product).toString().toLowerCase().contains(propertyValue.toLowerCase());
-        } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | NullPointerException _) {
             return false;
         }
     }
@@ -155,7 +154,7 @@ public class DefaultProductService<
                 return -1;
             }
             return pageRequest.direction().equals("ASC") ? value1.compareTo(value2) : value2.compareTo(value1);
-        } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | NullPointerException _) {
             return 0;
         }
     }
@@ -164,8 +163,7 @@ public class DefaultProductService<
         return contentListDynamoService.getListById(listId, username).getItems().parallelStream()
                 .map(SimpleItem::getId)
                 .map((String id) -> getById(id, username))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .toList();
     }
 

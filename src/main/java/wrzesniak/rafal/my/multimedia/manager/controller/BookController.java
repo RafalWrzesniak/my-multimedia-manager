@@ -39,7 +39,7 @@ public class BookController extends BaseProductController<BookWithUserDetailsDto
                                                     @RequestHeader(TOKEN_HEADER) String jwtToken) {
         String username = jwtTokenDecoder.parseUsernameFromAuthorizationHeader(jwtToken);
         BookWithUserDetailsDto book = bookFacade.createFromUrl(toURL(url), username);
-        bookFacade.setFormatForUserBook(book.getLubimyCzytacUrl().toString(), bookFormat, username);
+        bookFacade.setFormatForUserBook(book.lubimyCzytacUrl().toString(), bookFormat, username);
         Optional.ofNullable(listId).ifPresent(list -> bookFacade.addProductToList(url, list, username));
         return book;
     }

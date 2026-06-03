@@ -1,7 +1,5 @@
 package wrzesniak.rafal.my.multimedia.manager.web.lubimyczytac;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +11,8 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import wrzesniak.rafal.my.multimedia.manager.domain.book.objects.BookDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.validation.lubimyczytac.LubimyCzytacUrl;
 import wrzesniak.rafal.my.multimedia.manager.util.SeriesDynamoConverter;
@@ -52,7 +52,7 @@ public class LubimyCzytacService {
         BookDto bookDto;
         try {
             bookDto = objectMapper.readValue(data, BookDto.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.warn("Failed to map object to BookDto because `{}` from data: {}", e.getMessage(), data);
             return Optional.empty();
         }
@@ -86,7 +86,7 @@ public class LubimyCzytacService {
     private LocalDate tryMappingToLocalDate(String s) {
         try {
             return LocalDate.parse(s);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException _) {
             return null;
         }
     }
@@ -111,7 +111,7 @@ public class LubimyCzytacService {
             description = parsedUrl.getElementsByAttributeValue(parsing.get("id"), parsing.get("description"))
                     .first()
                     .text();
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException _) {
             log.warn("Could not find description for this document");
             return configuration.getDefaultDescription();
         }

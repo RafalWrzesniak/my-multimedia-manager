@@ -1,13 +1,11 @@
 package wrzesniak.rafal.my.multimedia.manager.web.gryonline;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.RetryPolicy;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.databind.ObjectMapper;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto.Author;
 import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
@@ -19,7 +17,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto.Publisher;
-import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDto.builder;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform.*;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode.MultiPlayer;
 import static wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode.SinglePlayer;
@@ -27,7 +24,6 @@ import static wrzesniak.rafal.my.multimedia.manager.util.StringFunctions.toURL;
 
 @Profile("test")
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
 class GryOnlineServiceTest {
 
     @Autowired
@@ -66,7 +62,7 @@ class GryOnlineServiceTest {
     }
 
     private static GameDto buildCsgoDto() {
-        return builder()
+        return GameDto.builder()
                 .name("Counter-Strike: Global Offensive")
                 .url(CSGO_GAME_URL)
                 .image(toURL("https://cdn.gracza.pl/galeria/gry13/grupy/11644.jpg"))
@@ -81,7 +77,7 @@ class GryOnlineServiceTest {
     }
 
     private static GameDto buildIndianaJonesDto() {
-        return builder()
+        return GameDto.builder()
                 .name("Indiana Jones i Wielki Krąg")
                 .url(INDIANA_JONES_GAME_URL)
                 .image(toURL("https://cdn.gracza.pl/galeria/gry13/grupy/90185656.jpg"))

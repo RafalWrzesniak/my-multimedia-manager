@@ -113,7 +113,7 @@ public class UserService {
     private ContentListDynamo getListIfExists(String listId, String username) {
         try {
             return contentListDynamoService.getListById(listId, username);
-        } catch (NoListWithSuchIdException e) {
+        } catch (NoListWithSuchIdException _) {
             return new ContentListDynamo().withListId(listId);
         }
     }

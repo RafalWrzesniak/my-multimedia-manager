@@ -50,7 +50,7 @@ public class UserLists {
             case MovieListWithUserDetails movieListWithUserDetails -> movieLists.add(movieListWithUserDetails);
             case GameListWithUserDetails gameListWithUserDetails -> gameLists.add(gameListWithUserDetails);
             default -> throw new IllegalStateException("Unexpected value: " + list);
-        };
+        }
     }
 
     public void sortLists() {

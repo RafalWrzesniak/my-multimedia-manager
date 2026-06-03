@@ -1,10 +1,10 @@
 package wrzesniak.rafal.my.multimedia.manager.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import wrzesniak.rafal.my.multimedia.manager.service.AwsSecretsManager;
 
 import java.util.Base64;
@@ -30,7 +30,7 @@ public class JwtTokenDecoder {
                 username = adminSecret.adminOriginalUsername();
             }
             return username;
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException _) {
             log.error("Failed to parse authorization header: {}", jwtToken);
             throw new IllegalArgumentException("Failed to parse authorization header");
         }

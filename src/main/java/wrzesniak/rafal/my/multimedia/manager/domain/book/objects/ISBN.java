@@ -1,5 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.book.objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class ISBN {
     @Getter
     private final String value;
 
+    @JsonCreator
     private ISBN(String value) {
         this.value = value;
     }

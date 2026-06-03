@@ -52,8 +52,7 @@ public class DefaultDynamoRepository<
                 .sorted((m1, m2) -> m2.getFinishedOn().compareTo(m1.getFinishedOn()))
                 .limit(limit)
                 .map(userDetails -> getById(userDetails.getId(), username))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .toList();
     }
 

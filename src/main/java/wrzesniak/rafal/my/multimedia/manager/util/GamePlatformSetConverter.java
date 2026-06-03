@@ -23,15 +23,14 @@ public class GamePlatformSetConverter implements AttributeConverter<Set<GamePlat
         return Arrays.stream(input.s().split(", "))
                 .map(s -> s.replaceAll(" ", "_"))
                 .map(this::createGamePlatform)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .collect(Collectors.toSet());
     }
 
     private Optional<GamePlatform> createGamePlatform(String s) {
         try {
             return Optional.of(GamePlatform.valueOf(s));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             return Optional.empty();
         }
     }

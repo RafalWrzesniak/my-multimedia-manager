@@ -1,7 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.game.user.details;
 
 import lombok.Builder;
-import lombok.Value;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GameDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.GamePlatform;
 import wrzesniak.rafal.my.multimedia.manager.domain.game.objects.PlayMode;
@@ -14,29 +13,25 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
-@Value
 @Builder
-public class GameWithUserDetailsDto {
-
-    String id;
-    String title;
-    URL gryOnlineUrl;
-    String description;
-    BigDecimal ratingValue;
-    Integer ratingCount;
-    String studio;
-    String publisher;
-    Set<PlayMode> playModes;
-    Set<GamePlatform> gamePlatform;
-    Set<String> genreList;
-    LocalDate releaseDate;
-    LocalDateTime createdOn;
-    LocalDateTime updatedOn;
-    GamePlatform userGamePlatform;
-    LocalDate finishedOn;
-    Integer playedHours;
-    String webImageUrl;
-
+public record GameWithUserDetailsDto(String id,
+                                     String title,
+                                     URL gryOnlineUrl,
+                                     String description,
+                                     BigDecimal ratingValue,
+                                     Integer ratingCount,
+                                     String studio,
+                                     String publisher,
+                                     Set<PlayMode> playModes,
+                                     Set<GamePlatform> gamePlatform,
+                                     Set<String> genreList,
+                                     LocalDate releaseDate,
+                                     LocalDateTime createdOn,
+                                     LocalDateTime updatedOn,
+                                     GamePlatform userGamePlatform,
+                                     LocalDate finishedOn,
+                                     Integer playedHours,
+                                     String webImageUrl) {
 
     public static GameWithUserDetailsDto of(GameDynamo game, GameUserDetailsDynamo gameUserDetailsDynamo) {
         return GameWithUserDetailsDto.builder()

@@ -1,7 +1,6 @@
 package wrzesniak.rafal.my.multimedia.manager.domain.movie.user.details;
 
 import lombok.Builder;
-import lombok.Value;
 import lombok.With;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.MovieDynamo;
 import wrzesniak.rafal.my.multimedia.manager.domain.movie.objects.SeriesInfo;
@@ -15,26 +14,23 @@ import java.util.Optional;
 import java.util.Set;
 
 @With
-@Value
 @Builder
-public class MovieWithUserDetailsDto {
-
-    String id;
-    String title;
-    String polishTitle;
-    LocalDate releaseDate;
-    Integer runtimeMins;
-    BigDecimal imDbRating;
-    Integer imDbRatingVotes;
-    URL filmwebUrl;
-    Set<String> genreList;
-    Set<String> countryList;
-    String plotLocal;
-    LocalDateTime createdOn;
-    LocalDateTime updatedOn;
-    LocalDate watchedOn;
-    String webImageUrl;
-    SeriesInfo seriesInfo;
+public record MovieWithUserDetailsDto(String id,
+                                      String title,
+                                      String polishTitle,
+                                      LocalDate releaseDate,
+                                      Integer runtimeMins,
+                                      BigDecimal imDbRating,
+                                      Integer imDbRatingVotes,
+                                      URL filmwebUrl,
+                                      Set<String> genreList,
+                                      Set<String> countryList,
+                                      String plotLocal,
+                                      LocalDateTime createdOn,
+                                      LocalDateTime updatedOn,
+                                      LocalDate watchedOn,
+                                      String webImageUrl,
+                                      SeriesInfo seriesInfo) {
 
     public static MovieWithUserDetailsDto of(MovieDynamo movieDynamo, MovieUserDetailsDynamo movieUserDetailsDynamo) {
         return MovieWithUserDetailsDto.builder()
