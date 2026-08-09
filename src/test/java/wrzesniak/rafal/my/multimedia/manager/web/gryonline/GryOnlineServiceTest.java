@@ -86,7 +86,7 @@ class GryOnlineServiceTest {
                 .genre(List.of("Akcji"))
                 .playMode(List.of(SinglePlayer))
                 .gamePlatform(List.of(PC, XSX, PS5, Switch2))
-                .author(new Author("Machine Games"))
+                .author(new Author("MachineGames"))
                 .releaseDate(LocalDate.of(2024, 12, 9))
                 .build();
     }
