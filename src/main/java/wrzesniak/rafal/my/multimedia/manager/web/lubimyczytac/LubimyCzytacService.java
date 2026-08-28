@@ -21,6 +21,7 @@ import wrzesniak.rafal.my.multimedia.manager.web.WebOperations;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -99,9 +100,11 @@ public class LubimyCzytacService {
 
     private String parsePublisher(Document parsedUrl) {
         Map<String, String> parsing = configuration.getParsing();
-        Element publisherElement = parsedUrl.getElementsByAttributeValueContaining(parsing.get("href"), parsing.get("publisher"))
-                .first();
-        return publisherElement != null ? publisherElement.text() : configuration.getUnknownPublisher();
+        List<Element> publisherElements = parsedUrl.getElementsByAttributeValueContaining(parsing.get("href"), parsing.get("publisher"))
+                .stream()
+                .filter(element -> !element.text().isBlank())
+                .toList();
+        return publisherElements.isEmpty() ? configuration.getUnknownPublisher() : publisherElements.getFirst().text();
     }
 
     private String parseDescription(Document parsedUrl) {
