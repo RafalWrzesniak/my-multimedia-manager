@@ -85,7 +85,7 @@ public class FilmwebMovieCreator {
         } catch(DateTimeParseException _) {
             String foundStringDate = document.getElementsByAttributeValue(ITEMPROP, "datePublished").text();
             Locale.setDefault(Locale.of("pl", "PL"));
-            return LocalDate.parse(foundStringDate.substring(0, StringFunctions.findLastDigitIndex(foundStringDate)+1), DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+            return LocalDate.parse(foundStringDate.substring(0, StringFunctions.findLastDigitIndexBeforeComma(foundStringDate)+1), DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
         } catch (NullPointerException _) {
             Elements keywords = document.getElementsByAttributeValueContaining(CLASS, "filmInfo__group");
             String globalPremiereDateString = "globalPremiereDate";

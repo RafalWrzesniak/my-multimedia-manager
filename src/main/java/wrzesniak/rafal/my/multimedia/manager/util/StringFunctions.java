@@ -19,10 +19,12 @@ public class StringFunctions {
         return title1 != null && !title1.isEmpty() ? title1 : title2;
     }
 
-    public static int findLastDigitIndex(String input) {
-        int lastIndex = input.length();
-        for (int i = 0; i < input.length(); i++) {
-            char currentChar = input.charAt(i);
+    public static int findLastDigitIndexBeforeComma(String input) {
+        int commaIndex = input.indexOf(",");
+        int lastIndex = commaIndex != -1 ? commaIndex : input.length();
+        String subInput = input.substring(0, lastIndex);
+        for (int i = 0; i < subInput.length(); i++) {
+            char currentChar = subInput.charAt(i);
             if (Character.isDigit(currentChar)) {
                 lastIndex = i;
             }
